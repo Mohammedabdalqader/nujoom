@@ -18,8 +18,8 @@ export function getInitialLocale(): Locale {
 export const i18n = createI18n(getInitialLocale());
 
 /** Whether the current layout runs right-to-left (web reads the document, native the I18nManager). */
-export function isRTL(): boolean {
-  if (Platform.OS === 'web') return getDirection(i18n.language === 'en' ? 'en' : 'ar') === 'rtl';
+export function isRTL(language: string = i18n.language): boolean {
+  if (Platform.OS === 'web') return getDirection(language === 'en' ? 'en' : 'ar') === 'rtl';
   return I18nManager.isRTL;
 }
 

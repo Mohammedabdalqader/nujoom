@@ -349,3 +349,19 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
 - **Who can see it** is unchanged: the storage policy follows the profile's visibility (`can_view_avatar`), so a youth's photo stays within their guardian's choice (spec §7). Account deletion removes the folder (D-040).
 - **Where:** a "Your photo / صورتك" section in Settings (production only), with the current photo or initials and Choose/Change/Remove. The optional photo step at the end of onboarding (docs/DESIGN.md) is left to Codex's onboarding pass.
 - **Verified** on the production app (Expo web, live project): choose, then the photo is shown from the avatars bucket; change; remove, after which the profile has no photo and the folder is empty. No page errors. Native crop and permission prompts still need a device check.
+
+**D-044 A repeatable slice-1 end-to-end run (S1-10) (2026-09-28).**
+
+- **The tool:** `tools/e2e` (new dependency: `playwright` 1.63.0, the version whose browsers this machine already has). `pnpm --filter @nujoom/tools-e2e slice1 <baseUrl>` drives the **production** app on Expo web against the linked project with throwaway tester accounts, deleted at the end.
+- **What it covers:**
+  - Adult: code sign-in → onboarding (profile, consent with recording) → Home.
+  - All five tabs render real content (no blank screen, no `undefined`/`NaN`).
+  - A restart keeps the session.
+  - Settings shows photo, privacy, recording, legal and data sections.
+  - English turns the layout LTR, including direction-sensitive icons, and Arabic turns it back.
+  - Sign-out, and staying signed out after a reload.
+  - Youth: an under-18 sign-up reaches the guardian step; naming a guardian never claims "sent" without delivery; continue with limits.
+  - No page errors in either run.
+- **Result:** 18/18. Screenshots are in `agentic_system/screenshots/s1/e2e/`.
+- **Bug fixed along the way:** on the web preview, switching language flipped the layout but not direction-sensitive icons (the back arrow), because `Icon` read the direction from a global and the React Compiler reused the old render. `Icon` now subscribes to the language (`useTranslation`), like Codex's X9 `Text` change. Phones reload on a language change, so they weren't affected.
+- **How to run:** start the app with production settings (`cd apps/mobile && npx expo start --web --port 8083`, with `.env.development.local`), then run the tool. It does not start servers itself.

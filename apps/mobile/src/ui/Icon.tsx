@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Text as RNText, type TextProps as RNTextProps } from 'react-native';
 
 import { GLYPHS, type IconName } from '@/design/icons/glyphs';
@@ -26,7 +27,10 @@ export function Icon({
   style,
   ...rest
 }: IconProps) {
-  const flip = directional && !isRTL();
+  // Subscribing to the language re-renders direction-sensitive icons when it changes: the web
+  // preview switches direction without a reload, and a render must not reuse the old direction.
+  const { i18n } = useTranslation();
+  const flip = directional && !isRTL(i18n.language);
   return (
     <RNText
       {...rest}

@@ -1,0 +1,12 @@
+{
+  "name": "@nujoom/tools-e2e",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "slice1": "node slice1.mjs"
+  },
+  "dependencies": {
+    "playwright": "1.63.0"
+  }
+}

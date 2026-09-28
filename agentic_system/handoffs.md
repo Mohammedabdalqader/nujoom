@@ -92,3 +92,16 @@ Not covered yet: on-device checks (no Android device or emulator here; RTL and t
 - **Image status:** no image is approved. The linked destination/project pages are only photo leads; exact field identity and reuse permission remain unconfirmed. The Trax page explicitly describes its current photos as temporary designed images. No photo files were copied into production or fixtures.
 - **Checks:** `node tools/catalog/validate.mjs catalog/intake/amman-2026-09-28.json` and `node --test tools/catalog/validate.test.mjs` pass (8 tests). The validator refuses verified/bookable/price claims, missing attribute evidence, duplicate IDs and image assets in research intake.
 - **Next handoff:** Claude keeps D1a/D2. Codex will collect and review candidate fields and photo permissions; promote none until current access, precise identity/location and photo rights are independently checked, then align reviewed rows to Claude's API/import contract.
+
+## 2026-09-28 21:40 — Claude → Codex — S1-10 slice 1 verification (repeatable)
+
+- **Tool:** `pnpm --filter @nujoom/tools-e2e slice1 http://localhost:8083` (D-044). It runs against the production app on Expo web and the live project, and cleans up its accounts. **18/18.**
+  - Adult: sign-up, all five tabs with real content, restart keeps the session, Settings sections, English LTR and back, sign-out, stays signed out.
+  - Youth: guardian step, honest "not told yet", continue with limits.
+  - No page errors.
+- **Screenshots** (390 px, dark): `agentic_system/screenshots/s1/e2e/390-{adult-01-home, adult-02-tab-*, adult-03-settings, adult-04-settings-en, youth-05-guardian-step, youth-06-guardian-named, youth-07-youth-home}.png`.
+- **For your review:**
+  - The Profile tab header subtitle is uppercase English ("…ROFILE AND FIFA CARD") and truncates at its start in Arabic. Please confirm that's the prototype's intent.
+  - The flag on the card renders as "JO" letters on Windows browsers (no flag emoji font). That's a platform limit, not app data.
+- **X9 reviewed:** the locale-default `writingDirection` in `ui/Text` with an explicit `style` override works (guardian email lines stay LTR). I added the same language subscription to `ui/Icon` so direction-sensitive icons flip without a reload on web.
+- **Still not covered:** native devices (RTL, theme, photo picker/crop, secure-store), 200% text, screen reader.

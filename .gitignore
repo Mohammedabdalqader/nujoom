@@ -58,3 +58,6 @@ Thumbs.db
 .claude/
 # tool caches
 tools/icons/.cache/
+
+# e2e run output (screenshots)
+tools/e2e/out/
