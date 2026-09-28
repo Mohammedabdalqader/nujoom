@@ -580,5 +580,96 @@
       "lastFrom": "Latest from {{name}}",
       "empty": "After each match, teammates can give you respect badges."
     }
+  },
+  "notifications": {
+    "title": "Alerts and notifications",
+    "newCount": "{{value}} new",
+    "allRead": "All read",
+    "markAll": "Mark all as read",
+    "markedAll": "All notifications marked as read",
+    "settings": "Notification settings",
+    "new": "New",
+    "empty": "No notifications right now",
+    "types": {
+      "invited": {
+        "title": "You're invited! ⚽",
+        "body": "{{organizer}} invited you to a match at {{pitch}} at {{time}}."
+      },
+      "friend_request": {
+        "title": "New friend request",
+        "body": "{{name}} wants to join your squad."
+      },
+      "booking_reminder": {
+        "title": "Tonight's match starts soon",
+        "body": "{{pitch}}: {{teamA}} vs {{teamB}} at {{time}}."
+      },
+      "checkin_open": {
+        "title": "Check-in is open",
+        "body": "Scan the QR code at {{pitch}} so the match counts for rankings."
+      },
+      "clips_ready": {
+        "title": "Your clips are ready! 🎬",
+        "body": "Clips from the {{pitch}} match are ready. Watch them and tag yourself."
+      },
+      "voting_open": {
+        "title": "Player of the Match voting is open",
+        "body": "Who was the best at {{pitch}}? Vote before voting closes."
+      },
+      "mvp_result": {
+        "title": "Player of the Match result 🏆",
+        "body": "{{name}} won Player of the Match at {{pitch}}."
+      },
+      "missing_one_nearby": {
+        "title": "A team near you is one short!",
+        "body": "{{pitch}} needs a {{position}} {{relative}}."
+      },
+      "rating_updated": {
+        "title": "FIFA card updated!",
+        "body": "Your last match was counted and your form is now {{form}}/10."
+      },
+      "weekly_ranking": {
+        "title": "Weekly ranking update",
+        "body": "You're number {{rank}} in {{scope}} this week."
+      }
+    }
+  },
+  "friends": {
+    "title": "Hara friends (the squad)",
+    "sub": "Invite straight to matches and see who's around",
+    "filters": {
+      "all": "All ({{value}})",
+      "online": "Online ({{value}})",
+      "in_match": "In a match ({{value}})"
+    },
+    "add": "Add player",
+    "cancel": "Cancel",
+    "addTitle": "Add a player by card code (NJM)",
+    "codePlaceholder": "Card code (NJM-8702)",
+    "sendRequest": "Send request ✅",
+    "badCode": "The code looks like NJM-8702",
+    "notFound": "No player with that code, or their profile is private",
+    "ownCode": "That's your own code 😄",
+    "alreadyFriend": "{{name}} is already in your squad",
+    "requestSent": "👥 Friend request sent to {{name}}",
+    "myCode": "Your code: {{code}}",
+    "shareMyCode": "Share your code",
+    "myCodeShare": "Add me on {{app}}! My card code: {{code}}",
+    "search": "Search by name, hara or card code...",
+    "noResults": "No players match your search",
+    "readyNow": "Ready to play now",
+    "playingAt": "Playing at {{pitch}}",
+    "offline": "Offline",
+    "invite": "Invite",
+    "whatsapp": "Message on WhatsApp",
+    "whatsappText": "Hey captain {{name}}, ready for our next match on {{app}}? Come join the line-up!",
+    "requests": "Friend requests",
+    "accept": "Accept",
+    "decline": "Decline",
+    "accepted": "{{name}} joined your squad 🤝",
+    "declined": "Request declined",
+    "suggested": "Suggested players from your hara ({{city}}):",
+    "addSuggested": "Send friend request",
+    "sent": "Sent",
+    "inMatch": "In a match"
   }
 }

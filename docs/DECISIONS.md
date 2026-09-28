@@ -148,3 +148,10 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
 - With a minimum age of 13, the U14 group holds only 13-year-olds, too few for a board of its own. So the "تحت 16" (under 16) board covers the U14 and U16 groups, ages 13–15.
 - The age groups still exist separately in the data (spec §6.10) for rating and eligibility.
 - Adults never appear on youth boards and youth never on the adult board (§7).
+
+**D-023 Friends stay inside an age band and are added by card code.**
+
+- The prototype added anyone by typing a name. A real squad needs the other player's consent, so you send a request with their card code ("NJM-8702") and they accept or decline.
+- Lookups and suggestions only return players the viewer may see: public profiles, or city-visible profiles in the same city. Private profiles are never found.
+- Friendships never cross the adult/youth line. Presence ("online") is still presence, and §7 gives minors no public presence.
+- Card codes are typed on Arabic keyboards too, so the lookup accepts Arabic-Indic digits, lower case, spaces and a missing "NJM-" (`normalizeCardCode`, tested).

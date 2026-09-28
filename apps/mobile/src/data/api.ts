@@ -1,6 +1,8 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
+  previewFriendRequests,
+  previewFriendSuggestions,
   previewFriends,
   previewHome,
   previewMe,
@@ -17,6 +19,8 @@ import type {
   Area,
   Clip,
   Friend,
+  FriendRequest,
+  FriendSuggestion,
   HomeFeed,
   Leaderboard,
   MatchDay,
@@ -32,6 +36,8 @@ import type {
 export const keys = {
   me: ['me'] as const,
   friends: ['friends'] as const,
+  friendRequests: ['friends', 'requests'] as const,
+  friendSuggestions: ['friends', 'suggestions'] as const,
   notifications: ['notifications'] as const,
   home: ['home'] as const,
   myClips: ['clips', 'mine'] as const,
@@ -53,6 +59,18 @@ export const useMe = () => useQuery<Me>({ queryKey: keys.me, queryFn: preview(pr
 
 export const useFriends = () =>
   useQuery<Friend[]>({ queryKey: keys.friends, queryFn: preview(previewFriends) });
+
+export const useFriendRequests = () =>
+  useQuery<FriendRequest[]>({
+    queryKey: keys.friendRequests,
+    queryFn: preview(previewFriendRequests),
+  });
+
+export const useFriendSuggestions = () =>
+  useQuery<FriendSuggestion[]>({
+    queryKey: keys.friendSuggestions,
+    queryFn: preview(previewFriendSuggestions),
+  });
 
 export const useNotifications = () =>
   useQuery<AppNotification[]>({
@@ -88,6 +106,15 @@ export const useProfileExtras = () =>
   useQuery<ProfileExtras>({ queryKey: keys.profileExtras, queryFn: preview(previewProfileExtras) });
 
 /** Local cache updates for the preview phase; replaced by mutations with RPCs per milestone. */
+/**
+ * Card-code lookup for "add a player". R3 turns this into an RPC that only finds players the
+ * caller may see: public or city-visible, same age band (D-023).
+ */
+export async function findPlayerByCardCode(code: string): Promise<FriendSuggestion | null> {
+  const known = [...previewFriendSuggestions, ...previewFriendRequests.map((r) => r.from)];
+  return known.find((p) => p.cardCode === code) ?? null;
+}
+
 export function useCache() {
   const client = useQueryClient();
   return {

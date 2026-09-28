@@ -71,7 +71,7 @@ export type FormResult = {
 };
 
 export type Friend = PlayerRef & {
-  position: string;
+  position: Position;
   form: number;
   presence: 'online' | 'offline' | 'in_match';
   /** Only for adults who opted in (D-006.5). */
@@ -79,6 +79,20 @@ export type Friend = PlayerRef & {
   neighborhood: Bilingual;
   cardCode: string;
   lastActiveAt: string | null;
+};
+
+/** A player you could add: public or city-visible, same city and age band (D-023). */
+export type FriendSuggestion = PlayerRef & {
+  position: Position;
+  form: number;
+  neighborhood: Bilingual;
+  cardCode: string;
+};
+
+export type FriendRequest = {
+  id: string;
+  from: FriendSuggestion;
+  createdAt: string;
 };
 
 export type Team = {

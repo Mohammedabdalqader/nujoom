@@ -6,6 +6,8 @@ import { PHOTOS } from '@/data/preview-photos';
 import { dateInAmman } from '@nujoom/shared';
 
 import type {
+  FriendRequest,
+  FriendSuggestion,
   AppNotification,
   Area,
   Clip,
@@ -136,6 +138,43 @@ export const previewFriends: Friend[] = [
   },
 ];
 
+export const previewFriendSuggestions: FriendSuggestion[] = [
+  {
+    id: 'ps-1',
+    name: 'سامر قنديل',
+    avatarUrl: PHOTOS.hamzaKeilani,
+    position: 'MID',
+    form: 7.9,
+    neighborhood: hara.weibdeh,
+    cardCode: 'NJM-6190',
+  },
+  {
+    id: 'ps-2',
+    name: 'يزن الشقير',
+    avatarUrl: PHOTOS.yazanShuqair,
+    position: 'FWD',
+    form: 8.1,
+    neighborhood: hara.hussein,
+    cardCode: 'NJM-7304',
+  },
+];
+
+export const previewFriendRequests: FriendRequest[] = [
+  {
+    id: 'rq-1',
+    from: {
+      id: 'ps-3',
+      name: 'موسى الدوايمة',
+      avatarUrl: PHOTOS.mousaDawaimeh,
+      position: 'DEF',
+      form: 7.6,
+      neighborhood: hara.nuzha,
+      cardCode: 'NJM-2275',
+    },
+    createdAt: minutes(-45),
+  },
+];
+
 export const previewNotifications: AppNotification[] = [
   {
     id: 'n-1',
@@ -163,7 +202,7 @@ export const previewNotifications: AppNotification[] = [
   {
     id: 'n-3',
     type: 'missing_one_nearby',
-    params: { pitch: 'ملعب النزهة', position: 'MID', minutes: 40 },
+    params: { pitch: 'ملعب النزهة', position: 'MID', startsAt: minutes(40) },
     createdAt: minutes(-120),
     unread: false,
     href: '/',

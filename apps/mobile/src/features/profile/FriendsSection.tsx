@@ -2,40 +2,23 @@ import { initials } from '@nujoom/shared';
 import { useRouter } from 'expo-router';
 import { Pressable, View } from 'react-native';
 
-import { useHomeFeed } from '@/data/api';
 import type { Friend } from '@/data/types';
 import { sfx } from '@/design/sound';
+import { PRESENCE_DOT } from '@/features/friends/logic';
+import { useInviteFriend } from '@/features/friends/useInviteFriend';
 import { useLocale } from '@/lib/locale';
 import { Avatar } from '@/ui/Avatar';
 import { Icon } from '@/ui/Icon';
 import { SectionHeader } from '@/ui/SectionHeader';
 import { Text } from '@/ui/Text';
-import { useToast } from '@/ui/Toast';
-
-const PRESENCE_DOT = {
-  online: 'bg-secondary',
-  in_match: 'bg-primary-container',
-  offline: 'bg-outline',
-} as const;
 
 /** "شلة الحارة وقائمة الأصدقاء": presence counts, four friend cards with one-tap invites. */
 export function FriendsSection({ friends }: { friends: Friend[] }) {
   const { t } = useLocale();
   const router = useRouter();
-  const toast = useToast();
-  const nextMatch = useHomeFeed().data?.nextMatch ?? null;
+  const invite = useInviteFriend();
   const online = friends.filter((f) => f.presence === 'online').length;
   const inMatch = friends.filter((f) => f.presence === 'in_match').length;
-
-  const invite = (friend: Friend) => {
-    if (!nextMatch) {
-      toast.show(t('profile.friends.noMatchToInvite'));
-      return;
-    }
-    // R3: a structured in-app invite to the next booking (no free text, spec §7).
-    sfx.success();
-    toast.show(t('profile.friends.invited', { name: friend.name }));
-  };
 
   const openFriends = () => {
     sfx.clipBeep();
