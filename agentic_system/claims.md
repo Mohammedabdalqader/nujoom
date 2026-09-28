@@ -14,5 +14,3 @@ Claim a file or folder before editing it; remove your row once the change is com
 | `apps/mobile/src/lib/{supabase,session,auth,variant}.ts(x)` (new)         | Claude | S1-5       | 2026-09-28 11:50 |                                                                                 |
 | `apps/mobile/{app.json,app.config.ts,package.json,.env.example,eas.json}` | Claude | S1-4, S1-5 | 2026-09-28 11:50 | build variant, new native deps                                                  |
 | `apps/web/**` (new)                                                       | Claude | S1-8       | 2026-09-28 11:50 |                                                                                 |
-| `docs/DESIGN.md`                                                          | Codex  | G1 UX      | 2026-09-28 17:20 | Discovery list/map/card/detail and truth-state handoff; release after commit.   |
-| `apps/mobile/src/ui/Text.tsx`                                             | Codex  | X9         | 2026-09-28 17:24 | Mixed-script paragraph direction; focused regression check.                     |
