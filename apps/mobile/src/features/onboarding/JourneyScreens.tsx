@@ -1,4 +1,4 @@
-import { errorKey } from '@nujoom/shared';
+import { errorKey, guardianInviteState } from '@nujoom/shared';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
@@ -8,6 +8,7 @@ import { getSource, type ConfigError, type GuardianLink } from '@/data/source';
 import { useTheme } from '@/design/theme';
 import { GuardianInvitePanel } from '@/features/guardian/GuardianInvitePanel';
 import { useLocale } from '@/lib/locale';
+import { useNow } from '@/lib/useNow';
 import { accountKey, useAccount, useSession, useSignOut } from '@/lib/session';
 import { Icon } from '@/ui/Icon';
 import { Page } from '@/ui/Page';
@@ -141,7 +142,11 @@ export function GuardianStepScreen() {
   const account = useAccount();
   const signOut = useSignOut();
   const [links, setLinks] = useState<GuardianLink[] | null>(null);
-  const named = (links ?? account.data?.guardians ?? []).length > 0;
+  const now = useNow(60_000);
+  const current = links ?? account.data?.guardians ?? [];
+  const named = current.length > 0;
+  // Not yet told (failed or no send): the youth may go on, but with the limits spelled out.
+  const told = guardianInviteState(current, now).state === 'sent';
   return (
     <Page className="gap-5 pt-10">
       <Icon name="family_restroom" size={48} className="text-primary" />
@@ -161,7 +166,7 @@ export function GuardianStepScreen() {
           className="min-h-[52px] rounded-xl border border-primary/60 items-center justify-center"
         >
           <Text font="rubik" className="text-[16px] text-primary font-bold">
-            {t('guardianStep.continue')}
+            {told ? t('guardianStep.continue') : t('guardianStep.continueLimited')}
           </Text>
         </Pressable>
       ) : null}

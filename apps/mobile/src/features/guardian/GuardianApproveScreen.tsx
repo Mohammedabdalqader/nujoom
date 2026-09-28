@@ -70,14 +70,20 @@ function Button({
 }
 
 function Header({ icon, title, body }: { icon: IconName; title: string; body?: string }) {
+  // Titles can start with the youth's name in the other script; on the web `dir="auto"` would
+  // then flip the whole sentence, so the paragraph direction follows the app language.
+  const { rtl } = useLocale();
+  const direction = { writingDirection: rtl ? ('rtl' as const) : ('ltr' as const) };
   return (
     <>
       <Icon name={icon} size={48} className="text-primary" />
-      <Text font="rubik" className="text-[24px] text-on-surface font-bold">
+      <Text font="rubik" className="text-[24px] text-on-surface font-bold" style={direction}>
         {title}
       </Text>
       {body ? (
-        <Text className="text-[16px] leading-[25px] text-on-surface-variant">{body}</Text>
+        <Text className="text-[16px] leading-[25px] text-on-surface-variant" style={direction}>
+          {body}
+        </Text>
       ) : null}
     </>
   );
@@ -173,7 +179,7 @@ function SignedInApproval({ token, email }: { token: string; email: string }) {
 }
 
 function ApprovalForm({ token, invite }: { token: string; invite: GuardianInvite }) {
-  const { t, locale } = useLocale();
+  const { t, locale, rtl } = useLocale();
   const router = useRouter();
   const queryClient = useQueryClient();
   const { session } = useSession();
@@ -374,7 +380,10 @@ function ApprovalForm({ token, invite }: { token: string; invite: GuardianInvite
       />
       {confirmDecline ? (
         <View className="rounded-xl border border-error/40 p-3 gap-3">
-          <Text className="text-[15px] leading-[23px] text-on-surface">
+          <Text
+            className="text-[15px] leading-[23px] text-on-surface"
+            style={{ writingDirection: rtl ? 'rtl' : 'ltr' }}
+          >
             {t('guardianApprove.declineConfirm', { name: youth })}
           </Text>
           <Button

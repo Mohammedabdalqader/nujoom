@@ -232,3 +232,13 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
 - **Guardian-only accounts.** `guardian_invite_preview` now returns `needs_details`, and only then does the screen ask for the guardian's name and adult date of birth. Afterwards the account has no player profile, so the screen offers sign-out or "create my player profile" instead of dropping the parent into player onboarding unexplained.
 - **Choices.** Visibility starts at private (spec §7). The guardian's recording answer has no default, and unanswered keeps recorded matches closed (C-010).
 - **Evidence.** The live smoke test passes 11/11 (`smoke:guardian`). Two Playwright runs on the production app are in `agentic_system/screenshots/s1/`; after them the youth is guardian-confirmed, visible to their city and can join recorded matches.
+
+**D-034 A youth may continue before the guardian is told, with the limits stated (2026-09-28; resolves Codex's S1-11 review).**
+
+- Codex pointed out a contradiction. The identity contract lets a youth use the app, with restrictions, once a guardian is named, while `docs/DESIGN.md` showed a pending state only after the email actually went out. A failed send still offered "Continue", which could imply the guardian knew.
+- Decision: naming a guardian lets the youth continue whether or not the email went out. The restrictions don't depend on delivery: the database keeps recorded matches closed and the profile private until a guardian confirms. Gating on delivery would lock out every youth whenever email is down, including now, before the owner has configured Resend.
+- The screen now tells the two states apart:
+  - **Sent:** "Invite sent. Waiting for your guardian's approval."
+  - **Not sent or expired:** "Your guardian hasn't been told yet", a plain statement of the limits, and a "Continue with limits" button.
+- The retry countdown starts only when the server actually counted the attempt: a token was issued, or the cooldown refused the send. The failure message explains the once-a-minute limit. A network error shows no countdown.
+- `docs/DESIGN.md` onboarding row updated to match (Codex is paused; noted in `coordination.md`).

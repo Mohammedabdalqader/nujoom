@@ -1,5 +1,4 @@
 import {
-  bidiIsolate,
   errorKey,
   formatDateTime,
   formatMatchClock,
@@ -19,6 +18,10 @@ import { Icon } from '@/ui/Icon';
 import { Text } from '@/ui/Text';
 
 type Notice = { tone: 'ok' | 'error'; text: string } | null;
+
+/** Edge Function errors after which the server's one-a-minute send limit applies. */
+const SERVER_COUNTED = new Set(['email_failed', 'invite_rate_limited']);
+const cooldownEnd = () => Date.now() + GUARDIAN_RESEND_COOLDOWN_MS;
 
 /**
  * A youth names their guardian and sends, resends or corrects the approval email (S1-11, spec §7).
@@ -46,7 +49,6 @@ export function GuardianInvitePanel({
   const { state, link } = guardianInviteState(links, now);
   const showForm = state === 'none' || editing;
   const waitMs = cooldownUntil - now;
-  const address = link ? bidiIsolate(link.email) : '';
 
   const refresh = async () => {
     const next = await getSource().guardian.links();
@@ -67,10 +69,14 @@ export function GuardianInvitePanel({
       try {
         await source.guardian.sendInvite(linkId, locale);
         setNotice({ tone: 'ok', text: t('guardianStep.checkSpam') });
+        setCooldownUntil(cooldownEnd());
       } catch (e) {
         setNotice({ tone: 'error', text: t(errorKey(e)) });
-      } finally {
-        setCooldownUntil(Date.now() + GUARDIAN_RESEND_COOLDOWN_MS);
+        // The server counts an attempt once it issued a token (even if the email then failed) or
+        // when it refused for the cooldown; only then is there a real wait to show.
+        if (SERVER_COUNTED.has(e instanceof Error ? e.message : '')) {
+          setCooldownUntil(cooldownEnd());
+        }
       }
       await refresh().catch(() => {});
     } catch (e) {
@@ -91,38 +97,51 @@ export function GuardianInvitePanel({
 
   const status =
     state === 'confirmed'
-      ? {
-          icon: 'verified' as const,
-          tone: 'text-secondary',
-          text: t('guardianStep.confirmed', { email: address }),
-        }
+      ? { icon: 'verified' as const, tone: 'text-secondary', text: t('guardianStep.confirmed') }
       : state === 'sent'
-        ? {
-            icon: 'mark_email_read' as const,
-            tone: 'text-secondary',
-            text: t('guardianStep.sent', { email: address }),
-          }
+        ? { icon: 'mark_email_read' as const, tone: 'text-secondary', text: t('guardianStep.sent') }
         : state === 'expired'
-          ? {
-              icon: 'schedule' as const,
-              tone: 'text-error',
-              text: t('guardianStep.expired', { email: address }),
-            }
+          ? { icon: 'schedule' as const, tone: 'text-error', text: t('guardianStep.expired') }
           : state === 'notSent'
-            ? {
-                icon: 'mail' as const,
-                tone: 'text-primary',
-                text: t('guardianStep.notSent', { email: address }),
-              }
+            ? { icon: 'mail' as const, tone: 'text-primary', text: t('guardianStep.notSent') }
             : null;
+  // Before delivery the guardian knows nothing; say so instead of "waiting for approval".
+  const note =
+    state === 'sent'
+      ? t('guardianStep.waiting')
+      : state === 'notSent' || state === 'expired'
+        ? t('guardianStep.limits')
+        : null;
 
   return (
     <View className="gap-4">
-      {status && !editing ? (
-        <View className="rounded-xl bg-surface-container border border-border p-3 gap-2">
+      {status && link && !editing ? (
+        <View
+          accessible
+          accessibilityLabel={[status.text, `${t('guardianStep.emailLabel')}: ${link.email}`, note]
+            .filter(Boolean)
+            .join('. ')}
+          accessibilityLiveRegion="polite"
+          className="rounded-xl bg-surface-container border border-border p-3 gap-2"
+        >
           <View className="flex-row items-start gap-2">
             <Icon name={status.icon} size={20} className={status.tone} />
             <Text className="flex-1 text-[15px] leading-[23px] text-on-surface">{status.text}</Text>
+          </View>
+          <View className="gap-0.5">
+            <Text font="grotesk" className="text-[11px] text-on-surface-variant">
+              {t('guardianStep.emailLabel')}
+            </Text>
+            {/* The address on its own left-to-right line, so it never scrambles the sentence. */}
+            <View className="self-start max-w-full">
+              <Text
+                font="grotesk"
+                className="text-[15px] text-on-surface"
+                style={{ writingDirection: 'ltr' }}
+              >
+                {link.email}
+              </Text>
+            </View>
           </View>
           {state === 'sent' && link?.sentAt && link.expiresAt ? (
             <Text font="grotesk" className="text-[12px] text-on-surface-variant">
@@ -132,10 +151,8 @@ export function GuardianInvitePanel({
               })}
             </Text>
           ) : null}
-          {state !== 'confirmed' ? (
-            <Text className="text-[14px] leading-[22px] text-on-surface-variant">
-              {t('guardianStep.waiting')}
-            </Text>
+          {note ? (
+            <Text className="text-[14px] leading-[22px] text-on-surface-variant">{note}</Text>
           ) : null}
         </View>
       ) : null}
@@ -206,8 +223,10 @@ export function GuardianInvitePanel({
               {busy
                 ? t('guardianStep.sending')
                 : waitMs > 0
-                  ? t('guardianStep.resendIn', { time: formatMatchClock(waitMs + 999) })
-                  : t('guardianStep.resend')}
+                  ? t(state === 'sent' ? 'guardianStep.resendIn' : 'guardianStep.retryIn', {
+                      time: formatMatchClock(waitMs + 999),
+                    })
+                  : t(state === 'sent' ? 'guardianStep.resend' : 'guardianStep.retry')}
             </Text>
           </Pressable>
           <Pressable
