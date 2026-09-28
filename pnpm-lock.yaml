@@ -416,6 +416,12 @@ importers:
 
   tools/sounds: {}
 
+  tools/tester-code:
+    dependencies:
+      '@supabase/supabase-js':
+        specifier: ^2.117.2
+        version: 2.117.2
+
 packages:
 
   '@alloc/quick-lru@5.3.0':

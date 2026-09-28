@@ -1,0 +1,13 @@
+{
+  "name": "@nujoom/tools-tester-code",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "code": "node code.mjs",
+    "smoke": "node smoke-identity.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.117.2"
+  }
+}

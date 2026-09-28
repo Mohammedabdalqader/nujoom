@@ -16,7 +16,8 @@
     "check": "pnpm format:check && turbo run lint typecheck test",
     "db:test": "node tools/db-test/run.mjs",
     "db:push": "supabase db push",
-    "db:types": "supabase gen types typescript --linked --schema public > packages/shared/src/db.types.ts"
+    "db:types": "supabase gen types typescript --linked --schema public > packages/shared/src/db.types.ts",
+    "tester-code": "pnpm --filter @nujoom/tools-tester-code code"
   },
   "devDependencies": {
     "prettier": "^3.9.8",
