@@ -70,7 +70,7 @@ Checks: a pitch is searchable only when it and its facility are both `published`
 
 **`pitch_operations`**: exists only for participating fields; owner-confirmed.
 
-`pitch_id` pk FK, `price_per_hour` numeric(6,2) (JOD), `price_note_ar/en`, `slot_minutes` (60 | 90), `opening_hours` jsonb (validated shape, Amman local times), `schedule_active` boolean default false, `confirmed_by` uuid (the staff member), `confirmed_at`. A trigger refuses `schedule_active = true` unless the pitch is `verified`.
+`pitch_id` pk FK, `price_per_hour` numeric(6,2) (JOD), `price_note_ar/en`, `slot_minutes` (60 | 90), `opening_hours` jsonb (validated shape, Amman local times), `schedule_active` boolean default false, `confirmed_by` uuid (the staff member), `confirmed_at`. Staff of a **claimed** facility (`operator_state` `claimed` or `authority_verified`) may prepare and activate the schedule while the field is still not verified. That staging is private: search returns `operations: null` for every not-verified field, and `pitch_is_bookable` stays false until the badge flips (§3, §4).
 
 **`pitch_evidence`**: append-only provenance per attribute.
 
@@ -117,12 +117,12 @@ A verified field without `schedule_active` shows the badge but no slots or Book 
 
 ### 3.1 Pause and freshness (Codex's review; the numbers are proposals, stored in `config.catalog_freshness`)
 
-| Situation                                                                                 | Result                                                                                                                                                                    |
-| ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| First verification                                                                        | Needs an **active** schedule (`schedule_active = true`) and operator-confirmed facts (D-032)                                                                              |
-| Operator pauses the schedule                                                              | Badge stays, "Bookings unavailable right now" (`الحجز غير متاح حالياً`), for at most `pause_days` (proposed 30)                                                           |
-| Pause longer than `pause_days`, or operator facts older than `confirm_days` (proposed 90) | The listing enters the admin review queue as `stale`; after `grace_days` more (proposed 14) without re-confirmation, a scheduled job downgrades the badge to not verified |
-| Partnership ends, or the integration is found wrong                                       | An admin downgrades immediately (`admin_set_participation`)                                                                                                               |
+| Situation                                                                                 | Result                                                                                                                                                                                             |
+| ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| First verification                                                                        | `admin_set_participation` checks, in one transaction: `authority_verified`, operator-confirmed facts, `pitch_operations` present and `schedule_active = true`, staged privately beforehand (D-032) |
+| Operator pauses the schedule                                                              | Badge stays, "Bookings unavailable right now" (`الحجز غير متاح حالياً`), for at most `pause_days` (proposed 30)                                                                                    |
+| Pause longer than `pause_days`, or operator facts older than `confirm_days` (proposed 90) | The listing enters the admin review queue as `stale`; after `grace_days` more (proposed 14) without re-confirmation, a scheduled job downgrades the badge to not verified                          |
+| Partnership ends, or the integration is found wrong                                       | An admin downgrades immediately (`admin_set_participation`)                                                                                                                                        |
 
 Every downgrade, including the scheduled one (`recorded_by` = system), writes a `verification_events` row. Re-verification follows the first-verification rule.
 
@@ -180,19 +180,19 @@ The same item, plus `siblings` (the facility's other searchable fields with thei
 
 ## 6. Write API
 
-| RPC                                                                             | Who                   | Notes                                                                        |
-| ------------------------------------------------------------------------------- | --------------------- | ---------------------------------------------------------------------------- |
-| `admin_upsert_source_record(source, key, version, licence, raw, geometry, run)` | service role (import) | Idempotent; never touches the catalog                                        |
-| `admin_create_listing(source_record_ids[], facility jsonb, pitches jsonb[])`    | admin                 | Creates a candidate facility + fields from reviewed sources; writes evidence |
-| `admin_review_listing(target, action, patch, reason)`                           | admin                 | All `listing_state` and fact changes; writes `listing_reviews` + `audit_log` |
-| `admin_log_outreach(facility, channel, outcome, note, follow_up)`               | admin / field team    | Moves `operator_state` forward per §3                                        |
-| `admin_decide_claim(claim, decision, reason)`                                   | admin                 | Approval → `pitch_staff` owner + `operator_state = claimed`                  |
-| `admin_verify_authority(facility, evidence)`                                    | admin                 | → `authority_verified`                                                       |
-| `owner_confirm_field(pitch, facts jsonb, operations jsonb)`                     | pitch staff (owner)   | Operator-sourced evidence + `pitch_operations`; no badge change              |
-| `admin_set_participation(pitch, to, evidence)`                                  | admin                 | The only badge writer; checks §3 preconditions                               |
-| `owner_set_schedule_active(pitch, active)`                                      | pitch staff           | Refused unless verified                                                      |
-| `claim_facility(facility, evidence_paths)`                                      | authenticated adult   | One open claim per user per facility; youth refused                          |
-| `submit_catalog_report(kind, target, payload)`                                  | authenticated         | Rate-limited (e.g. 5/day); structured payload validated per kind             |
+| RPC                                                                             | Who                   | Notes                                                                           |
+| ------------------------------------------------------------------------------- | --------------------- | ------------------------------------------------------------------------------- |
+| `admin_upsert_source_record(source, key, version, licence, raw, geometry, run)` | service role (import) | Idempotent; never touches the catalog                                           |
+| `admin_create_listing(source_record_ids[], facility jsonb, pitches jsonb[])`    | admin                 | Creates a candidate facility + fields from reviewed sources; writes evidence    |
+| `admin_review_listing(target, action, patch, reason)`                           | admin                 | All `listing_state` and fact changes; writes `listing_reviews` + `audit_log`    |
+| `admin_log_outreach(facility, channel, outcome, note, follow_up)`               | admin / field team    | Moves `operator_state` forward per §3                                           |
+| `admin_decide_claim(claim, decision, reason)`                                   | admin                 | Approval → `pitch_staff` owner + `operator_state = claimed`                     |
+| `admin_verify_authority(facility, evidence)`                                    | admin                 | → `authority_verified`                                                          |
+| `owner_confirm_field(pitch, facts jsonb, operations jsonb)`                     | pitch staff (owner)   | Operator-sourced evidence + `pitch_operations`; no badge change                 |
+| `admin_set_participation(pitch, to, evidence)`                                  | admin                 | The only badge writer; checks §3 preconditions                                  |
+| `owner_set_schedule_active(pitch, active)`                                      | pitch staff           | Allowed for staff of a claimed facility; public and bookable only once verified |
+| `claim_facility(facility, evidence_paths)`                                      | authenticated adult   | One open claim per user per facility; youth refused                             |
+| `submit_catalog_report(kind, target, payload)`                                  | authenticated         | Rate-limited (e.g. 5/day); structured payload validated per kind                |
 
 Admin checks use the existing `app_admins` table. A field-team role is a later addition (`app_admins.role`) if the owner staffs one.
 
@@ -228,7 +228,9 @@ Negative and positive cases:
    4b. Amenities: `null` and `{}` round-trip distinctly; a non-null value without evidence is refused.
 5. `anon` and `authenticated` cannot select any catalog table or call any `admin_*` RPC. A non-admin calling them gets `forbidden`.
 6. `admin_set_participation(F1-B, 'verified')` fails while `operator_state <> 'authority_verified'` and while no operations exist. Approving a claim leaves the badge `not_verified`.
-7. `owner_set_schedule_active` on a not-verified field fails. Staff of F1 cannot edit F2.
+7. Staff of F1 cannot edit F2. A non-staff user cannot stage a schedule.
+   7a. **Lifecycle (positive):** F1-B goes claimed → `authority_verified` → `owner_confirm_field` → `owner_set_schedule_active(true)` while not verified → `admin_set_participation(verified)`. Afterwards `pitch_is_bookable` is true and search returns its operations with `bookable: true`.
+   7b. **Staging stays private (negative):** before that last step, F1-B's staged operations are absent from `search_pitches` and `catalog_pitch` (`operations: null`), `pitch_is_bookable` is false, and booking RPCs refuse it. `admin_set_participation` is refused while the schedule is inactive or the operations are missing.
 8. Re-running `admin_upsert_source_record` with the same key updates in place (one row); a changed version flags it for review; no facility or pitch is created.
 9. Arabic search: "الريم", "ريم" and "رِيم" all find F1; the English "reem" finds it only if `name_en` is set.
 10. `near` returns F1 within 5 km ordered by distance; a bbox excludes out-of-view rows.
@@ -263,3 +265,4 @@ Negative and positive cases:
   - A pause and freshness rule is added (§3.1), with proposed numbers in config and tests 4a and 4b.
   - Codex's location labels are adopted, and Q3 and Q6 are marked answered.
   - Unchanged: not-verified items keep `operations: null` (no price and no slots).
+- **2026-09-28 20:30, after Codex's 17:33 review.** Fixed a deadlock: a schedule could only be activated on a verified field, yet verification required an active schedule. Operators now stage and activate the schedule privately while not verified; the badge flip checks it; nothing is public or bookable before the flip. Added lifecycle tests 7a (positive) and 7b (staging stays private).
