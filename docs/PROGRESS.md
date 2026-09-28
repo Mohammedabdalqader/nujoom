@@ -50,7 +50,7 @@ Newest first. The day-to-day thread between the two agents is in `agentic_system
 
 ### Web app started (S1-8)
 
-- `apps/web` (Next.js) has the front page, the terms and privacy pages, and sign-in with an email code, in Arabic (right-to-left) and English, in the app's dark look (D-035, D-036). The guardian approval page comes next.
+- `apps/web` (Next.js) has the front page, the terms and privacy pages, and sign-in with an email code, in Arabic (right-to-left) and English, in the app's dark look (D-035, D-036), plus the guardian approval page (D-037). Once the site is hosted, the approval email can point at it (set `APPROVAL_URL`).
 - **Run it:** copy `apps/web/.env.example` to `apps/web/.env.local`, fill in the project URL and anon key (the same values as the app's), then `pnpm --filter @nujoom/web dev` and open http://localhost:3000.
 - **After pulling this change:** run `pnpm install`, then restart Expo with `npx expo start --clear`. The mobile colours moved into a shared package, and a Metro that was already running can't find it until it restarts.
 
@@ -68,7 +68,7 @@ Newest first. The day-to-day thread between the two agents is in `agentic_system
 
 ### Known issues and gaps
 
-- **Guardian approval is in the app only.** The web approval page comes with the web app (S1-8). Until then, a parent opens the link on a phone with the app.
+- **Guardian emails still link into the app.** The web approval page works locally (D-037), but it needs hosting (a domain, or a temporary Vercel address) before the Edge Function's `APPROVAL_URL` can point at it.
 - **Emails can't reach real users** until the owner sets up Resend (see `docs/SETUP_AUTH.md`); development uses tester codes.
 - **GitHub:** every change is pushed (C-014).
 - **RTL and theme on native** are unverified: there is no Android device or emulator on this machine. A development build (`eas build --profile development`) is the proper test; Expo Go has RTL limits.

@@ -263,3 +263,18 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
 - **Account corner:** the header reads the session in the browser, so public pages stay static; access decisions are made on the server. It shows "Sign in", or the email (from a small breakpoint up) and "Sign out".
 - **Config:** a build without `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` still builds, and the sign-in page shows an error instead of guessing. `apps/web/.env.example` documents the variables; the service-role key never goes in the web app.
 - **Verified** on the production build against the live project with a tester account: invalid email, a wrong code (rejected), a correct code landing on `next`, the signed-in redirect, sign-out, a bogus callback code with `next=//evil.example` staying on-site, and English LTR. The address in "check your email" has its own LTR line.
+
+**D-037 Guardian approval on the web (S1-8/S1-11) (2026-09-28).**
+
+- `/[locale]/guardian/accept/[token]` applies the in-app rules (D-033):
+  - only the invited address sees the youth's name
+  - visibility starts private and recording has no default
+  - name and adult date of birth are asked only when the guardian has no profile
+  - decline asks for confirmation
+  - a used or expired link, or another account, gets a neutral "not valid for <email>" with a switch-account button
+- **Two ways in:**
+  - Signed out → sign in → back to the link.
+  - The invite email's own link. Server-issued links can't use PKCE, so Supabase returns the session in the URL fragment. The page turns it into the cookie session and removes it from the address bar before doing anything else.
+- **Hardening:** malformed tokens get a 404. The route sends `Referrer-Policy: no-referrer` and `Cache-Control: no-store` (the token is the whole secret), and is `noindex`. The youth's name is wrapped in `<bdi>`, so either script keeps the sentence's direction.
+- **Verified on the live project** with the production build: Arabic through sign-in, and English through a real magic link returning to the page. In both, the adult check refused an under-18 guardian, the approval went through, and the used link then showed as invalid. The magic-link run also shows the project accepts `http://localhost:3000/**` redirects.
+- **Switching the email to the web page:** once the web app is hosted, set the Edge Function secret `APPROVAL_URL=https://<domain>/{locale}/guardian/accept`. Until then the email keeps using the app link, `nujoom://guardian/accept/<token>`.
