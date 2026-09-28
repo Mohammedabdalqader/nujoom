@@ -11,6 +11,16 @@ const check = (name, ok, detail = '') => {
   console.log(`${ok ? 'ok  ' : 'FAIL'} ${name}${ok || !detail ? '' : ` — ${detail}`}`);
 };
 
+/** When a Storage signed URL stops working: the `exp` of its signed token, in seconds. */
+const linkExpiry = (url) => {
+  try {
+    const token = new URL(url).searchParams.get('token') ?? '';
+    return JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString()).exp;
+  } catch {
+    return NaN;
+  }
+};
+
 const admin = adminClient();
 const email = `smoke-export-${Date.now().toString(36)}@nujoom.test`;
 let userId = null;
@@ -95,6 +105,24 @@ try {
     .from('exports')
     .download(`${userId}/${body.requestId}.json`);
   check('nor downloadable without the signed link', download.error !== null);
+
+  // Near its expiry an export is not handed out again: a new one is built, and no link outlives
+  // the request it belongs to.
+  const soon = new Date(Date.now() + 30_000).toISOString();
+  await admin.from('data_requests').update({ expires_at: soon }).eq('id', body.requestId);
+  const near = await (await callExport(token)).json();
+  const nearDays = (Date.parse(near.expiresAt) - Date.now()) / 86_400_000;
+  check(
+    'an almost-expired export is rebuilt, not reused',
+    near.requestId !== body.requestId && nearDays > 6.9,
+    JSON.stringify(near),
+  );
+  const signedExp = linkExpiry(near.url);
+  check(
+    'and its link expires with the request, not later',
+    Number.isFinite(signedExp) && signedExp * 1000 <= Date.parse(near.expiresAt) + 1000,
+    `${signedExp} vs ${near.expiresAt}`,
+  );
 } catch (error) {
   check('smoke run finished', false, error.message);
 } finally {

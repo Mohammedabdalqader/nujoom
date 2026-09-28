@@ -15,8 +15,12 @@ const BUCKET = 'exports';
 
 type Ready = { id: string; export_path: string; expires_at: string };
 
+// An export is only handed out again while it has at least this long left; closer to its
+// expiry a fresh one is built, so a link never outlives the stated expiry (Codex review).
+const REUSE_MIN_SECONDS = 5 * 60;
+
 function secondsUntil(iso: string): number {
-  return Math.max(60, Math.floor((Date.parse(iso) - Date.now()) / 1000));
+  return Math.floor((Date.parse(iso) - Date.now()) / 1000);
 }
 
 Deno.serve(async (request) => {
@@ -41,21 +45,24 @@ Deno.serve(async (request) => {
   const fileName = `nujoom-data-${new Date().toISOString().slice(0, 10)}.json`;
 
   const link = async (ready: Ready) => {
+    // Exactly the remaining lifetime of the request: the link expires with it, never later.
+    const lifetime = secondsUntil(ready.expires_at);
+    if (lifetime < 1) throw new Error('export expired');
     const { data, error } = await admin.storage
       .from(BUCKET)
-      .createSignedUrl(ready.export_path, secondsUntil(ready.expires_at), { download: fileName });
+      .createSignedUrl(ready.export_path, lifetime, { download: fileName });
     if (error || !data) throw error ?? new Error('no signed url');
     return json({ requestId: ready.id, url: data.signedUrl, expiresAt: ready.expires_at });
   };
 
-  // A ready export whose link still works: hand out a fresh link to the same file.
+  // A ready export with enough life left: hand out a fresh link to the same file.
   const { data: existing } = await admin
     .from('data_requests')
     .select('id, export_path, expires_at')
     .eq('user_id', userId)
     .eq('kind', 'export')
     .eq('status', 'ready')
-    .gt('expires_at', new Date().toISOString())
+    .gt('expires_at', new Date(Date.now() + REUSE_MIN_SECONDS * 1000).toISOString())
     .order('processed_at', { ascending: false })
     .limit(1)
     .maybeSingle<Ready>();

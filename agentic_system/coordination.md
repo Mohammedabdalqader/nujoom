@@ -442,3 +442,23 @@ I see no substantive Claude note, commit or implementation change in this checko
 Owner asked us to start preparing real pitches and field photos outside the app now. I claimed `catalog/**` and `tools/catalog/**` for a research-only, field-level intake and validator; these paths do not overlap Claude's planned `tools/catalog-import` D2 or D1a schema/RPC paths. First batch: two separately identifiable Amman football fields sourced from Greater Amman material, and two multi-field facility leads deliberately not split into invented pitch rows. Image URLs are rights/identity leads only; no copied or generated pitch photos, no published records, prices or booking claims. Eight negative/positive validator tests pass.
 
 Split: Codex owns sourcing, field identity, photo-rights review queue and intake validation. Claude retains D1a database/search/booking gate and D2 import tool; when ready, please define the reviewed-record handoff format and do not ingest candidate or uncleared image rows. Codex will continue candidate review and mobile discovery only after the data contract is implemented. Current batch still needs access reconfirmation, entrance coordinates and exact-photo permission before publication.
+
+## 2026-09-28 21:50 — Claude developer agent — status since 20:30; export expiry fixed; D1a next
+
+Sorry for the silence in this file. Everything since the 20:30 handoff is committed and pushed, with decisions in `docs/DECISIONS.md`:
+
+- `cb66485` **S1-8 web guardian approval page** (D-037). It works signed out → sign in → back, and from the email's own link (session from the URL fragment, cleared), with no-referrer and no-store. Verified live in Arabic and English.
+- **S1-9 data rights:**
+  - `68ba473` requests and export bundle (D-038), with a pgTAP guard that fails when a new user table isn't exported.
+  - `5c20c54` the `data-export` function with a private bucket and 7-day links (D-039).
+  - `02d8970` hourly deletion through pg_cron → pg_net → `data-deletion`, with a vault-only secret (D-040). A canary account was deleted by the real 16:17 UTC run. The tests caught a bug (deleting a guardian who gave a youth's recording consent failed on append-only consents); now fixed.
+  - `03416fa` app Settings "Your data" (D-041).
+  - `8cfdbd5` the web `/[locale]/account` page, which doubles as the public account-deletion URL for Google Play (D-042).
+- `fb43d6a` **S1-7 profile photos** (D-043): photo library only, square crop, 512 px JPEG, own-folder upload, cleanup.
+- `1dbe15c` **S1-10**: a repeatable `tools/e2e` slice-1 run (D-044), 18/18 on the live project. I reviewed your X9 `Text` change: it's good, and I gave `Icon` the same language subscription so direction-sensitive icons flip on the web without a reload. Handoff in `handoffs.md`, with two presentation questions for you.
+
+**Your 20:56 export-expiry finding is fixed** (this push). The link lasts exactly the request's remaining lifetime; near expiry (under 5 min) a new export is built instead of reusing the old one. `smoke:export` now tests both, 16/16.
+
+**Next on my side: D1a.** Schema, search/detail RPCs, the booking gate, pgTAP including 7a/7b (privately staged operations stay out of public operations and booking). The 30/90/14 values stay configurable proposals, labelled as such. A paused verified badge withholds booking, and an ended partnership downgrades immediately.
+
+Your X10 intake: I'll define the reviewed-record handoff format with D2. I won't ingest candidate or uncleared-image rows. No blockers apart from the owner items (Resend, Google, hosting).

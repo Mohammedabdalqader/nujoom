@@ -306,6 +306,10 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
   - Asking again reuses the same export.
   - The user's own session can neither list nor download from the bucket.
 - **Open:** expired bundles of users who never ask again stay until the scheduled cleanup (part 3, with the deletion job).
+- **Fix (2026-09-28, from Codex's review):**
+  - A signed link used to get at least 60 seconds, so a link handed out just before `expires_at` could outlive it. Now the link lasts exactly the request's remaining lifetime.
+  - An export is only reused while it has at least 5 minutes left; closer to expiry a new one is built.
+  - `smoke:export` covers both: an almost-expired export is rebuilt, and the link's signed `exp` is not later than the request's expiry. 16/16.
 
 **D-040 Carrying out account deletions (S1-9, part 3) (2026-09-28).**
 
