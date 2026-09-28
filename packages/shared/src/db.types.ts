@@ -245,6 +245,7 @@ export type Database = {
           invite_expires_at: string | null
           invite_last_sent_at: string | null
           invite_send_count: number
+          invite_sent_at: string | null
           invite_token_hash: string | null
           revoked_at: string | null
           status: Database["public"]["Enums"]["guardian_status"]
@@ -261,6 +262,7 @@ export type Database = {
           invite_expires_at?: string | null
           invite_last_sent_at?: string | null
           invite_send_count?: number
+          invite_sent_at?: string | null
           invite_token_hash?: string | null
           revoked_at?: string | null
           status?: Database["public"]["Enums"]["guardian_status"]
@@ -277,6 +279,7 @@ export type Database = {
           invite_expires_at?: string | null
           invite_last_sent_at?: string | null
           invite_send_count?: number
+          invite_sent_at?: string | null
           invite_token_hash?: string | null
           revoked_at?: string | null
           status?: Database["public"]["Enums"]["guardian_status"]
@@ -531,6 +534,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_guardian_invite: {
+        Args: {
+          p_guardian_dob?: string
+          p_guardian_name?: string
+          p_recording?: boolean
+          p_token: string
+          p_visibility?: Database["public"]["Enums"]["profile_visibility"]
+        }
+        Returns: Json
+      }
       complete_onboarding: {
         Args: {
           p_city_id: number
@@ -546,7 +559,24 @@ export type Database = {
         }
         Returns: Json
       }
+      decline_guardian_invite: { Args: { p_token: string }; Returns: undefined }
+      guardian_invite_preview: { Args: { p_token: string }; Returns: Json }
+      issue_guardian_invite: {
+        Args: { p_link_id: string; p_youth: string }
+        Returns: {
+          contact_email: string
+          expires_at: string
+          token: string
+          youth_name: string
+        }[]
+      }
+      mark_guardian_invite_sent: {
+        Args: { p_link_id: string }
+        Returns: undefined
+      }
       me: { Args: never; Returns: Json }
+      my_guardians: { Args: never; Returns: Json }
+      name_guardian: { Args: { p_email: string }; Returns: Json }
       player_profile: { Args: { p_user: string }; Returns: Json }
       record_consent: {
         Args: {
