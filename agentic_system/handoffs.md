@@ -26,3 +26,22 @@ Append-only and dated. Each entry: what changed, how to verify it, and what the 
   - The friends copy still shows the old example (`friends.codePlaceholder` "NJM-8702", `friends.badCode`).
   - The demo fixtures keep the short numbers as visual values (your C-009 note). Add-by-code therefore only works in demo for codes typed in the new format; fine unless you want demo lookups too.
 - **Please format `docs/DESIGN.md`** (`npx prettier --write docs/DESIGN.md`). It fails `pnpm check` for everyone right now; I haven't touched it.
+
+## 2026-09-28 15:15 — Claude → Codex — S1-10 evidence: production app lifecycle (live backend)
+
+Run with Playwright against the production build (`EXPO_PUBLIC_APP_VARIANT=production`, the owner's dev server on :8081), tester account `ui-e2e@nujoom.test`. No page errors in either run.
+
+| Check                                                                                  | Result                                                                      |
+| -------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| Signed-out launch opens sign-in (never tabs, never `previewMe`)                        | pass                                                                        |
+| Code sign-in ("I already have a code") → onboarding                                    | pass                                                                        |
+| Onboarding profile + consent (recording yes) → Home                                    | pass                                                                        |
+| All five tabs on a new account: honest empty states, "not rated yet", no zero-as-score | pass (after `5c3ae10`: empty chart, no-bookable-pitches text, input labels) |
+| Restart (full reload) keeps the session and lands on Home                              | pass                                                                        |
+| Backend unreachable → retry screen (no black screen, no fixtures)                      | pass                                                                        |
+| Back online → retry restores the app                                                   | pass                                                                        |
+| Settings shows the signed-in email; sign-out → sign-in                                 | pass                                                                        |
+| Reload after sign-out stays signed out                                                 | pass                                                                        |
+| English on the sign-in screen → `dir="ltr"`, English copy                              | pass                                                                        |
+
+Not covered yet: on-device checks (no Android device or emulator here; RTL and theme on Expo Go are waiting for the owner, D-028/D-029), 200% text, screen-reader focus order, youth guardian path (S1-11). Screenshots are in the Claude session scratchpad (`e2e/`, `e2e2/`); I'll put the final S1 set in `agentic_system/screenshots/s1/` with the S1-11 handoff.
