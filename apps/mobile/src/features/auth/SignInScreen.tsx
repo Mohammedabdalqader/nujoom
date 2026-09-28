@@ -1,14 +1,15 @@
 import { errorKey, normalizeEmail } from '@nujoom/shared';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
-import { ActivityIndicator, Pressable, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, Platform, Pressable, View } from 'react-native';
 
 import { getSource } from '@/data/source';
 import { sfx } from '@/design/sound';
 import { useTheme } from '@/design/theme';
 import { changeLocale } from '@/lib/i18n';
 import { useLocale } from '@/lib/locale';
+import { sessionStorage } from '@/lib/session-storage';
 import { Field } from '@/ui/Field';
 import { Icon } from '@/ui/Icon';
 import { Page } from '@/ui/Page';
@@ -16,6 +17,8 @@ import { Text } from '@/ui/Text';
 
 /** Google shows only once the owner has set it up (docs/SETUP_AUTH.md). */
 const GOOGLE_ENABLED = process.env.EXPO_PUBLIC_GOOGLE_SIGN_IN === '1';
+const EMAIL_DRAFT_KEY = 'signin.emailDraft';
+const EMAIL_DRAFT_MAX_AGE_MS = 5 * 60_000;
 
 /**
  * Sign-in (docs/DESIGN.md §Slice 1): one email field, a 6-digit code, and Google when enabled.
@@ -28,6 +31,25 @@ export function SignInScreen() {
   const [email, setEmail] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState<'code' | 'google' | null>(null);
+
+  useEffect(() => {
+    if (Platform.OS === 'web') return;
+    let active = true;
+    void sessionStorage
+      .getItem(EMAIL_DRAFT_KEY)
+      .then(async (saved) => {
+        if (!saved) return;
+        await sessionStorage.removeItem(EMAIL_DRAFT_KEY);
+        const draft = JSON.parse(saved) as { email: string; expiresAt: number };
+        if (active && typeof draft.email === 'string' && draft.expiresAt > Date.now()) {
+          setEmail((current) => current || draft.email);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const valid = normalizeEmail(email);
 
@@ -49,6 +71,7 @@ export function SignInScreen() {
       }
       setBusy(null);
     }
+    if (Platform.OS !== 'web') void sessionStorage.removeItem(EMAIL_DRAFT_KEY).catch(() => {});
     router.push({
       pathname: '/(auth)/code',
       params: { email: valid, sent: alreadyHaveCode ? '0' : '1' },
@@ -67,11 +90,25 @@ export function SignInScreen() {
     }
   };
 
+  const switchLanguage = async () => {
+    if (Platform.OS !== 'web' && email) {
+      try {
+        await sessionStorage.setItem(
+          EMAIL_DRAFT_KEY,
+          JSON.stringify({ email, expiresAt: Date.now() + EMAIL_DRAFT_MAX_AGE_MS }),
+        );
+      } catch {
+        // Language switching still works if secure storage is unavailable.
+      }
+    }
+    await changeLocale(locale === 'ar' ? 'en' : 'ar');
+  };
+
   return (
     <Page className="gap-6">
       <View className="flex-row justify-end">
         <Pressable
-          onPress={() => void changeLocale(locale === 'ar' ? 'en' : 'ar')}
+          onPress={() => void switchLanguage()}
           accessibilityRole="button"
           className="min-h-[44px] px-3 flex-row items-center gap-1.5 rounded-full bg-surface-container"
         >
