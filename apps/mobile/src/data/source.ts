@@ -1,4 +1,13 @@
-import type { AppConfig, FeatureFlag } from '@nujoom/shared';
+import type {
+  AppConfig,
+  ConsentVersions,
+  FeatureFlag,
+  GuardianState,
+  JourneyStage,
+  PlayerPosition,
+  DominantFoot,
+  ProfileVisibility,
+} from '@nujoom/shared';
 
 import type {
   AppNotification,
@@ -17,7 +26,58 @@ import type {
   Pitch,
   ProfileExtras,
   Squad,
+  Bilingual,
 } from '@/data/types';
+
+export type Session = { userId: string; email: string | null };
+
+/** The signed-in user's account state: where the journey stands and what they may do. */
+export type Account = {
+  userId: string;
+  email: string | null;
+  stage: Exclude<JourneyStage, 'auth'>;
+  isYouth: boolean;
+  guardian: GuardianState;
+  /** The player's own recording yes (C-010). */
+  recordingConsent: boolean;
+  /** Recording yes + (youth) a confirmed guardian's yes. */
+  canJoinRecorded: boolean;
+  visibility: ProfileVisibility | null;
+  settings: { locale: 'ar' | 'en'; sharePresence: boolean; shareInMatch: boolean };
+};
+
+export type City = {
+  id: number;
+  name: Bilingual;
+  neighborhoods: { id: number; name: Bilingual }[];
+};
+
+export type OnboardingSubmit = {
+  displayName: string;
+  dob: string;
+  cityId: number;
+  neighborhoodId: number | null;
+  position: PlayerPosition;
+  dominantFoot: DominantFoot | null;
+  handle: string | null;
+  shirtNumber: number | null;
+  visibility: ProfileVisibility;
+  /** complete_onboarding's p_consents (see consentPayload in @nujoom/shared). */
+  consents: Record<string, string | false>;
+};
+
+export type AuthApi = {
+  current(): Promise<Session | null>;
+  /** Calls back on sign-in, sign-out and token refresh; returns an unsubscribe function. */
+  subscribe(listener: (session: Session | null) => void): () => void;
+  sendCode(email: string): Promise<void>;
+  verifyCode(email: string, code: string): Promise<void>;
+  /** Google through the system browser; 'cancelled' when the user backed out. */
+  google(): Promise<'signed_in' | 'cancelled'>;
+  /** Finishes a magic-link sign-in from the PKCE code in the link. */
+  completeLink(code: string): Promise<void>;
+  signOut(): Promise<void>;
+};
 
 /**
  * Where the app's data comes from (contract §2, §7). Screens never see this; they use the hooks
@@ -25,6 +85,15 @@ import type {
  * the production build reads Supabase and can never fall back to fixtures (C-005).
  */
 export type DataSource = {
+  auth: AuthApi;
+  account(): Promise<Account>;
+  onboardingOptions(): Promise<{ cities: City[]; consentVersions: ConsentVersions }>;
+  completeOnboarding(input: OnboardingSubmit): Promise<Account>;
+  setSettings(patch: Partial<Account['settings']>): Promise<Account>;
+  setVisibility(visibility: ProfileVisibility): Promise<Account>;
+  setRecordingConsent(granted: boolean): Promise<Account>;
+  /** Re-accepts the current terms and privacy versions (the `consent` stage). */
+  acceptCurrentConsents(): Promise<Account>;
   me(): Promise<Me>;
   friends(): Promise<Friend[]>;
   friendRequests(): Promise<FriendRequest[]>;

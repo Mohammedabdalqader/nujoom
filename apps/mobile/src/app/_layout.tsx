@@ -13,8 +13,14 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { ThemeProvider, useTheme } from '@/design/theme';
+import {
+  AccountErrorScreen,
+  MisconfiguredScreen,
+  SplashScreen as BrandSplash,
+} from '@/features/onboarding/JourneyScreens';
 import { FONT_ASSETS } from '@/design/typography';
 import { ensureLayoutDirection, i18n } from '@/lib/i18n';
+import { SessionProvider, useAccount, useSession } from '@/lib/session';
 import { ToastProvider } from '@/ui/Toast';
 
 void SplashScreen.preventAutoHideAsync();
@@ -22,26 +28,59 @@ void SplashScreen.preventAutoHideAsync();
 /** Dialogs from the design: transparent modal routes over the tabs (see ui/Dialog). */
 const DIALOG = { presentation: 'transparentModal', animation: 'fade' } as const;
 
+/**
+ * The journey router (contract §3): signed out → sign-in; not onboarded → onboarding; terms
+ * changed → re-consent; youth without a guardian → guardian step; otherwise the app. The demo
+ * build is always signed in. Loading shows the brand, failures show a retry, never a black screen.
+ */
 function Navigator() {
   const { theme } = useTheme();
+  const session = useSession();
+  const account = useAccount();
+
+  if (session.status === 'misconfigured') return <MisconfiguredScreen error={session.error} />;
+  if (session.status === 'loading' || (session.status === 'signedIn' && account.isPending)) {
+    return <BrandSplash />;
+  }
+  if (session.status === 'signedIn' && account.isError) {
+    return <AccountErrorScreen error={account.error} onRetry={() => void account.refetch()} />;
+  }
+  const stage = session.status === 'signedIn' ? (account.data?.stage ?? 'onboarding') : 'auth';
+
   return (
     <>
       <StatusBar style={theme === 'dark' ? 'light' : 'dark'} />
       <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="notifications" options={DIALOG} />
-        <Stack.Screen name="friends" options={DIALOG} />
-        <Stack.Screen name="missing-one" options={DIALOG} />
-        <Stack.Screen name="match-details/[id]" options={DIALOG} />
-        <Stack.Screen name="clip/[id]" options={DIALOG} />
-        <Stack.Screen name="tools/squad" options={DIALOG} />
-        <Stack.Screen name="tools/gear" options={DIALOG} />
-        <Stack.Screen name="tools/cost" options={DIALOG} />
-        <Stack.Screen name="book/[pitchId]" options={DIALOG} />
-        <Stack.Screen name="checkin" options={DIALOG} />
-        <Stack.Screen name="player/[id]" />
-        <Stack.Screen name="wallet" options={DIALOG} />
-        <Stack.Screen name="settings" />
+        <Stack.Protected guard={stage === 'auth'}>
+          <Stack.Screen name="(auth)" />
+          <Stack.Screen name="auth-callback" />
+        </Stack.Protected>
+        <Stack.Protected guard={stage === 'onboarding'}>
+          <Stack.Screen name="onboarding" />
+        </Stack.Protected>
+        <Stack.Protected guard={stage === 'consent'}>
+          <Stack.Screen name="reconsent" />
+        </Stack.Protected>
+        <Stack.Protected guard={stage === 'guardian'}>
+          <Stack.Screen name="guardian-setup" />
+        </Stack.Protected>
+        <Stack.Protected guard={stage === 'app'}>
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="notifications" options={DIALOG} />
+          <Stack.Screen name="friends" options={DIALOG} />
+          <Stack.Screen name="missing-one" options={DIALOG} />
+          <Stack.Screen name="match-details/[id]" options={DIALOG} />
+          <Stack.Screen name="clip/[id]" options={DIALOG} />
+          <Stack.Screen name="tools/squad" options={DIALOG} />
+          <Stack.Screen name="tools/gear" options={DIALOG} />
+          <Stack.Screen name="tools/cost" options={DIALOG} />
+          <Stack.Screen name="book/[pitchId]" options={DIALOG} />
+          <Stack.Screen name="checkin" options={DIALOG} />
+          <Stack.Screen name="player/[id]" />
+          <Stack.Screen name="wallet" options={DIALOG} />
+          <Stack.Screen name="settings" />
+        </Stack.Protected>
+        <Stack.Screen name="legal/[doc]" />
       </Stack>
     </>
   );
@@ -70,11 +109,13 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <I18nextProvider i18n={i18n}>
           <QueryClientProvider client={queryClient}>
-            <ThemeProvider>
-              <ToastProvider>
-                <Navigator />
-              </ToastProvider>
-            </ThemeProvider>
+            <SessionProvider>
+              <ThemeProvider>
+                <ToastProvider>
+                  <Navigator />
+                </ToastProvider>
+              </ThemeProvider>
+            </SessionProvider>
           </QueryClientProvider>
         </I18nextProvider>
       </SafeAreaProvider>

@@ -11,11 +11,16 @@ export function SelectField<T extends string>({
   options,
   value,
   onChange,
+  placeholder = '',
+  error = null,
 }: {
   label: string;
   options: readonly SelectOption<T>[];
-  value: T;
+  /** Null shows the placeholder: forms don't preselect facts about the user (docs/DESIGN.md). */
+  value: T | null;
   onChange: (value: T) => void;
+  placeholder?: string;
+  error?: string | null;
 }) {
   const [open, setOpen] = useState(false);
   const current = options.find((o) => o.value === value);
@@ -28,19 +33,24 @@ export function SelectField<T extends string>({
         onPress={() => setOpen(true)}
         accessibilityRole="button"
         accessibilityLabel={label}
-        className="w-full flex-row items-center justify-between bg-surface-container-low border border-border rounded-lg px-3 py-2"
+        className={`w-full min-h-[44px] flex-row items-center justify-between bg-surface-container-low border rounded-lg px-3 py-2 ${
+          error ? 'border-error' : 'border-border'
+        }`}
       >
-        <Text className="text-[13px] text-on-surface">{current?.label ?? ''}</Text>
+        <Text className={`text-[15px] ${current ? 'text-on-surface' : 'text-outline'}`}>
+          {current?.label ?? placeholder}
+        </Text>
         <Icon name="expand_more" size={18} className="text-on-surface-variant" />
       </Pressable>
       <SelectSheet
         visible={open}
         title={label}
         options={options}
-        value={value}
+        value={value ?? undefined}
         onSelect={onChange}
         onClose={() => setOpen(false)}
       />
+      {error ? <Text className="text-[12px] text-error">{error}</Text> : null}
     </View>
   );
 }

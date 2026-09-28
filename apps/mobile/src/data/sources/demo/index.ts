@@ -1,6 +1,6 @@
 import { DEFAULT_CONFIG, DEFAULT_FEATURE_FLAGS } from '@nujoom/shared';
 
-import type { DataSource } from '@/data/source';
+import type { Account, DataSource } from '@/data/source';
 
 import {
   DEMO_FIXTURE_MARKER,
@@ -30,8 +30,46 @@ const copy = <T>(value: T): Promise<T> => Promise.resolve(JSON.parse(JSON.string
  * The demo build's data: labelled sample players, venues, matches and illustrative images
  * (contract §7). It never talks to a backend, and demo actions stay on the device.
  */
+/** The demo persona is always signed in; sign-in screens exist only in production. */
+let demoAccount: Account = {
+  userId: 'me',
+  email: null,
+  stage: 'app',
+  isYouth: false,
+  guardian: 'none',
+  recordingConsent: true,
+  canJoinRecorded: true,
+  visibility: 'public',
+  settings: { locale: 'ar', sharePresence: true, shareInMatch: false },
+};
+const update = (patch: Partial<Account>) => {
+  demoAccount = { ...demoAccount, ...patch };
+  return copy(demoAccount);
+};
+const demoOnly = () => Promise.reject(new Error('demo_only'));
+
 export const demoSource: DataSource & { marker: string } = {
   marker: DEMO_FIXTURE_MARKER,
+  auth: {
+    current: () => Promise.resolve({ userId: 'me', email: null }),
+    subscribe: () => () => {},
+    sendCode: demoOnly,
+    verifyCode: demoOnly,
+    google: demoOnly,
+    completeLink: demoOnly,
+    signOut: () => Promise.resolve(),
+  },
+  account: () => copy(demoAccount),
+  onboardingOptions: () =>
+    copy({
+      cities: [],
+      consentVersions: { terms: 'demo', privacy: 'demo', recording: 'demo' },
+    }),
+  completeOnboarding: () => copy(demoAccount),
+  setSettings: (patch) => update({ settings: { ...demoAccount.settings, ...patch } }),
+  setVisibility: (visibility) => update({ visibility }),
+  acceptCurrentConsents: () => copy(demoAccount),
+  setRecordingConsent: (granted) => update({ recordingConsent: granted, canJoinRecorded: granted }),
   me: () => copy(previewMe),
   friends: () => copy(previewFriends),
   friendRequests: () => copy(previewFriendRequests),
