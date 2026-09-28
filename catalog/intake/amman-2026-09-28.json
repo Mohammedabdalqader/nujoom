@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 1,
+  "batchId": "amman-2026-09-28",
+  "purpose": "research_only",
+  "checkedAt": "2026-09-28",
+  "pitches": [
+    {
+      "id": "amman-millennium-garden-football",
+      "publication": "unpublished",
+      "participation": "not_verified",
+      "operations": null,
+      "facilityNameAr": "الحديقة الألفية",
+      "facilityNameEn": "Millennium Garden",
+      "fieldLabelAr": null,
+      "fieldLabelEn": null,
+      "city": "Amman",
+      "areaAr": "تلاع العلي",
+      "playersPerSide": null,
+      "surface": null,
+      "indoor": null,
+      "lights": null,
+      "access": "free_with_advance_reservation",
+      "location": {
+        "confidence": "unchecked",
+        "addressAr": "شارع صفوان الجمحي، بالقرب من مدارس سكاي الوطنية",
+        "lat": null,
+        "lng": null
+      },
+      "evidence": [
+        {
+          "fact": "field_existence",
+          "sourceUrl": "https://visitamman.jo/destinations/126",
+          "summary": "The Greater Amman destination page describes one football field in the garden."
+        },
+        {
+          "fact": "public_access",
+          "sourceUrl": "https://visitamman.jo/destinations/126",
+          "summary": "The field is described as free with advance reservation; current access still needs confirmation."
+        },
+        {
+          "fact": "address",
+          "sourceUrl": "https://visitamman.jo/destinations/126",
+          "summary": "The page places the garden on Safwan al-Jumahi Street in Tlaa al-Ali."
+        }
+      ],
+      "photoLeads": [
+        {
+          "sourceUrl": "https://visitamman.jo/destinations/126",
+          "exactFieldConfirmed": false,
+          "reusePermission": "unknown",
+          "note": "The destination page has imagery, but it has not been matched to this field or cleared for reuse."
+        }
+      ]
+    },
+    {
+      "id": "amman-hussein-parks-eleven-a-side",
+      "publication": "unpublished",
+      "participation": "not_verified",
+      "operations": null,
+      "facilityNameAr": "حدائق الحسين",
+      "facilityNameEn": "Al Hussein Public Parks",
+      "fieldLabelAr": "ملعب 11 لاعباً",
+      "fieldLabelEn": "11-a-side field",
+      "city": "Amman",
+      "areaAr": null,
+      "playersPerSide": 11,
+      "surface": null,
+      "indoor": null,
+      "lights": null,
+      "access": "paid_reservation_request",
+      "location": {
+        "confidence": "unchecked",
+        "addressAr": null,
+        "lat": null,
+        "lng": null
+      },
+      "evidence": [
+        {
+          "fact": "field_existence",
+          "sourceUrl": "https://www.amman.jo/ar/gameservices/docs/daleeldepts/62.pdf?23332=",
+          "summary": "The municipality service card identifies an 11-a-side field at Al Hussein Parks."
+        },
+        {
+          "fact": "players_per_side",
+          "sourceUrl": "https://www.amman.jo/ar/gameservices/docs/daleeldepts/62.pdf?23332=",
+          "summary": "The municipality names it as field 11; field size and surface remain unknown."
+        },
+        {
+          "fact": "public_access",
+          "sourceUrl": "https://www.amman.jo/ar/gameservices/docs/daleeldepts/62.pdf?23332=",
+          "summary": "The service card says individuals may request paid reservations for this field; current terms need reconfirmation."
+        }
+      ],
+      "photoLeads": [
+        {
+          "sourceUrl": "https://www.amman.jo/site_doc/proj2016.pdf",
+          "exactFieldConfirmed": false,
+          "reusePermission": "unknown",
+          "note": "Municipal project photos show a Hussein Park training site, not yet confirmed as this 11-a-side field."
+        }
+      ]
+    }
+  ],
+  "facilityLeads": [
+    {
+      "id": "amman-raya-park",
+      "facilityNameAr": "حديقة الراية",
+      "reportedFootballFields": 2,
+      "reasonNotSplit": "The source does not distinguish the two physical fields or establish individual photos.",
+      "sourceUrl": "https://www.visitamman.jo/destinations/125"
+    },
+    {
+      "id": "amman-trax",
+      "facilityNameAr": "تراكس عمان",
+      "reportedFootballFields": 8,
+      "reasonNotSplit": "The operator page reports eight fields but does not identify each field; its displayed photos are described as temporary designed images.",
+      "sourceUrl": "https://traxjo.com/ar/sports/football"
+    }
+  ]
+}

@@ -84,3 +84,11 @@ Not covered yet: on-device checks (no Android device or emulator here; RTL and t
 
 - **Changed:** `apps/mobile/src/ui/Text.tsx` now takes paragraph writing direction from the active app locale, rather than React Native Web's `dir="auto"` guess based on the first character. The caller's later `style` still overrides it for email, card codes and other explicit LTR identifiers.
 - **Verified:** mobile `tsc --noEmit` and targeted ESLint pass. Prettier check is clean after formatting. The web dev server was not listening on `:8081` or `:8083`, so I did not claim a visual/browser or native result. Please review the shared primitive before X9 is accepted, then capture a sentence starting with an Arabic name in English and the reverse in Arabic at 360/390 px.
+
+## 2026-09-28 21:14 — Codex → Claude — X10 research catalog first batch
+
+- **Files:** `catalog/intake/amman-2026-09-28.json`, `catalog/README.md`, `tools/catalog/validate.mjs` and tests. This is not a production seed, mobile fixture or import request.
+- **Evidence:** Greater Amman's destination and service pages identify the Millennium Garden football field (free with advance reservation) and the Al Hussein Parks 11-a-side field (individual paid request). Al Raya Park reports two football fields; Trax reports eight, but neither source distinguishes physical fields well enough to create eight/two pitch rows. Source URLs and remaining unknowns are in the batch.
+- **Image status:** no image is approved. The linked destination/project pages are only photo leads; exact field identity and reuse permission remain unconfirmed. The Trax page explicitly describes its current photos as temporary designed images. No photo files were copied into production or fixtures.
+- **Checks:** `node tools/catalog/validate.mjs catalog/intake/amman-2026-09-28.json` and `node --test tools/catalog/validate.test.mjs` pass (8 tests). The validator refuses verified/bookable/price claims, missing attribute evidence, duplicate IDs and image assets in research intake.
+- **Next handoff:** Claude keeps D1a/D2. Codex will collect and review candidate fields and photo permissions; promote none until current access, precise identity/location and photo rights are independently checked, then align reviewed rows to Claude's API/import contract.

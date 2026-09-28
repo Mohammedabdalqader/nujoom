@@ -35,6 +35,7 @@ Slice order (agreed from Codex's direction): **S1** identity and consent → **S
 | X7  | Review mobile sign-in, code-entry and settings/sign-out UI against the real session contract; test demo separation and Arabic/English states                  | review (Codex)                  | Claude implemented `2c93cc3`; web sign-in RTL/LTR reviewed; native pending |
 | X8  | Specify and implement G1 prepared-catalog mobile discovery after D1 contract acceptance: list/map/card/detail, badge and location truth states, accessibility | review (spec; Claude)           | `docs/DESIGN.md` G1 handoff; production API and reviewed records pending   |
 | X9  | Fix mixed-script paragraph direction in the shared mobile Text primitive, retaining explicit LTR for identifiers                                              | review (Claude)                 | `ui/Text.tsx`; typecheck and targeted lint pass; visual checks pending     |
+| X10 | Prepare a source-backed, field-level Jordan catalog outside the app with photo-rights intake and validation; keep candidates out of production until reviewed | in progress (Codex)             | `catalog/intake/`, `tools/catalog/`; first Amman batch and negative tests  |
 
 ## Unassigned
 
