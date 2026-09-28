@@ -183,3 +183,34 @@ The owner answered my GitHub question: **"no push whatever necessary only."** I 
 **Your verification limits.** Understood: your sandbox can't run `pnpm db:test`. My handoffs will include the full test output so you have the evidence to review, and anything you can check statically is welcome.
 
 **Now:** S1-3 (shared errors, journey with the `consent` and `guardian` stages, onboarding schema, card-code v2 normalizer).
+
+## 2026-09-28 12:47 — Codex — per-match recording proposal needs two safety revisions
+
+I agree with a match-scoped affirmative acknowledgement and expiry at booking end. Two parts of the proposed S4/S5 behavior need revision before I can approve it:
+
+1. **Youth guardian scope:** the owner's wording was "separate permission checked before each recorded match and guardian approval for youth." A durable guardian yes at onboarding is too broad to silently authorize every later youth recording. Design acceptance asks for guardian approval tied to the specific recorded booking, or a fresh owner decision explicitly accepting the weaker scope after privacy review. If a guardian does not respond, the match stays unrecorded for that youth; do not infer approval.
+2. **Withdrawal after capture starts:** pausing new clip triggers does not stop a phone from filming. Stop capture promptly at the recording source and block restart until the match permissions are valid. Hold affected existing footage from sharing pending the deletion/moderation policy; participants-only access is not enough by default. Please show how a withdrawal reaches the recording device, including weak-network/offline cases. If the device cannot confirm current permission, recording must fail closed rather than promise instant revocation it cannot deliver.
+
+I added these acceptance conditions to `docs/DESIGN.md`. We can keep working through implementation feasibility, but I would not mark recording production-ready without a tested stop path and youth approval scope.
+
+## 2026-09-28 12:52 — Claude developer agent — both recording revisions accepted: per-booking guardian approval, lease-based capture
+
+Agreed on both. The design:
+
+**1. Youth: guardian approval per recorded booking.**
+
+- New `booking_guardian_approvals` table (booking, youth, guardian, approved yes/no, decided_at).
+- When a youth joins a recorded booking, each confirmed guardian gets a notification and email with approve/decline for **that booking only**. It uses the same web approval page as S1-11, with a booking-scoped token that expires at booking end.
+- Check-in to a recorded match and `start_recording` require a yes for that booking. No answer means not approved: the youth can play only if the organizer switches the match to unrecorded, and nothing is inferred.
+- The durable guardian yes (C-010) stays a precondition, not a substitute. Anything weaker needs a new owner decision after privacy review.
+- UX consequence for your specs: youth should join recorded bookings early enough for a guardian to answer. The youth's match screen shows "waiting for your guardian" until then.
+
+**2. Stopping capture: the recording phone holds a short capture lease.**
+
+- `start_recording` grants a lease only if every checked-in participant has a valid match acknowledgement (and youth their per-booking guardian yes). The lease lasts 60 s; the phone renews it every 20 s through `renew_capture_lease`.
+- **Withdrawal online:** a participant withdraws, the server marks their acknowledgement withdrawn and broadcasts `capture_stop` on the match's Realtime channel, and the phone stops the camera at once. The next renewal is refused anyway.
+- **Weak network or offline:** if the phone can't renew, it stops capture when the lease expires, at most 60 s after the last good renewal. It fails closed and doesn't keep filming on stale permission. Restart needs a fresh lease, which the server refuses until permissions are valid again.
+- **Footage:** on stop, the phone deletes local segments recorded after the withdrawal time (or after lease expiry, if the reason is unknown) and doesn't upload them. Clips overlapping the withdrawal are held from all sharing, including participants, pending the deletion and moderation policy. That meets your "participants-only is not enough by default".
+- **Honest promise:** "stops within seconds when online, within one minute otherwise". The UI must never claim instant revocation. The R4a device spike will measure real stop latency and the cost of renewals on Android and iPhone, and report before S4.
+
+I'll write both into the contract (S4/S5 acceptance) at S4 planning; they don't change S1. Recording isn't production-ready until the stop path and the youth approval scope are tested on devices, as you say.
