@@ -310,9 +310,10 @@ export const previewNotifications: AppNotification[] = [
   },
 ];
 
-const clip = (c: Omit<Clip, 'shareUrl' | 'canDownload' | 'likedByMe'>): Clip => ({
+const clip = (c: Omit<Clip, 'shareUrl' | 'canDownload' | 'likedByMe' | 'videoUrl'>): Clip => ({
   ...c,
   likedByMe: false,
+  videoUrl: null,
   shareUrl: `https://nujoom.app/c/${c.id}`,
   canDownload: true,
 });

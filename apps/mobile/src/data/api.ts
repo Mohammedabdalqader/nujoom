@@ -17,6 +17,7 @@ import {
   previewGear,
   previewKitty,
   previewMatchDetails,
+  previewClips,
 } from '@/data/preview';
 import type {
   AppNotification,
@@ -57,6 +58,7 @@ export const keys = {
   gear: ['gear'] as const,
   kitty: ['kitty'] as const,
   matchDetails: (bookingId: string) => ['match-details', bookingId] as const,
+  clip: (id: string) => ['clip', id] as const,
   leaderboard: (scope: string, age: string, period: string) =>
     ['leaderboard', scope, age, period] as const,
 };
@@ -139,6 +141,13 @@ export const useMatchDetails = (bookingId: string) =>
   useQuery<MatchDetails | null>({
     queryKey: keys.matchDetails(bookingId),
     queryFn: preview(previewMatchDetails.bookingId === bookingId ? previewMatchDetails : null),
+  });
+
+/** One clip for the player; null when it's gone or you may not see it (R5: RLS + signed URL). */
+export const useClip = (id: string) =>
+  useQuery<Clip | null>({
+    queryKey: keys.clip(id),
+    queryFn: preview([...previewClips, ...previewMyClips].find((c) => c.id === id) ?? null),
   });
 
 export async function findPlayerByCardCode(code: string): Promise<FriendSuggestion | null> {

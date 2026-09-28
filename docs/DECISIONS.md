@@ -155,3 +155,9 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
 - Lookups and suggestions only return players the viewer may see: public profiles, or city-visible profiles in the same city. Private profiles are never found.
 - Friendships never cross the adult/youth line. Presence ("online") is still presence, and §7 gives minors no public presence.
 - Card codes are typed on Arabic keyboards too, so the lookup accepts Arabic-Indic digits, lower case, spaces and a missing "NJM-" (`normalizeCardCode`, tested).
+
+**D-024 Clip playback uses `expo-video` (new dependency, 2026-09-28).**
+
+- It is the Expo SDK's own player (SDK 57, config plugin added), works in Expo Go and dev builds, and plays the worker's 720p faststart MP4s from signed URLs.
+- `Clip.videoUrl` is null while a clip is still processing; the player then shows the thumbnail and a "still processing" state instead of fake playback.
+- `SelectSheet.value` became optional so one-off choices (a report reason) show no preselection.

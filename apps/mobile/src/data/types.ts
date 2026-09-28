@@ -215,6 +215,9 @@ export type Clip = {
   context: string | null;
   verified: boolean;
   shareUrl: string;
+  /** Signed or public MP4; null while the clip is still processing. */
+  videoUrl: string | null;
+  /** Only clips that may be public can be downloaded; youth follow their guardians (D-006.9). */
   canDownload: boolean;
 };
 

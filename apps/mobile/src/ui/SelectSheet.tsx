@@ -11,7 +11,8 @@ type SelectSheetProps<T extends string> = {
   visible: boolean;
   title: string;
   options: readonly SelectOption<T>[];
-  value: T;
+  /** The current choice, marked with a check; omit for one-off actions (e.g. a report reason). */
+  value?: T;
   onSelect: (value: T) => void;
   onClose: () => void;
 };
