@@ -51,7 +51,7 @@ export const previewMe: Me = {
   neighborhood: hara.hussein,
   position: 'FWD',
   positionTag: 'ST',
-  cardCode: 'NJM-8701',
+  cardCode: 'NJM-8K7Q-M01X',
   shirtNumber: 10,
   accountVerified: true,
   isYouth: false,
@@ -87,7 +87,7 @@ export const previewFriends: Friend[] = [
     presence: 'online',
     inMatchAt: null,
     neighborhood: hara.hussein,
-    cardCode: 'NJM-2901',
+    cardCode: 'NJM-29WD-4RCA',
     lastActiveAt: minutes(0),
   },
   {
@@ -100,7 +100,7 @@ export const previewFriends: Friend[] = [
     presence: 'online',
     inMatchAt: null,
     neighborhood: hara.weibdeh,
-    cardCode: 'NJM-3410',
+    cardCode: 'NJM-34TZ-10BH',
     lastActiveAt: minutes(0),
   },
   {
@@ -113,7 +113,7 @@ export const previewFriends: Friend[] = [
     presence: 'in_match',
     inMatchAt: { ar: 'قفص ماركا', en: 'Marka Cage' },
     neighborhood: hara.abdali,
-    cardCode: 'NJM-1102',
+    cardCode: 'NJM-11F2-7PSN',
     lastActiveAt: minutes(-5),
   },
   {
@@ -126,7 +126,7 @@ export const previewFriends: Friend[] = [
     presence: 'offline',
     inMatchAt: null,
     neighborhood: hara.taj,
-    cardCode: 'NJM-5531',
+    cardCode: 'NJM-553Y-JQ9E',
     lastActiveAt: minutes(-120),
   },
   {
@@ -139,7 +139,7 @@ export const previewFriends: Friend[] = [
     presence: 'online',
     inMatchAt: null,
     neighborhood: hara.hussein,
-    cardCode: 'NJM-4421',
+    cardCode: 'NJM-442V-RM6T',
     lastActiveAt: minutes(0),
   },
 ];
@@ -152,7 +152,7 @@ export const previewFriendSuggestions: FriendSuggestion[] = [
     position: 'MID',
     form: 7.9,
     neighborhood: hara.weibdeh,
-    cardCode: 'NJM-6190',
+    cardCode: 'NJM-619G-XK4B',
   },
   {
     id: 'ps-2',
@@ -161,7 +161,7 @@ export const previewFriendSuggestions: FriendSuggestion[] = [
     position: 'FWD',
     form: 8.1,
     neighborhood: hara.hussein,
-    cardCode: 'NJM-7304',
+    cardCode: 'NJM-730N-5HWD',
   },
 ];
 
@@ -175,7 +175,7 @@ export const previewFriendRequests: FriendRequest[] = [
       position: 'DEF',
       form: 7.6,
       neighborhood: hara.nuzha,
-      cardCode: 'NJM-2275',
+      cardCode: 'NJM-227S-ZA8C',
     },
     createdAt: minutes(-45),
   },
