@@ -14,7 +14,8 @@ const CARD_CODE = /^NJM-[0-9A-HJKMNP-TV-Z]{4}-[0-9A-HJKMNP-TV-Z]{4}$/;
 
 const ARABIC_INDIC = /[٠-٩۰-۹]/g;
 
-function westernDigits(value: string): string {
+/** Arabic-Indic and Persian digits → Western digits; everything else unchanged. */
+export function westernDigits(value: string): string {
   return value.replace(ARABIC_INDIC, (d) => {
     const code = d.charCodeAt(0);
     // U+0660–0669 (Arabic-Indic) and U+06F0–06F9 (Extended, Persian/Urdu).

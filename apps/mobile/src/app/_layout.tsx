@@ -4,7 +4,7 @@ import '../../global.css';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { Stack, useRouter, type Href } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
@@ -20,6 +20,7 @@ import {
 } from '@/features/onboarding/JourneyScreens';
 import { FONT_ASSETS } from '@/design/typography';
 import { ensureLayoutDirection, i18n } from '@/lib/i18n';
+import { takeResume } from '@/lib/resume';
 import { SessionProvider, useAccount, useSession } from '@/lib/session';
 import { ToastProvider } from '@/ui/Toast';
 
@@ -35,8 +36,18 @@ const DIALOG = { presentation: 'transparentModal', animation: 'fade' } as const;
  */
 function Navigator() {
   const { theme } = useTheme();
+  const router = useRouter();
   const session = useSession();
   const account = useAccount();
+  const stage = session.status === 'signedIn' ? (account.data?.stage ?? 'onboarding') : 'auth';
+  const routed = session.status === 'signedIn' && account.isSuccess;
+
+  // A link opened while signed out (a guardian approval) resumes once sign-in has routed.
+  useEffect(() => {
+    if (!routed) return;
+    const next = takeResume();
+    if (next) router.push(next as Href);
+  }, [routed, router]);
 
   if (session.status === 'misconfigured') return <MisconfiguredScreen error={session.error} />;
   if (session.status === 'loading' || (session.status === 'signedIn' && account.isPending)) {
@@ -45,7 +56,6 @@ function Navigator() {
   if (session.status === 'signedIn' && account.isError) {
     return <AccountErrorScreen error={account.error} onRetry={() => void account.refetch()} />;
   }
-  const stage = session.status === 'signedIn' ? (account.data?.stage ?? 'onboarding') : 'auth';
 
   return (
     <>
@@ -81,6 +91,8 @@ function Navigator() {
           <Stack.Screen name="settings" />
         </Stack.Protected>
         <Stack.Screen name="legal/[doc]" />
+        {/* Any stage: the guardian may be signed out, a player, or not a player at all. */}
+        <Stack.Screen name="guardian/accept/[token]" />
       </Stack>
     </>
   );

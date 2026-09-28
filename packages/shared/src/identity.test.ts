@@ -7,6 +7,7 @@ import { ERROR_KEYS, errorKey } from './errors';
 import { guardianStateFrom, parseStage, stageFor, type JourneyFacts } from './journey';
 import {
   consentPayload,
+  digitsOnly,
   dobFromParts,
   isYouthDob,
   normalizeDisplayName,
@@ -62,6 +63,12 @@ describe('journey', () => {
 });
 
 describe('onboarding', () => {
+  it('reads typed numbers in any digit script', () => {
+    expect(digitsOnly('١٥')).toBe('15');
+    expect(digitsOnly('۲۰۰۹')).toBe('2009');
+    expect(digitsOnly(' 1-5 ')).toBe('15');
+  });
+
   const valid: ProfileStepInput = {
     displayName: 'Ahmad',
     dob: '2000-01-01',
@@ -200,6 +207,8 @@ describe('email, redirects and visibility', () => {
     expect(safeRedirectPath('/en/x', 'ar', '/ar')).toBe('/ar');
     expect(safeAppResumePath('/j/abcdefghijklmnop1234?x=1')).toBe('/j/abcdefghijklmnop1234');
     expect(safeAppResumePath('/settings')).toBeNull();
+    const token = 'a'.repeat(64);
+    expect(safeAppResumePath(`/guardian/accept/${token}`)).toBe(`/guardian/accept/${token}`);
     expect(safeAppResumePath('https://evil.example/j/abcdefghijklmnop')).toBeNull();
   });
 

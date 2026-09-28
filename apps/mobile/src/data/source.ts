@@ -58,7 +58,12 @@ export type GuardianLink = {
 };
 
 /** What an invited guardian sees before approving: never more than the youth's name. */
-export type GuardianInvite = { youthName: string; expiresAt: string | null };
+export type GuardianInvite = {
+  youthName: string;
+  expiresAt: string | null;
+  /** The guardian has no account profile yet: approving asks for their name and date of birth. */
+  needsDetails: boolean;
+};
 
 export type GuardianApproval = {
   visibility: ProfileVisibility;

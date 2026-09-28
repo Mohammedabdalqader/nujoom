@@ -1016,6 +1016,48 @@
     "cancel": "Cancel",
     "continue": "Continue to the app"
   },
+  "guardianApprove": {
+    "title": "Guardian approval",
+    "signInBody": "Sign in with the email that received the invite to approve.",
+    "signIn": "Sign in",
+    "invalidBody": "This link isn't valid for {{email}}: it may have expired or been used, or the invite went to another email.",
+    "switchAccount": "Sign in with another email",
+    "close": "Close",
+    "intro": "{{name}} named you as their guardian on {{app}}.",
+    "explain": "Your approval activates their account. You decide who can see their profile and whether they can appear in match recordings.",
+    "expires": "Link expires {{date}}",
+    "visibility": "Who can see their profile?",
+    "visibilityOptions": {
+      "private": "Only match mates",
+      "city": "Their city ranking too",
+      "public": "Public profile"
+    },
+    "visibilityHint": {
+      "private": "Most private: only players from their matches and guardians.",
+      "city": "They also appear on their age group's city leaderboard.",
+      "public": "Anyone can see their profile."
+    },
+    "recording": "Can they appear in match recordings?",
+    "recordingYes": "Yes, I allow it",
+    "recordingNo": "No",
+    "recordingHint": "They need both your yes and theirs to join recorded matches. Under-18 matches are never streamed publicly.",
+    "yourDetails": "Your details",
+    "yourDetailsHint": "We need your name and date of birth to confirm you're over 18. They're never shown publicly.",
+    "name": "Your name",
+    "nameError": "Enter your name (at least 2 letters).",
+    "dobError": "Check your date of birth. A guardian must be 18 or older.",
+    "approve": "Approve",
+    "approving": "Saving…",
+    "decline": "Decline",
+    "declineConfirm": "Sure? {{name}} can't join recorded matches until a guardian approves.",
+    "declineYes": "Yes, decline",
+    "approved": "Done! You approved {{name}}'s account.",
+    "declined": "You declined the invite.",
+    "guardianOnly": "You don't need a player profile to be a guardian.",
+    "createProfile": "Create my player profile",
+    "done": "Done",
+    "signOut": "Sign out"
+  },
   "legal": {
     "terms": "Terms of Use",
     "privacy": "Privacy Policy",

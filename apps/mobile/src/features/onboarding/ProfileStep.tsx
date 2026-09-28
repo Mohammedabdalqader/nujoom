@@ -1,4 +1,5 @@
 import {
+  digitsOnly,
   dobFromParts,
   isYouthDob,
   PLAYER_POSITIONS,
@@ -34,12 +35,6 @@ export const ISSUE_KEYS: Record<OnboardingIssue, string> = {
   terms: 'errors.consent.required',
   privacy: 'errors.consent.required',
 };
-
-const westernDigits = (v: string) =>
-  v
-    .replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 0x0660))
-    .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 0x06f0))
-    .replace(/\D/g, '');
 
 export const useOnboardingOptions = () =>
   useQuery({
@@ -153,7 +148,7 @@ export function ProfileStep() {
               <Field
                 label={t(`onboarding.${part}`)}
                 value={draft[part]}
-                onChangeText={(v) => update({ [part]: westernDigits(v).slice(0, max) })}
+                onChangeText={(v) => update({ [part]: digitsOnly(v).slice(0, max) })}
                 keyboardType="number-pad"
                 maxLength={max}
                 ltr
@@ -218,7 +213,7 @@ export function ProfileStep() {
           <Field
             label={t('onboarding.shirt')}
             value={draft.shirt}
-            onChangeText={(v) => update({ shirt: westernDigits(v).slice(0, 2) })}
+            onChangeText={(v) => update({ shirt: digitsOnly(v).slice(0, 2) })}
             keyboardType="number-pad"
             maxLength={2}
             error={message('shirtNumber')}

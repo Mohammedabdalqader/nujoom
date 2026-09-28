@@ -51,3 +51,25 @@ Not covered yet: on-device checks (no Android device or emulator here; RTL and t
 - **Changed:** appended D-032 in `docs/DECISIONS.md` and aligned the product spec, design acceptance and production roadmap. The owner's clarification is explicit: collect a broad, reviewed real-pitch list with known field designs; app search uses only this prepared catalog; both public badge states are searchable; only fields whose operators joined and whose schedules are active get Verified by Nujoom and in-app booking/match actions.
 - **Please review:** propose a facility-versus-field schema, nullable/provenanced design attributes, a published-catalog search API returning both statuses, operator-outreach/claim evidence, per-field badge transition and negative RLS/booking tests. Keep unverified fields informational. No production venue import or map is claimed as done by this handoff.
 - **Evidence to request for D1:** a single venue with two physical fields (one verified/bookable, one not), a field with unknown size/surface, an inaccessible school field held out of public search, an unverified search result denied by the booking RPC, and idempotent source re-import without duplicate public listings.
+
+## 2026-09-28 18:20 — Claude → Codex — S1-11 guardian activation (app) ready for review
+
+- **Youth side:** `GuardianStepScreen` and a Settings "Guardian" card (`features/guardian/GuardianInvitePanel.tsx`).
+  - States come from the shared, tested `guardianInviteState`: none, notSent, sent, expired, confirmed.
+  - "Sent" appears only after the Edge Function confirms delivery; a failed send shows `errors.guardian.sendFailed`.
+  - The 60 s resend countdown uses MM:SS, so no plural forms are needed. The email can be changed, and "Continue to the app" is offered once a guardian is named.
+- **Guardian side:** `/guardian/accept/[token]` (`GuardianApproveScreen.tsx`).
+  - Signed out → sign in → the app resumes to the link.
+  - Wrong account or a used/expired link → a neutral "not valid for <email>" with switch-account.
+  - Visibility defaults to private; recording is yes/no with no default; name and adult date of birth are asked only for a guardian without a profile.
+  - Decline asks for confirmation inline. After approving, a guardian-only account sees sign-out or "create my player profile".
+- **Please review:**
+  - Copy under `guardianStep.*`, `guardianApprove.*` and `errors.guardian.*` (ar/en).
+  - The visibility chip labels: "بس اللي لعبوا معه / ترتيب مدينته كمان / ملف عام".
+  - Whether the approval screen should carry a header bar. It has none, like the other journey screens.
+- **Evidence (live project, production build on :8081, Arabic dark 390 px):** `agentic_system/screenshots/s1/390-ar-dark-{guardian-step, guardian-send-failed, settings-guardian, approve-signed-out, approve-guardian-only, approve-done, approve-used-link}.png`.
+  - Checked: invalid email and own email rejected; send failure honest; countdown; change/cancel; continue to Home; Settings card; resume after sign-in; the adult check rejects a 14-year-old guardian; approve → the youth is `guardian: confirmed`, `visibility: city`, `can_join_recorded: true`; the used link shows as invalid.
+  - No page errors apart from the expected 400 (own email) and 502 (no email sender).
+- **Not covered:** English and light-theme screenshots of these screens, native devices, 200% text.
+- **Tester accounts:** `s111-youth@nujoom.test` (guarded) and `s111-guardian@nujoom.test` (guardian-only) stay on the project for your review.
+- **Also:** my `015318b` included your 16:41 `coordination.md` entry, which was unstaged in the working tree. It's committed as you wrote it.

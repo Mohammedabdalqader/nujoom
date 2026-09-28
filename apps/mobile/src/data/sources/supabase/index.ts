@@ -263,11 +263,18 @@ export function createSupabaseSource(config: BackendConfig): DataSource {
         if (data?.sent !== true) throw new Error('email_failed');
       },
       async preview(token) {
-        const raw = await rpc<{ youth_name: string; expires_at: string | null } | null>(
-          'guardian_invite_preview',
-          { p_token: token },
-        );
-        return raw ? { youthName: raw.youth_name, expiresAt: raw.expires_at } : null;
+        const raw = await rpc<{
+          youth_name: string;
+          expires_at: string | null;
+          needs_details?: boolean;
+        } | null>('guardian_invite_preview', { p_token: token });
+        return raw
+          ? {
+              youthName: raw.youth_name,
+              expiresAt: raw.expires_at,
+              needsDetails: raw.needs_details === true,
+            }
+          : null;
       },
       async accept(token, approval) {
         await rpc('accept_guardian_invite', {

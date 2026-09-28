@@ -1,7 +1,7 @@
 -- S1-11 guardian activation: naming, issuing, preview, approve, decline, expiry, limits.
 -- Contract §6, C-011, spec §7.
 begin;
-select plan(39);
+select plan(41);
 
 create function pg_temp.city(p_slug text) returns bigint language sql as $$
   select id from public.cities where slug = p_slug $$;
@@ -97,6 +97,8 @@ select tests.act_as(tests.id('parent'));
 select is(public.guardian_invite_preview('wrong-token'), null, 'a wrong token previews nothing');
 select is(public.guardian_invite_preview((select token from issued)) ->> 'youth_name', 'Yazan',
   'the invited guardian sees whose guardian they are becoming');
+select is((public.guardian_invite_preview((select token from issued)) ->> 'needs_details')::boolean, false,
+  'a guardian with a profile is not asked for their details again');
 select throws_ok($$ select public.accept_guardian_invite('wrong-token') $$, 'invalid_invite',
   'a wrong token is refused');
 select is(
@@ -122,6 +124,8 @@ create temp table issued2 as
     (select id from public.guardians where youth_user_id = tests.id('youth2')), tests.id('youth2'));
 grant select on issued2 to anon, authenticated, service_role;
 select tests.act_as(tests.id('mum'));
+select is((public.guardian_invite_preview((select token from issued2)) ->> 'needs_details')::boolean, true,
+  'a guardian without a profile is asked for their name and date of birth');
 select throws_ok(format($$ select public.accept_guardian_invite(%L) $$, (select token from issued2)),
   'invalid_name', 'a guardian without an account gives a name');
 select throws_ok(

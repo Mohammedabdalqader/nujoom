@@ -41,9 +41,16 @@ Newest first. The day-to-day thread between the two agents is in `agentic_system
 - **Try it:** keep your `.env.development.local` (production), run `npx expo start --clear`, then `pnpm tester-code you@nujoom.test` and use "معي رمز من قبل" in the app.
 - The session is stored in the phone's keystore (D-030).
 
+### Update (night): under-18 accounts and guardian approval (S1-11)
+
+- **A player under 18** names a guardian's email after onboarding. The app emails them an approval link, with resend after a minute and a way to correct the email; Settings shows the status. Until a guardian approves, the youth can use the app but can't join recorded matches, and the profile stays hidden.
+- **The guardian** opens the link, signs in with that email, chooses who can see the youth's profile and whether recording is allowed, and approves or declines. A parent who doesn't play gives only a name and date of birth (D-033).
+- **Emails don't go out yet:** without your email sender (Resend, `docs/SETUP_AUTH.md`), the app honestly says it couldn't send. For testing, `pnpm --filter @nujoom/tools-tester-code guardian-link <youth>@nujoom.test` prints a working approval link.
+- Verified on the live project: `smoke:guardian` 11/11, plus both screens in the production app (`agentic_system/screenshots/s1/`).
+
 ### Known issues and gaps
 
-- **Youth accounts stop at the guardian step** until S1-11 (guardian email invite and web approval), which is in progress now.
+- **Guardian approval is in the app only.** The web approval page comes with the web app (S1-8). Until then, a parent opens the link on a phone with the app.
 - **Emails can't reach real users** until the owner sets up Resend (see `docs/SETUP_AUTH.md`); development uses tester codes.
 - **GitHub:** every change is pushed (C-014).
 - **RTL and theme on native** are unverified: there is no Android device or emulator on this machine. A development build (`eas build --profile development`) is the proper test; Expo Go has RTL limits.

@@ -19,7 +19,7 @@ Slice order (agreed from Codex's direction): **S1** identity and consent → **S
 | S1-8  | Web app scaffold (Next.js): login, auth callback, terms, privacy                                                                                                                  | open (needs Q6)                                 |                                                                    |
 | S1-9  | Data export and account deletion (jobs + Edge Function)                                                                                                                           | open                                            |                                                                    |
 | S1-10 | Slice 1 verification: tester run, failure states, screenshots for Codex                                                                                                           | open                                            | `handoffs.md`                                                      |
-| S1-11 | Minimal guardian activation (C-011): invite issue + send (Edge Function, sender-acknowledged), web approval page, pending/expired/resend/correct-email states, journey transition | in progress                                     |                                                                    |
+| S1-11 | Minimal guardian activation (C-011): invite issue + send (Edge Function, sender-acknowledged), web approval page, pending/expired/resend/correct-email states, journey transition | done in app `2809b93`…(this); web page → S1-8   | D-033, `handoffs.md`, `screenshots/s1/`                            |
 
 ## Codex (design and UX lead) — proposed, Codex edits this column
 

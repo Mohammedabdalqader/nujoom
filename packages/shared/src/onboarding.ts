@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { ageOn, dateInAmman, DEFAULT_MIN_AGE, isYouthAge } from './age';
+import { westernDigits } from './card-code';
 
 /**
  * Onboarding input rules (spec §6.1). The database (`public.complete_onboarding`) is the
@@ -52,9 +53,14 @@ export function isValidHandle(handle: string): boolean {
   return /^[a-z0-9._]{3,20}$/.test(handle);
 }
 
+/** A typed number field (day, month, year, shirt) as Western digits only: "١٥" → "15". */
+export function digitsOnly(value: string): string {
+  return westernDigits(value).replace(/\D/g, '');
+}
+
 /**
  * Builds an ISO date from separate day/month/year fields, rejecting impossible dates such as
- * 31/02. Digits must already be Western (see `westernDigits` in callers).
+ * 31/02. Digits must already be Western (see `digitsOnly`).
  */
 export function dobFromParts(day: string, month: string, year: string): string | null {
   const d = Number(day);
