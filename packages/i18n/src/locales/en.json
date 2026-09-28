@@ -1127,6 +1127,9 @@
     "deleteCancelled": "Your account won't be deleted."
   },
   "web": {
-    "comingSoon": "Coming soon to Android and iPhone."
+    "comingSoon": "Coming soon to Android and iPhone.",
+    "account": "My account",
+    "accountSignedOut": "Sign in with your account's email to download your data or delete your account.",
+    "accountLink": "Delete account and download data"
   }
 }

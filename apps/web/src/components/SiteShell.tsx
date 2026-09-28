@@ -54,6 +54,10 @@ export function SiteShell({
           <Link href={`/${locale}/legal/privacy`} className="hover:text-primary">
             {t('legal.privacy')}
           </Link>
+          {/* The public account-deletion link the app stores ask for (D-042). */}
+          <Link href={`/${locale}/account`} className="hover:text-primary">
+            {t('web.accountLink')}
+          </Link>
         </nav>
       </footer>
     </div>

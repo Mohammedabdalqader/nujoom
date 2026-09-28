@@ -332,3 +332,10 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
 - **Errors:** `export_failed` and `no_pending_deletion` are mapped in ar/en, and rate limits use the shared message. The Edge Function call handling is now one helper, shared with the guardian invite.
 - **Verified** on the production app (Expo web, live project, adult tester): download link ready, deletion explained, scheduled, still scheduled after a reload, then cancelled. No page errors.
 - **Still needed for the stores:** Google Play requires a **web** page where people can ask for account deletion. That page comes with the web app's account pages (S1-8).
+
+**D-042 The web account page, which is also the public deletion link (S1-8/S1-9) (2026-09-28).**
+
+- `/[locale]/account` offers download my data, delete my account and cancel deletion, with the same RPCs, Edge Function, 7-day grace and wording as the app's Settings (D-041). It shows who is signed in and has a sign-out.
+- **Signed out,** it explains how deletion works (7 days, cancellable, then final) and links to sign-in, which returns to the page. So the page also works as the **public account-deletion URL** that Google Play asks for. The footer links it on every page ("Delete account and download data" / "حذف الحساب وتنزيل البيانات"), and the header's email opens it.
+- **Verified** on the production build against the live project: footer link, signed-out explanation, sign-in back to the page, the downloaded bundle matching the account, deletion scheduled and still scheduled after a reload, then cancelled. Arabic RTL with no sideways scroll, and no page errors.
+- **For the store listing:** once hosted, the deletion URL is `https://<domain>/ar/account` (or `/en/account`).

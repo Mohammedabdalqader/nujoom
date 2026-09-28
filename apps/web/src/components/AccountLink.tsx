@@ -47,9 +47,12 @@ export function AccountLink({
   }
   return (
     <span className="flex min-w-0 items-center gap-3 text-sm">
-      <bdi dir="ltr" className="hidden truncate text-on-surface-variant sm:inline">
-        {email}
-      </bdi>
+      <Link
+        href={`/${locale}/account`}
+        className="hidden truncate text-on-surface-variant hover:text-on-surface sm:inline"
+      >
+        <bdi dir="ltr">{email}</bdi>
+      </Link>
       <button
         type="button"
         onClick={async () => {
