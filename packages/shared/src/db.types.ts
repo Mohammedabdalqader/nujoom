@@ -924,6 +924,7 @@ export type Database = {
           confirmed_at: string
           confirmed_by: string | null
           opening_hours: Json
+          paused_at: string | null
           pitch_id: string
           price_note_ar: string | null
           price_note_en: string | null
@@ -936,6 +937,7 @@ export type Database = {
           confirmed_at?: string
           confirmed_by?: string | null
           opening_hours?: Json
+          paused_at?: string | null
           pitch_id: string
           price_note_ar?: string | null
           price_note_en?: string | null
@@ -948,6 +950,7 @@ export type Database = {
           confirmed_at?: string
           confirmed_by?: string | null
           opening_hours?: Json
+          paused_at?: string | null
           pitch_id?: string
           price_note_ar?: string | null
           price_note_en?: string | null
@@ -1346,6 +1349,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      admin_stale_listings: { Args: never; Returns: Json }
       admin_verify_authority: {
         Args: { p_evidence?: Json; p_facility: string }
         Returns: undefined
@@ -1433,6 +1437,7 @@ export type Database = {
       }
       request_account_deletion: { Args: never; Returns: Json }
       request_data_export: { Args: never; Returns: Json }
+      run_catalog_freshness: { Args: never; Returns: number }
       search_pitches: { Args: { p?: Json }; Returns: Json }
       set_settings: { Args: { p_patch: Json }; Returns: Json }
       set_visibility: {

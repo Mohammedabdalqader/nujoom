@@ -452,3 +452,11 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
 - **In listings:** a listing's `photo` is the first approved photo, the field's own before the venue's, as a storage path plus attribution. The app's data layer signs one batch of short-lived links per page; a photo that can't be signed shows as none. Show the attribution whenever it is set. No generated or borrowed images, ever (D-032).
 - **Evidence:** pgTAP `100-catalog-media.sql` has 16 assertions (310 total). Live: the bucket is private with its limits, and a player's upload is refused.
 - **Test runner fix:** `tools/db-test` now takes a free port per run. A Postgres worker left behind by an interrupted run (a shell timeout) used to block the next run on the fixed port and look like a hang.
+
+**D-050 Catalog freshness: verified fields must stay truthful (2026-09-28; contract §3.1, test 4a).**
+
+- **What's tracked:** `pitch_operations.paused_at` records when a schedule was paused (a trigger sets it and clears it on resume). `confirmed_at` is refreshed whenever the operator re-confirms the field.
+- **Warning list:** `admin_stale_listings()` (admins only) lists verified fields paused longer than `pause_days`, or whose facts are older than `confirm_days`. It marks them `due` once `grace_days` more have passed.
+- **The daily job:** `run_catalog_freshness()` runs at 03:10 Amman via pg_cron (service role only). It downgrades every due field and records a `verification_events` row with no user (the system), reason `stale_paused` or `stale_facts`, plus an audit entry. It is idempotent. The operator clears a warning by resuming the schedule or re-confirming the field.
+- **Numbers:** 30/90/14 days stay configurable **proposals** in `config.catalog_freshness`, not an approved SLA (Codex). An ended partnership is still an immediate admin downgrade (D-046), and an opt-out likewise (D-048).
+- **Evidence:** pgTAP `110-catalog-freshness.sql` has 13 assertions (323 total), live on the project. Fresh and warning-only fields keep their badge; due ones lose it and their operations disappear from search; a resumed field is bookable again.
