@@ -612,6 +612,33 @@ export type Database = {
           },
         ]
       }
+      import_runs: {
+        Row: {
+          batch_id: string | null
+          counts: Json
+          finished_at: string | null
+          id: string
+          source: string
+          started_at: string
+        }
+        Insert: {
+          batch_id?: string | null
+          counts?: Json
+          finished_at?: string | null
+          id?: string
+          source: string
+          started_at?: string
+        }
+        Update: {
+          batch_id?: string | null
+          counts?: Json
+          finished_at?: string | null
+          id?: string
+          source?: string
+          started_at?: string
+        }
+        Relationships: []
+      }
       jobs: {
         Row: {
           attempts: number
@@ -849,6 +876,13 @@ export type Database = {
             columns: ["pitch_id"]
             isOneToOne: false
             referencedRelation: "pitches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pitch_evidence_source_record_fk"
+            columns: ["source_record_id"]
+            isOneToOne: false
+            referencedRelation: "source_records"
             referencedColumns: ["id"]
           },
         ]
@@ -1177,6 +1211,89 @@ export type Database = {
           },
         ]
       }
+      source_records: {
+        Row: {
+          created_at: string
+          facility_id: string | null
+          first_seen_run: string | null
+          geometry: Json | null
+          gone_at: string | null
+          id: string
+          last_seen_run: string | null
+          licence: string
+          needs_review: boolean
+          pitch_id: string | null
+          raw: Json
+          source: string
+          source_key: string
+          source_version: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          facility_id?: string | null
+          first_seen_run?: string | null
+          geometry?: Json | null
+          gone_at?: string | null
+          id?: string
+          last_seen_run?: string | null
+          licence: string
+          needs_review?: boolean
+          pitch_id?: string | null
+          raw: Json
+          source: string
+          source_key: string
+          source_version: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          facility_id?: string | null
+          first_seen_run?: string | null
+          geometry?: Json | null
+          gone_at?: string | null
+          id?: string
+          last_seen_run?: string | null
+          licence?: string
+          needs_review?: boolean
+          pitch_id?: string | null
+          raw?: Json
+          source?: string
+          source_key?: string
+          source_version?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "source_records_facility_id_fkey"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "facilities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "source_records_first_seen_run_fkey"
+            columns: ["first_seen_run"]
+            isOneToOne: false
+            referencedRelation: "import_runs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "source_records_last_seen_run_fkey"
+            columns: ["last_seen_run"]
+            isOneToOne: false
+            referencedRelation: "import_runs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "source_records_pitch_id_fkey"
+            columns: ["pitch_id"]
+            isOneToOne: false
+            referencedRelation: "pitches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_settings: {
         Row: {
           locale: string
@@ -1391,6 +1508,18 @@ export type Database = {
         Returns: undefined
       }
       guardian_invite_preview: { Args: { p_token: string }; Returns: Json }
+      import_catalog_record: {
+        Args: { p_licence: string; p_record: Json; p_run: string }
+        Returns: Json
+      }
+      import_finish_run: {
+        Args: { p_full_snapshot?: boolean; p_run: string }
+        Returns: Json
+      }
+      import_start_run: {
+        Args: { p_batch: string; p_source: string }
+        Returns: string
+      }
       issue_guardian_invite: {
         Args: { p_link_id: string; p_youth: string }
         Returns: {

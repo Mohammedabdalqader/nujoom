@@ -460,3 +460,16 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
 - **The daily job:** `run_catalog_freshness()` runs at 03:10 Amman via pg_cron (service role only). It downgrades every due field and records a `verification_events` row with no user (the system), reason `stale_paused` or `stale_facts`, plus an audit entry. It is idempotent. The operator clears a warning by resuming the schedule or re-confirming the field.
 - **Numbers:** 30/90/14 days stay configurable **proposals** in `config.catalog_freshness`, not an approved SLA (Codex). An ended partnership is still an immediate admin downgrade (D-046), and an opt-out likewise (D-048).
 - **Evidence:** pgTAP `110-catalog-freshness.sql` has 13 assertions (323 total), live on the project. Fresh and warning-only fields keep their badge; due ones lose it and their operations disappear from search; a resumed field is bookable again.
+
+**D-051 Importing reviewed catalog records (D2 part 1) (2026-09-29).**
+
+- **Tables:** `import_runs` and `source_records`. Source records keep exactly what a source said, with its licence and a content-hash version, unique per (source, key), linked to the facility and field a reviewer created. `pitch_evidence.source_record_id` now references them.
+- **RPCs** (service role only, for `tools/catalog-import`): `import_start_run`, `import_catalog_record(run, licence, record)` and `import_finish_run(run, full_snapshot)`.
+- **The import only creates unpublished candidates.** Publishing stays an admin decision (D-046).
+  - It refuses records claiming publication, a badge or operations, and records without a completed review (access and field identity confirmed, access classified as public).
+  - It also refuses an invalid location, an unknown city or invalid values.
+  - Photo leads and multi-field facility leads are never imported.
+- **Idempotent:** an unchanged re-import changes nothing. A new version of an imported record is flagged `needs_review` and never overwrites the reviewed catalog (contract test 8). Only full-snapshot sources mark missing records as gone.
+- **Handoff format** for Codex's X10 intake: `agentic_system/contracts/catalog-import.md`, the intake pitch plus a `review` block.
+- **Evidence:** pgTAP `120-catalog-import.sql` has 17 assertions (340 total), live on the project.
+- **Next:** the CLI tool that reads a reviewed batch file and reports per-record results.
