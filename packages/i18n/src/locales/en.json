@@ -14,7 +14,9 @@
     "jod": "JOD",
     "jodCode": "JOD",
     "vs": "vs",
-    "size": "{{n}}-a-side"
+    "size": "{{n}}-a-side",
+    "notRated": "Not rated yet",
+    "noValue": "—"
   },
   "nav": {
     "home": "Home",
@@ -373,8 +375,6 @@
     "youthNote": "Youth boards are separate from adults, and player photos show only with a parent's permission."
   },
   "profile": {
-    "verified": "Verified account • {{city}} ({{visibility}})",
-    "unverified": "Unverified account • {{city}}",
     "visibility": {
       "public": "Public",
       "city": "City",
@@ -398,7 +398,6 @@
       }
     },
     "shareCard": "Share my player card on WhatsApp",
-    "shareText": "🔥 Check out {{name}}'s card ({{ovr}} {{tag}}) on {{app}}!\n⭐ Rating: {{form}} | Position: {{position}}\n📍 Hara: {{hara}}\nChallenge us next match and get the app.\n{{url}}",
     "cardCode": "Card code: {{code}}",
     "copied": "(Copied!)",
     "downloadHd": "Download in HD",
@@ -428,7 +427,8 @@
       "assists": "Assists",
       "assistsUnit": "assists",
       "mvps": "Player of the match (MVP)",
-      "mvpsUnit": "gold shields"
+      "mvpsUnit": "gold shields",
+      "unratedHint": "You get a rating once players you played with rate you after a counted match."
     },
     "form": {
       "title": "Last 5 matches (Form)",
@@ -579,7 +579,11 @@
       "times": "× {{count}}",
       "lastFrom": "Latest from {{name}}",
       "empty": "After each match, teammates can give you respect badges."
-    }
+    },
+    "shareIntroRated": "🔥 Check out {{name}}'s card ({{ovr}} {{tag}}) on {{app}}!\n⭐ Rating: {{form}} | Position: {{position}}",
+    "shareIntroUnrated": "🔥 Check out {{name}}'s card ({{tag}}) on {{app}}!\n⭐ Not rated yet | Position: {{position}}",
+    "shareOutro": "📍 Hara: {{hara}}\nChallenge us next match and get the app.",
+    "cityVisibility": "{{city}} • {{visibility}}"
   },
   "notifications": {
     "title": "Alerts and notifications",

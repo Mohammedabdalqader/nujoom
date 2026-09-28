@@ -6,5 +6,3 @@ export const kv = {
   set: (key: string, value: string): void => store?.setItem(key, value),
   remove: (key: string): void => store?.removeItem(key),
 };
-
-export const sessionStorage = store ?? undefined;

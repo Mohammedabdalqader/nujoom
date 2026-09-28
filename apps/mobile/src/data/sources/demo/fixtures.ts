@@ -56,10 +56,9 @@ export const previewMe: Me = {
   positionTag: 'ST',
   cardCode: 'NJM-8K7Q-M01X',
   shirtNumber: 10,
-  accountVerified: true,
   isYouth: false,
   visibility: 'public',
-  isVerifiedPlayer: true,
+  rankingEligible: true,
   form: 8.4,
   formChange30d: 0.6,
   formConfidence: 92,
@@ -77,6 +76,7 @@ export const previewMe: Me = {
   season: '2026',
   xp: 2840,
   editionYear: 2026,
+  shareUrl: null,
 };
 
 export const previewFriends: Friend[] = [

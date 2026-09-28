@@ -83,27 +83,33 @@ export function FriendsSection({ friends }: { friends: Friend[] }) {
                       {f.name}
                     </Text>
                     <Text font="grotesk" className="text-[10px] text-on-surface-variant">
-                      {`${t(`positions.${f.position}`)} • ${f.form.toFixed(1)}`}
+                      {f.form !== null
+                        ? `${t(`positions.${f.position}`)} • ${f.form.toFixed(1)}`
+                        : t(`positions.${f.position}`)}
                     </Text>
                   </View>
                 </View>
-                <View className="mt-2.5 pt-1.5 border-t border-border/60 flex-row items-center justify-between">
-                  <Text font="grotesk" className="text-[9px] text-primary font-bold">
+                <View className="mt-2.5 pt-1.5 border-t border-border/60 gap-1">
+                  <Text
+                    font="grotesk"
+                    className="text-[12px] text-primary font-bold"
+                    style={{ writingDirection: 'ltr' }}
+                  >
                     {f.cardCode}
                   </Text>
                   <Pressable
                     onPress={() => invite(f)}
-                    className="px-2 py-0.5 rounded-md bg-secondary-container active:bg-emerald active:scale-95 flex-row items-center gap-0.5"
+                    className="w-full min-h-[44px] px-2 rounded-md bg-secondary-container active:bg-emerald active:scale-95 flex-row items-center justify-center gap-1"
                   >
                     <Icon
                       name="send"
-                      size={12}
+                      size={16}
                       directional
                       className="text-on-secondary-container"
                     />
                     <Text
                       font="rubik"
-                      className="text-[10px] text-on-secondary-container font-bold"
+                      className="text-[13px] text-on-secondary-container font-bold"
                     >
                       {t('profile.friends.invite')}
                     </Text>

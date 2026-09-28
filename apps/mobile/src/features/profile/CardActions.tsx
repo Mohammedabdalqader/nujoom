@@ -21,18 +21,22 @@ export function CardActions({ me }: { me: Me }) {
 
   const share = async () => {
     sfx.success();
-    const text = t('profile.shareText', {
+    const rated = me.ovr !== null && me.form !== null;
+    const intro = t(rated ? 'profile.shareIntroRated' : 'profile.shareIntroUnrated', {
       name: me.name,
-      ovr: me.ovr,
+      ovr: me.ovr ?? '',
       tag: me.positionTag,
       app: t('app.name'),
-      form: me.form.toFixed(1),
+      form: me.form?.toFixed(1) ?? '',
       position: t(`positions.${me.position}`),
+    });
+    const outro = t('profile.shareOutro', {
       hara: [pick(me.city), me.neighborhood ? pick(me.neighborhood) : null]
         .filter(Boolean)
         .join(' - '),
-      url: `https://nujoom.app/u/${me.id}`,
     });
+    // No link until the web domain exists (me.shareUrl is null), so nothing points nowhere.
+    const text = [intro, outro, me.shareUrl].filter(Boolean).join('\n');
     if ((await shareToWhatsApp(text)) === 'copied') toast.show(t('common.copied'));
   };
 
@@ -49,7 +53,7 @@ export function CardActions({ me }: { me: Me }) {
           {t('profile.shareCard')}
         </Text>
       </Pressable>
-      <View className="flex-row items-center justify-between px-1">
+      <View className="gap-1 px-1">
         <Pressable
           onPress={async () => {
             sfx.clipBeep();
@@ -57,14 +61,14 @@ export function CardActions({ me }: { me: Me }) {
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
           }}
-          className="flex-row items-center gap-1"
+          className="min-h-[44px] flex-row items-center gap-2"
         >
-          <Icon name="qr_code_2" size={16} className="text-primary" />
-          <Text className="text-[12px] text-on-surface-variant">
+          <Icon name="qr_code_2" size={18} className="text-primary" />
+          <Text className="flex-1 text-[14px] text-on-surface-variant">
             {t('profile.cardCode', { code: me.cardCode })}
           </Text>
           {copied ? (
-            <Text className="text-[10px] text-secondary">{t('profile.copied')}</Text>
+            <Text className="text-[12px] text-secondary">{t('profile.copied')}</Text>
           ) : null}
         </Pressable>
         <Pressable
@@ -72,8 +76,9 @@ export function CardActions({ me }: { me: Me }) {
             sfx.success();
             toast.show(t('profile.downloadSoon'));
           }}
+          className="min-h-[44px] self-start px-1 justify-center"
         >
-          <Text font="grotesk" className="text-[11px] text-primary font-bold">
+          <Text font="grotesk" className="text-[14px] text-primary font-bold">
             {t('profile.downloadHd')}
           </Text>
         </Pressable>

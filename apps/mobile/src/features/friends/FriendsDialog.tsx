@@ -270,7 +270,7 @@ function AddByCode({
           {t('friends.addTitle')}
         </Text>
       </View>
-      <View className="flex-row items-center gap-2">
+      <View className="gap-2">
         <TextInput
           value={code}
           onChangeText={(v) => {
@@ -284,7 +284,7 @@ function AddByCode({
           autoCorrect={false}
           returnKeyType="send"
           accessibilityLabel={t('friends.codePlaceholder')}
-          className={`flex-1 min-w-0 bg-surface-container-lowest border rounded-lg px-2.5 py-1.5 text-[12px] text-on-surface ${
+          className={`w-full min-h-[44px] bg-surface-container-lowest border rounded-lg px-3 py-2 text-[16px] text-on-surface ${
             error ? 'border-error' : 'border-surface-container-high focus:border-primary'
           }`}
           // Codes stay left-to-right inside Arabic forms, like the Field primitive's `ltr`.
@@ -293,17 +293,17 @@ function AddByCode({
         <Pressable
           disabled={busy}
           onPress={() => void submit()}
-          className={`flex-1 py-1.5 rounded-lg bg-secondary-container active:bg-emerald items-center ${busy ? 'opacity-60' : ''}`}
+          className={`w-full min-h-[44px] px-3 rounded-lg bg-secondary-container active:bg-emerald flex-row items-center justify-center ${busy ? 'opacity-60' : ''}`}
         >
-          <Text font="rubik" className="text-[13px] text-on-secondary-container font-bold">
+          <Text font="rubik" className="text-[16px] text-on-secondary-container font-bold">
             {t('friends.sendRequest')}
           </Text>
         </Pressable>
       </View>
-      {error ? <Text className="text-[11px] text-error">{error}</Text> : null}
+      {error ? <Text className="text-[14px] text-error">{error}</Text> : null}
       {myCode ? (
-        <View className="flex-row items-center justify-between">
-          <Text font="grotesk" className="text-[11px] text-on-surface-variant">
+        <View className="gap-1">
+          <Text font="grotesk" className="text-[14px] text-on-surface-variant">
             {t('friends.myCode', { code: myCode })}
           </Text>
           <Pressable
@@ -311,11 +311,10 @@ function AddByCode({
               sfx.clipBeep();
               void shareToWhatsApp(t('friends.myCodeShare', { app: t('app.name'), code: myCode }));
             }}
-            hitSlop={8}
-            className="flex-row items-center gap-1"
+            className="min-h-[44px] self-start px-2 flex-row items-center gap-1"
           >
-            <Icon name="share" size={14} className="text-secondary" />
-            <Text font="grotesk" className="text-[11px] text-secondary font-bold">
+            <Icon name="share" size={16} className="text-secondary" />
+            <Text font="grotesk" className="text-[14px] text-secondary font-bold">
               {t('friends.shareMyCode')}
             </Text>
           </Pressable>
@@ -380,9 +379,11 @@ function FriendRow({
             >
               {friend.name}
             </Text>
-            <Text font="grotesk" className="text-[11px] text-primary font-black">
-              {number(friend.form)}
-            </Text>
+            {friend.form !== null ? (
+              <Text font="grotesk" className="text-[11px] text-primary font-black">
+                {number(friend.form)}
+              </Text>
+            ) : null}
           </View>
           <Text className="text-[11px] text-on-surface-variant" numberOfLines={1}>
             {`${t(`positions.${friend.position}`)} • ${pick(friend.neighborhood)}`}
@@ -456,9 +457,11 @@ function RequestRow({
             >
               {p.name}
             </Text>
-            <Text font="grotesk" className="text-[11px] text-primary font-black">
-              {number(p.form)}
-            </Text>
+            {p.form !== null ? (
+              <Text font="grotesk" className="text-[11px] text-primary font-black">
+                {number(p.form)}
+              </Text>
+            ) : null}
           </View>
           <Text className="text-[11px] text-on-surface-variant" numberOfLines={1}>
             {`${t(`positions.${p.position}`)} • ${pick(p.neighborhood)} • ${ago(request.createdAt)}`}
@@ -506,7 +509,9 @@ function SuggestionCard({
             {player.name}
           </Text>
           <Text font="grotesk" className="text-[9px] text-on-surface-variant" numberOfLines={1}>
-            {`${t(`positions.${player.position}`)} • ${number(player.form)}`}
+            {player.form !== null
+              ? `${t(`positions.${player.position}`)} • ${number(player.form)}`
+              : t(`positions.${player.position}`)}
           </Text>
         </View>
       </View>

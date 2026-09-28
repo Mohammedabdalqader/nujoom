@@ -48,11 +48,19 @@ const FORM_STYLE = {
 
 /** "إحصائيات المسيرة والهيبة": form rating with confidence, four counters and the last five. */
 export function CareerStats({ me }: { me: Me }) {
-  const { t } = useLocale();
+  const { t, score } = useLocale();
+  const confidence = me.formConfidence;
   const level =
-    me.formConfidence >= 80 ? 'levelHigh' : me.formConfidence >= 50 ? 'levelMedium' : 'levelLow';
+    confidence === null
+      ? null
+      : confidence >= 80
+        ? 'levelHigh'
+        : confidence >= 50
+          ? 'levelMedium'
+          : 'levelLow';
   const summary = formSummary(me.lastFive);
-  const up = me.formChange30d >= 0;
+  const change = me.formChange30d;
+  const up = change !== null && change >= 0;
 
   return (
     <View className="gap-3">
@@ -73,7 +81,7 @@ export function CareerStats({ me }: { me: Me }) {
         <View className="flex-row items-center gap-3.5 flex-1">
           <View className="w-16 h-16 rounded-xl bg-gradient-to-tr from-surface-container-lowest to-surface-container-high items-center justify-center border border-primary/20">
             <Text font="grotesk" className="text-[24px] leading-[26px] text-primary font-black">
-              {me.form.toFixed(1)}
+              {score(me.form)}
             </Text>
             <Text
               font="grotesk"
@@ -90,30 +98,36 @@ export function CareerStats({ me }: { me: Me }) {
               <View className="w-2 h-2 rounded-full bg-secondary" />
             </View>
             <Text className="text-[12px] text-on-surface-variant mt-0.5">
-              {t('profile.career.confidence', {
-                level: t(`profile.career.${level}`),
-                value: me.formConfidence,
-                count: me.stats.matches,
-              })}
+              {level === null
+                ? t('profile.career.unratedHint')
+                : t('profile.career.confidence', {
+                    level: t(`profile.career.${level}`),
+                    value: confidence,
+                    count: me.stats.matches,
+                  })}
             </Text>
           </View>
         </View>
-        <View className="items-end">
-          <View className="flex-row items-center gap-1">
-            <Icon
-              name={up ? 'trending_up' : 'arrow_drop_down'}
-              size={18}
-              className={up ? 'text-secondary' : 'text-error'}
-            />
-            <Text
-              font="grotesk"
-              className={`text-[16px] font-bold ${up ? 'text-secondary' : 'text-error'}`}
-            >
-              {`${up ? '+' : ''}${me.formChange30d.toFixed(1)}`}
+        {change !== null ? (
+          <View className="items-end">
+            <View className="flex-row items-center gap-1">
+              <Icon
+                name={up ? 'trending_up' : 'arrow_drop_down'}
+                size={18}
+                className={up ? 'text-secondary' : 'text-error'}
+              />
+              <Text
+                font="grotesk"
+                className={`text-[16px] font-bold ${up ? 'text-secondary' : 'text-error'}`}
+              >
+                {`${up ? '+' : ''}${change.toFixed(1)}`}
+              </Text>
+            </View>
+            <Text className="text-[11px] text-on-surface-variant">
+              {t('profile.career.last30')}
             </Text>
           </View>
-          <Text className="text-[11px] text-on-surface-variant">{t('profile.career.last30')}</Text>
-        </View>
+        ) : null}
       </View>
 
       <View className="gap-2">

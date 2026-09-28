@@ -24,23 +24,17 @@ function StatusBadges({ me }: { me: Me }) {
   return (
     <View className="flex-row items-center justify-between">
       <View className="flex-row items-center gap-1.5 flex-wrap flex-1">
+        {/* No "verified account" badge: every sign-in already confirms the email (C-012). */}
         <View className="flex-row items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-high">
-          <View
-            className={`w-2 h-2 rounded-full ${me.accountVerified ? 'bg-secondary animate-pulse' : 'bg-outline'}`}
-          />
-          <Text
-            font="grotesk"
-            className={`text-[11px] font-bold ${me.accountVerified ? 'text-secondary' : 'text-on-surface-variant'}`}
-          >
-            {me.accountVerified
-              ? t('profile.verified', {
-                  city: pick(me.city),
-                  visibility: t(`profile.visibility.${me.visibility}`),
-                })
-              : t('profile.unverified', { city: pick(me.city) })}
+          <Icon name="location_on" size={14} className="text-on-surface-variant" />
+          <Text font="grotesk" className="text-[11px] font-bold text-on-surface-variant">
+            {t('profile.cityVisibility', {
+              city: pick(me.city),
+              visibility: t(`profile.visibility.${me.visibility}`),
+            })}
           </Text>
         </View>
-        {me.isVerifiedPlayer ? (
+        {me.rankingEligible ? (
           <View className="flex-row items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container">
             <Icon name="verified" size={14} className="text-primary" />
             <Text font="grotesk" className="text-[11px] text-on-surface-variant">

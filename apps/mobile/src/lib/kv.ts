@@ -8,6 +8,3 @@ export const kv = {
     Storage.removeItemSync(key);
   },
 };
-
-/** Storage for the Supabase session. */
-export { default as sessionStorage } from 'expo-sqlite/kv-store';

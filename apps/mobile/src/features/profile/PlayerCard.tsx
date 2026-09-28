@@ -96,7 +96,7 @@ export function PlayerCard({ me }: { me: Me }) {
                   font="rubik"
                   className="text-[28px] leading-[30px] font-black text-primary tracking-tighter text-shadow-[0_2px_8px_rgba(245,158,11,0.4)]"
                 >
-                  {me.ovr}
+                  {me.ovr ?? t('common.noValue')}
                 </Text>
                 <Text
                   font="grotesk"
@@ -159,7 +159,7 @@ export function PlayerCard({ me }: { me: Me }) {
                   >
                     {me.name}
                   </Text>
-                  {me.isVerifiedPlayer ? (
+                  {me.rankingEligible ? (
                     <Icon name="check_circle" filled size={18} className="text-secondary" />
                   ) : null}
                 </View>
@@ -185,7 +185,8 @@ export function PlayerCard({ me }: { me: Me }) {
               {COLUMNS.map((column) => (
                 <View key={column[0]} className="flex-1 gap-2">
                   {column.map((key) => {
-                    const value = me.attributes[key];
+                    // Unrated players show a dash, never a zero that reads like a score (C-007).
+                    const value = me.attributes?.[key] ?? null;
                     return (
                       <View
                         key={key}
@@ -193,9 +194,9 @@ export function PlayerCard({ me }: { me: Me }) {
                       >
                         <Text
                           font="grotesk"
-                          className={`text-[16px] font-bold ${value >= 60 ? 'text-primary' : 'text-on-surface-variant'}`}
+                          className={`text-[16px] font-bold ${value !== null && value >= 60 ? 'text-primary' : 'text-on-surface-variant'}`}
                         >
-                          {value}
+                          {value ?? t('common.noValue')}
                         </Text>
                         <View className="flex-row items-center gap-1.5">
                           <Text

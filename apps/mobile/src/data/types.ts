@@ -43,19 +43,23 @@ export type Me = PlayerRef & {
   cardCode: string;
   /** Favourite shirt number, printed on the card ("STREET CARD #10"). */
   shirtNumber: number | null;
-  /** Email confirmed ("حساب موثق"). */
-  accountVerified: boolean;
   isYouth: boolean;
   visibility: 'public' | 'city' | 'private';
-  /** Ranking-eligible ("لاعب معتمد"). */
-  isVerifiedPlayer: boolean;
+  /** Ranking-eligible ("لاعب معتمد"): false until S6 has a real rule (C-012). */
+  rankingEligible: boolean;
+  /**
+   * Rating-derived values are null until the player has been rated ("غير مصنّف بعد", C-007):
+   * zero is a real count, never a stand-in for a missing score.
+   */
   /** Form rating x/10 (spec §6.10 metric 3). */
-  form: number;
-  formChange30d: number;
-  formConfidence: number;
-  ovr: number;
-  attributes: Attributes;
-  elo: number;
+  form: number | null;
+  formChange30d: number | null;
+  formConfidence: number | null;
+  ovr: number | null;
+  attributes: Attributes | null;
+  elo: number | null;
+  /** Public link to the player card; null until the web domain exists (no dead links). */
+  shareUrl: string | null;
   stats: { matches: number; goals: number; assists: number; mvps: number };
   lastFive: FormResult[];
   season: string;
@@ -72,7 +76,7 @@ export type FormResult = {
 
 export type Friend = PlayerRef & {
   position: Position;
-  form: number;
+  form: number | null;
   presence: 'online' | 'offline' | 'in_match';
   /** Only for adults who opted in (D-006.5). */
   inMatchAt: Bilingual | null;
@@ -84,7 +88,7 @@ export type Friend = PlayerRef & {
 /** A player you could add: public or city-visible, same city and age band (D-023). */
 export type FriendSuggestion = PlayerRef & {
   position: Position;
-  form: number;
+  form: number | null;
   neighborhood: Bilingual;
   cardCode: string;
 };
@@ -333,7 +337,7 @@ export type MvpCandidate = {
   goals: number;
   assists: number;
   saves: number;
-  form: number;
+  form: number | null;
 };
 
 export type MatchDay = {
@@ -398,8 +402,8 @@ export type PlayerOfWeek = {
 export type MyRank = {
   rank: number | null;
   scopeName: Bilingual;
-  weeklyChange: number;
-  elo: number;
+  weeklyChange: number | null;
+  elo: number | null;
   /** Counted matches still needed before the player is ranked (spec §6.10). */
   matchesToQualify: number;
 };

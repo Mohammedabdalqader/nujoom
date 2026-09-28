@@ -18,7 +18,9 @@
     "jod": "د.أ",
     "jodCode": "JOD",
     "vs": "ضد",
-    "size": "{{n}} ضد {{n}}"
+    "size": "{{n}} ضد {{n}}",
+    "notRated": "غير مصنّف بعد",
+    "noValue": "—"
   },
   "nav": {
     "home": "الرئيسية",
@@ -401,8 +403,6 @@
     "youthNote": "لوحات الشباب منفصلة عن الكبار، وما بتظهر صور اللاعبين إلا بإذن الأهل."
   },
   "profile": {
-    "verified": "حساب موثق • {{city}} ({{visibility}})",
-    "unverified": "حساب غير موثق • {{city}}",
     "visibility": {
       "public": "عام",
       "city": "المدينة",
@@ -426,7 +426,6 @@
       }
     },
     "shareCard": "مشاركة بطاقة اللاعب عبر واتساب",
-    "shareText": "🔥 شيك على بطاقة {{name}} ({{ovr}} {{tag}}) في {{app}}!\n⭐ التقييم: {{form}} | المركز: {{position}}\n📍 حارة: {{hara}}\nتحدانا بمباراتك الجاية وحمّل التطبيق.\n{{url}}",
     "cardCode": "كود البطاقة: {{code}}",
     "copied": "(تم النسخ!)",
     "downloadHd": "تنزيل بجودة عالية",
@@ -456,7 +455,8 @@
       "assists": "صناعة الأهداف",
       "assistsUnit": "أسيست",
       "mvps": "رجل المباراة (MVP)",
-      "mvpsUnit": "درع ذهبي"
+      "mvpsUnit": "درع ذهبي",
+      "unratedHint": "بتنصنّف بعد ما يقيّمك اللاعبين اللي لعبت معهم بمباراة محسوبة."
     },
     "form": {
       "title": "آخر 5 مباريات (Form)",
@@ -607,7 +607,11 @@
       "times": "× {{count}}",
       "lastFrom": "آخرها من {{name}}",
       "empty": "بعد كل مباراة، زملاؤك بيقدروا يعطوك توصيات من شارات الهيبة."
-    }
+    },
+    "shareIntroRated": "🔥 شيك على بطاقة {{name}} ({{ovr}} {{tag}}) في {{app}}!\n⭐ التقييم: {{form}} | المركز: {{position}}",
+    "shareIntroUnrated": "🔥 شيك على بطاقة {{name}} ({{tag}}) في {{app}}!\n⭐ لسا ما انصنّف | المركز: {{position}}",
+    "shareOutro": "📍 حارة: {{hara}}\nتحدانا بمباراتك الجاية وحمّل التطبيق.",
+    "cityVisibility": "{{city}} • {{visibility}}"
   },
   "notifications": {
     "title": "التنبيهات والإشعارات",

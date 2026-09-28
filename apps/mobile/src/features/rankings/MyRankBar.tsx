@@ -19,16 +19,18 @@ export function MyRankBar({ me, rank }: { me: Me; rank: MyRank }) {
   const insets = useSafeAreaInsets();
   const toast = useToast();
 
+  const weekly = rank.weeklyChange;
+
   const share = async () => {
     sfx.success();
-    if (rank.rank === null) return;
+    if (rank.rank === null || rank.elo === null) return;
     const text = t('rankings.shareText', {
       app: t('app.name'),
       elo: number(rank.elo),
       rank: rank.rank,
       scope: pick(rank.scopeName),
-      url: `https://nujoom.app/u/${me.id}`,
-    });
+      url: me.shareUrl ?? '',
+    }).trim();
     if ((await shareToWhatsApp(text)) === 'copied') toast.show(t('common.copied'));
   };
 
@@ -65,18 +67,18 @@ export function MyRankBar({ me, rank }: { me: Me; rank: MyRank }) {
                 >
                   {t('rankings.myRank', { rank: rank.rank, scope: pick(rank.scopeName) })}
                 </RichText>
-                {rank.weeklyChange !== 0 ? (
+                {weekly !== null && weekly !== 0 ? (
                   <View className="flex-row items-center">
                     <Icon
-                      name={rank.weeklyChange > 0 ? 'arrow_upward' : 'arrow_drop_down'}
+                      name={weekly > 0 ? 'arrow_upward' : 'arrow_drop_down'}
                       size={14}
-                      className={rank.weeklyChange > 0 ? 'text-secondary' : 'text-error'}
+                      className={weekly > 0 ? 'text-secondary' : 'text-error'}
                     />
                     <Text
-                      className={`text-[12px] font-bold ${rank.weeklyChange > 0 ? 'text-secondary' : 'text-error'}`}
+                      className={`text-[12px] font-bold ${weekly > 0 ? 'text-secondary' : 'text-error'}`}
                     >
                       {t('rankings.thisWeek', {
-                        value: `${rank.weeklyChange > 0 ? '+' : ''}${rank.weeklyChange}`,
+                        value: `${weekly > 0 ? '+' : ''}${weekly}`,
                       })}
                     </Text>
                   </View>
@@ -92,7 +94,7 @@ export function MyRankBar({ me, rank }: { me: Me; rank: MyRank }) {
         <View className="flex-row items-center gap-1">
           <View className="items-end pe-2">
             <Text font="grotesk" className="text-[16px] text-primary font-black">
-              {number(rank.elo)}
+              {rank.elo !== null ? number(rank.elo) : t('common.noValue')}
             </Text>
             <Text font="grotesk" className="text-[10px] text-on-surface-variant">
               {t('rankings.myRating')}

@@ -28,5 +28,8 @@ export function useLocale() {
     day: (iso: string) => formatDateTime(iso, locale, { weekday: 'long' }),
     date: (iso: string) => formatDateTime(iso, locale, { day: 'numeric', month: 'long' }),
     ago: (iso: string) => formatRelativeTime(iso, locale),
+    /** A rating to show, or "—" when the player isn't rated yet (C-007). */
+    score: (value: number | null, digits = 1) =>
+      value === null ? t('common.noValue') : value.toFixed(digits),
   };
 }

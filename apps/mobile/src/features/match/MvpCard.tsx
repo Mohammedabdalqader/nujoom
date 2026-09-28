@@ -132,7 +132,9 @@ export function MvpCard({
                 {c.player.name}
               </Text>
               <Text font="grotesk" className={`text-[11px] mt-0.5 ${stat.color}`}>
-                {t('match.mvp.stats', { stat: stat.text, form: c.form.toFixed(1) })}
+                {c.form !== null
+                  ? t('match.mvp.stats', { stat: stat.text, form: c.form.toFixed(1) })
+                  : stat.text}
               </Text>
               <View className="w-full bg-surface rounded-full h-1.5 mt-1.5 overflow-hidden">
                 {share !== null ? (

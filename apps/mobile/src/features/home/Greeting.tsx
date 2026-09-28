@@ -44,9 +44,15 @@ export function Greeting({ me }: { me: Me }) {
           >
             {t('home.betaRating')}
           </Text>
-          <Text font="grotesk" className="text-[16px] leading-[18px] text-primary font-bold">
-            {me.form.toFixed(1)}
-          </Text>
+          {me.form !== null ? (
+            <Text font="grotesk" className="text-[16px] leading-[18px] text-primary font-bold">
+              {me.form.toFixed(1)}
+            </Text>
+          ) : (
+            <Text className="text-[12px] leading-[18px] text-on-surface-variant font-bold">
+              {t('common.notRated')}
+            </Text>
+          )}
         </View>
       </Pressable>
     </View>
