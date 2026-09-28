@@ -1,0 +1,87 @@
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/preflight.css' layer(base);
+@import 'tailwindcss/utilities.css';
+@import 'nativewind/theme';
+
+/*
+ * Design tokens (D-015). Values mirror src/design/tokens.ts (a unit test keeps them equal).
+ * Theme colours default to the dark theme; ThemeProvider overrides them for light mode
+ * through VariableContextProvider. Fixed colours never change between themes.
+ */
+@theme {
+  /* Theme colours (dark defaults) */
+  --color-surface: #111317;
+  --color-surface-container-lowest: #0c0e12;
+  --color-surface-container-low: #1a1c20;
+  --color-surface-container: #1e2024;
+  --color-surface-container-high: #282a2e;
+  --color-surface-container-highest: #333539;
+  --color-surface-bright: #37393e;
+  --color-on-surface: #e2e2e8;
+  --color-on-surface-variant: #d8c3ad;
+  --color-outline: #a08e7a;
+  --color-outline-variant: #534434;
+  --color-muted: #8d725a;
+  --color-border: #282a2e;
+  --color-border-strong: #333539;
+  --color-primary: #ffc174;
+  --color-primary-fixed: #ffddb8;
+  --color-primary-fixed-dim: #ffb95f;
+  --color-secondary: #4edea3;
+  --color-tertiary: #ffbcb7;
+  --color-error: #ffb4ab;
+  --color-tint-blue: #141824;
+  --color-tint-blue-strong: #1a2035;
+  --color-tint-orange: #241a14;
+  --color-tint-orange-strong: #35251a;
+  --color-tint-green: #18231e;
+  --color-tint-red: #231a1a;
+  --color-chrome: rgba(17, 19, 23, 0.88);
+  --color-scrim: rgba(0, 0, 0, 0.85);
+
+  /* Fixed colours */
+  --color-primary-container: #f59e0b;
+  --color-on-primary: #472a00;
+  --color-on-primary-container: #613b00;
+  --color-on-primary-fixed: #2a1700;
+  --color-secondary-container: #00a572;
+  --color-on-secondary: #003824;
+  --color-on-secondary-container: #00311f;
+  --color-secondary-fixed: #6ffbbe;
+  --color-emerald-dark: #003816;
+  --color-error-container: #93000a;
+  --color-on-error-container: #ffdad6;
+  --color-live: #ef4444;
+  --color-whatsapp: #25d366;
+  --color-whatsapp-dark: #20ba5a;
+  --color-team-blue: #3b82f6;
+  --color-team-blue-light: #60a5fa;
+  --color-team-blue-strong: #2563eb;
+  --color-team-blue-deep: #1d4ed8;
+  --color-team-blue-pale: #93c5fd;
+  --color-team-orange: #f97316;
+  --color-team-orange-strong: #ea580c;
+  --color-amber: #fbbf24;
+  --color-amber-pale: #fcd34d;
+  --color-amber-deep: #d97706;
+  --color-amber-dark: #b45309;
+  --color-emerald: #10b981;
+  --color-emerald-deep: #047857;
+  --color-crimson: #dc2626;
+  --color-crimson-deep: #991b1b;
+  --color-card-gold: #2a2215;
+  --color-card-top: #1c1812;
+  --color-card-mid: #14161a;
+  --color-card-bottom: #0c0e12;
+
+  /* Named spacing from the prototype */
+  --spacing-space-xs: 0.25rem;
+  --spacing-space-sm: 0.5rem;
+  --spacing-space-md: 0.875rem;
+  --spacing-space-lg: 1.25rem;
+  --spacing-space-xl: 2rem;
+  --spacing-gutter: 1rem;
+  --spacing-gutter-mobile: 0.75rem;
+  --spacing-margin: 1.25rem;
+  --spacing-margin-mobile: 1rem;
+}

@@ -1,0 +1,54 @@
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+
+import {
+  previewFriends,
+  previewHome,
+  previewMe,
+  previewMyClips,
+  previewNotifications,
+} from '@/data/preview';
+import type { AppNotification, Clip, Friend, HomeFeed, Me } from '@/data/types';
+
+/**
+ * The app's queries (D-019). Each resolves from Supabase once its milestone lands; until then from
+ * the typed preview data. Screens only ever see these hooks and the view-model types.
+ */
+export const keys = {
+  me: ['me'] as const,
+  friends: ['friends'] as const,
+  notifications: ['notifications'] as const,
+  home: ['home'] as const,
+  myClips: ['clips', 'mine'] as const,
+};
+
+const preview =
+  <T>(value: T) =>
+  () =>
+    Promise.resolve(structuredClone(value));
+
+export const useMe = () => useQuery<Me>({ queryKey: keys.me, queryFn: preview(previewMe) });
+
+export const useFriends = () =>
+  useQuery<Friend[]>({ queryKey: keys.friends, queryFn: preview(previewFriends) });
+
+export const useNotifications = () =>
+  useQuery<AppNotification[]>({
+    queryKey: keys.notifications,
+    queryFn: preview(previewNotifications),
+  });
+
+export const useHomeFeed = () =>
+  useQuery<HomeFeed>({ queryKey: keys.home, queryFn: preview(previewHome) });
+
+export const useMyClips = () =>
+  useQuery<Clip[]>({ queryKey: keys.myClips, queryFn: preview(previewMyClips) });
+
+/** Local cache updates for the preview phase; replaced by mutations with RPCs per milestone. */
+export function useCache() {
+  const client = useQueryClient();
+  return {
+    update<T>(key: readonly unknown[], fn: (old: T) => T) {
+      client.setQueryData<T>(key, (old) => (old === undefined ? old : fn(old)));
+    },
+  };
+}

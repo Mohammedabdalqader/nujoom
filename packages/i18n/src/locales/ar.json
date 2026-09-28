@@ -9,6 +9,143 @@
     "players_two": "لاعبان",
     "players_few": "{{count}} لاعبين",
     "players_many": "{{count}} لاعباً",
-    "players_other": "{{count}} لاعب"
+    "players_other": "{{count}} لاعب",
+    "close": "إغلاق",
+    "share": "مشاركة",
+    "shareWhatsApp": "مشاركة عبر واتساب",
+    "copied": "تم نسخ النص إلى الحافظة!",
+    "viewAll": "عرض الكل",
+    "jod": "د.أ",
+    "jodCode": "JOD",
+    "vs": "ضد",
+    "size": "{{n}} ضد {{n}}"
+  },
+  "nav": {
+    "home": "الرئيسية",
+    "pitches": "الملاعب",
+    "match": "المباراة",
+    "rankings": "المتصدرين",
+    "profile": "ملفي"
+  },
+  "header": {
+    "subtitle": {
+      "home": "NUJOOM AL-HARA • Home Feed",
+      "pitches": "NUJOOM AL-HARA • Pitches And Booking",
+      "match": "NUJOOM AL-HARA • Match Day And Clips",
+      "rankings": "NUJOOM AL-HARA • Rankings And Leaderboards",
+      "profile": "NUJOOM AL-HARA • Player Profile And Fifa Card"
+    },
+    "logo": "شعار نجوم الحارة",
+    "lightMode": "تفعيل الوضع النهاري",
+    "darkMode": "تفعيل الوضع الليلي",
+    "friends": "شلة الحارة والأصدقاء",
+    "notifications": "التنبيهات",
+    "profile": "الملف الشخصي"
+  },
+  "positions": {
+    "GK": "حارس مرمى",
+    "DEF": "مدافع",
+    "MID": "لاعب وسط",
+    "FWD": "مهاجم"
+  },
+  "kits": {
+    "blue": "القميص الأزرق",
+    "orange": "القميص البرتقالي"
+  },
+  "clipTypes": {
+    "goal": "هدف صاروخي 🚀",
+    "save": "تصدي خيالي 🧤",
+    "skill": "مهارة خرافية 🔥",
+    "moment": "لقطة مجنونة ⚡"
+  },
+  "home": {
+    "greeting": "أهلاً يا كابتن {{name}}",
+    "ready": "جاهز لمباراة الليلة؟ حارتك بانتظارك",
+    "betaRating": "Beta Rating",
+    "nextMatch": {
+      "ranked": "مباراة رسمية",
+      "startsIn": "يبدأ خلال",
+      "hours": "ساعة",
+      "minutes": "دقيقة",
+      "seconds": "ثانية",
+      "details": "عرض تفاصيل المباراة والتشكيلة",
+      "share": "مشاركة تفاصيل المباراة",
+      "shareText": "⚽ مباراة الليلة في {{app}}: {{teamA}} ضد {{teamB}} على {{pitch}} الساعة {{time}}. تعال شجع أو جهز حالك!\n{{url}}",
+      "emptyTitle": "ما عندك مباراة جاية",
+      "emptyBody": "احجز ملعب وادعُ الشلة، وخلي الحارة تشوف مستواك.",
+      "emptyCta": "احجز ملعب"
+    },
+    "tools": {
+      "title": "أدوات تنظيم مباراة اليوم",
+      "count": "3 أدوات حارة",
+      "squad": "قرعة التشكيلة",
+      "squadSub": "فرق متوازنة ⚖️",
+      "gear": "عتاد المباراة",
+      "gearSub": "مين جايب الكورة؟ ⚽",
+      "cost": "قطية الملعب",
+      "costSub": "حاسبة الحساب 💰"
+    },
+    "quick": {
+      "book": "احجز ملعب",
+      "bookSub": "أفضل حلبات وملاعب العاصمة",
+      "missing": "ناقصنا واحد",
+      "missingSub": "انضم لمباراة فاقدة لاعب",
+      "needed_zero": "لا أحد مطلوب",
+      "needed_one": "مطلوب واحد",
+      "needed_two": "مطلوبان",
+      "needed_few": "{{count}} مطلوبين",
+      "needed_many": "{{count}} مطلوباً",
+      "needed_other": "{{count}} مطلوب",
+      "record": "سجّل لقطة",
+      "recordSub": "وثق أجمل أهداف الليلة",
+      "highlights": "أبرز اللقطات",
+      "highlightsSub": "المهارات وصواريخ الحارة"
+    },
+    "missing": {
+      "title": "ناقصنا واحد الآن",
+      "viewAll": "عرض الكل ({{count}})",
+      "tonight": "الليلة",
+      "today": "اليوم",
+      "tomorrow": "بكرا",
+      "when": "{{day}} • {{time}} ({{relative}})",
+      "perPlayer": "حصة اللاعب",
+      "wanted": "مطلوب: {{position}}",
+      "wantedAny": "مطلوب: أي مركز",
+      "join": "انضم الآن للتشكيلة",
+      "joined": "تم تأكيد طلبك!",
+      "shareInvite": "مشاركة الدعوة عبر واتساب",
+      "shareText": "يا شباب ناقصنا {{position}} بـ{{pitch}} {{when}} ({{price}}). مين جاهز ينزل معنا؟\n{{url}}",
+      "anyPosition": "لاعب"
+    },
+    "friends": {
+      "title": "شلة الحارة والأصدقاء",
+      "online_zero": "لا أحد متصل",
+      "online_one": "متصل واحد للعب",
+      "online_two": "متصلان للعب",
+      "online_few": "{{count}} متصلين للعب",
+      "online_many": "{{count}} متصلاً للعب",
+      "online_other": "{{count}} متصل للعب",
+      "sub": "أرسل دعوة سريعة أو أضف لاعبين جدد لمباراة اليوم",
+      "manage": "إدارة الشلة"
+    },
+    "clips": {
+      "title": "لقطات حارتنا المشتعلة 🔥",
+      "all": "كل اللقطات",
+      "play": "تشغيل اللقطة",
+      "shareText": "🔥 شيك على لقطة {{player}} في {{app}}: \"{{title}}\"!\n{{url}}",
+      "empty": "لسا ما في لقطات بالحارة. سجّل مباراتك الجاية وكن أول نجم."
+    },
+    "pulse": {
+      "title": "نبض الحارة والنتائج",
+      "live": "مباشر الآن",
+      "resultTitle": "ديربي {{hara}} و{{opponent}}",
+      "resultBadge": "انتهت",
+      "resultBody": "فوز تاريخي لكتيبة {{hara}} بنتيجة <b>{{score}}</b> بعد شوط ناري.",
+      "hatTrickTitle": "هاتريك يا كابتن!",
+      "hatTrickBody": "المهاجم <b>{{player}}</b> يرفع تقييمه إلى {{form}} بعد ثلاثية في شباك {{against}}.",
+      "newPitchTitle": "ملعب جديد بالحارة!",
+      "newPitchBadge": "احجز الآن",
+      "newPitchBody": "{{pitch}} انضم في {{hara}}.. أول حجز عليك!"
+    }
   }
 }

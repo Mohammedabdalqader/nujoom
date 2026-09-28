@@ -5,6 +5,135 @@
   "common": {
     "beta": "Beta",
     "players_one": "{{count}} player",
-    "players_other": "{{count}} players"
+    "players_other": "{{count}} players",
+    "close": "Close",
+    "share": "Share",
+    "shareWhatsApp": "Share on WhatsApp",
+    "copied": "Copied to the clipboard!",
+    "viewAll": "View all",
+    "jod": "JOD",
+    "jodCode": "JOD",
+    "vs": "vs",
+    "size": "{{n}}-a-side"
+  },
+  "nav": {
+    "home": "Home",
+    "pitches": "Pitches",
+    "match": "Match",
+    "rankings": "Leaders",
+    "profile": "Me"
+  },
+  "header": {
+    "subtitle": {
+      "home": "NUJOOM AL-HARA • Home Feed",
+      "pitches": "NUJOOM AL-HARA • Pitches And Booking",
+      "match": "NUJOOM AL-HARA • Match Day And Clips",
+      "rankings": "NUJOOM AL-HARA • Rankings And Leaderboards",
+      "profile": "NUJOOM AL-HARA • Player Profile And Fifa Card"
+    },
+    "logo": "Nujoom al-Hara logo",
+    "lightMode": "Switch to daylight mode",
+    "darkMode": "Switch to night mode",
+    "friends": "Your squad and friends",
+    "notifications": "Notifications",
+    "profile": "Profile"
+  },
+  "positions": {
+    "GK": "Goalkeeper",
+    "DEF": "Defender",
+    "MID": "Midfielder",
+    "FWD": "Forward"
+  },
+  "kits": {
+    "blue": "Blue kit",
+    "orange": "Orange kit"
+  },
+  "clipTypes": {
+    "goal": "Screamer 🚀",
+    "save": "Wonder save 🧤",
+    "skill": "Filthy skill 🔥",
+    "moment": "Crazy moment ⚡"
+  },
+  "home": {
+    "greeting": "Hey Captain {{name}}",
+    "ready": "Ready for tonight's game? Your hara is waiting",
+    "betaRating": "Beta Rating",
+    "nextMatch": {
+      "ranked": "Ranked match",
+      "startsIn": "Kicks off in",
+      "hours": "hrs",
+      "minutes": "min",
+      "seconds": "sec",
+      "details": "Match details and lineup",
+      "share": "Share match details",
+      "shareText": "⚽ Tonight on {{app}}: {{teamA}} vs {{teamB}} at {{pitch}}, {{time}}. Come watch or get ready!\n{{url}}",
+      "emptyTitle": "No match coming up",
+      "emptyBody": "Book a pitch, invite the squad and show the hara your level.",
+      "emptyCta": "Book a pitch"
+    },
+    "tools": {
+      "title": "Match-day tools",
+      "count": "3 hara tools",
+      "squad": "Team draw",
+      "squadSub": "Balanced teams ⚖️",
+      "gear": "Match gear",
+      "gearSub": "Who's bringing the ball? ⚽",
+      "cost": "Pitch kitty",
+      "costSub": "Split the bill 💰"
+    },
+    "quick": {
+      "book": "Book a pitch",
+      "bookSub": "The capital's best cages and pitches",
+      "missing": "Missing one",
+      "missingSub": "Join a game that's a player short",
+      "needed_one": "{{count}} needed",
+      "needed_other": "{{count}} needed",
+      "record": "Record a clip",
+      "recordSub": "Capture tonight's best goals",
+      "highlights": "Highlights",
+      "highlightsSub": "Skills and screamers from the hara"
+    },
+    "missing": {
+      "title": "Missing one now",
+      "viewAll": "View all ({{count}})",
+      "tonight": "Tonight",
+      "today": "Today",
+      "tomorrow": "Tomorrow",
+      "when": "{{day}} • {{time}} ({{relative}})",
+      "perPlayer": "Per player",
+      "wanted": "Wanted: {{position}}",
+      "wantedAny": "Wanted: any position",
+      "join": "Join the lineup now",
+      "joined": "You're in!",
+      "shareInvite": "Share the invite on WhatsApp",
+      "shareText": "Guys, we're missing a {{position}} at {{pitch}} {{when}} ({{price}}). Who's in?\n{{url}}",
+      "anyPosition": "player"
+    },
+    "friends": {
+      "title": "Your hara squad",
+      "online_one": "{{count}} online to play",
+      "online_other": "{{count}} online to play",
+      "sub": "Send a quick invite or add new players for today's game",
+      "manage": "Manage squad"
+    },
+    "clips": {
+      "title": "Hottest clips in the hara 🔥",
+      "all": "All clips",
+      "play": "Play clip",
+      "shareText": "🔥 Check out {{player}}'s clip on {{app}}: \"{{title}}\"!\n{{url}}",
+      "empty": "No clips in the hara yet. Record your next match and be the first star."
+    },
+    "pulse": {
+      "title": "Hara pulse and results",
+      "live": "Live now",
+      "resultTitle": "{{hara}} vs {{opponent}} derby",
+      "resultBadge": "Full time",
+      "resultBody": "A historic {{hara}} win, <b>{{score}}</b>, after a fiery half.",
+      "hatTrickTitle": "Hat-trick, Captain!",
+      "hatTrickBody": "<b>{{player}}</b> climbs to {{form}} after a hat-trick against {{against}}.",
+      "newPitchTitle": "New pitch in the hara!",
+      "newPitchBadge": "Book now",
+      "newPitchBody": "{{pitch}} just joined in {{hara}}. First booking's yours!"
+    }
   }
 }

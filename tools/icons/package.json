@@ -1,0 +1,8 @@
+{
+  "name": "@nujoom/tools-icons",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "uv run build.py"
+  }
+}

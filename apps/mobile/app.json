@@ -1,0 +1,61 @@
+{
+  "expo": {
+    "name": "نجوم الحارة",
+    "slug": "nujoom",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "nujoom",
+    "userInterfaceStyle": "automatic",
+    "backgroundColor": "#111317",
+    "ios": {
+      "bundleIdentifier": "app.nujoom.hara",
+      "supportsTablet": false
+    },
+    "android": {
+      "package": "app.nujoom.hara",
+      "adaptiveIcon": {
+        "backgroundColor": "#111317",
+        "foregroundImage": "./assets/images/adaptive-icon.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "output": "single",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-localization",
+        {
+          "supportsRTL": true,
+          "supportedLocales": ["ar", "en"]
+        }
+      ],
+      "expo-sqlite",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#111317",
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 120
+        }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/MaterialSymbolsOutlined.ttf",
+            "./assets/fonts/MaterialSymbolsOutlinedFilled.ttf"
+          ]
+        }
+      ],
+      "expo-audio"
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}

@@ -72,3 +72,37 @@ describe('bidiIsolate', () => {
     expect(bidiIsolate('Sami خالد')).toBe('⁨Sami خالد⁩');
   });
 });
+
+describe('display helpers', () => {
+  it('compacts counters like the design', async () => {
+    const { compactCount } = await import('./format');
+    expect(compactCount(842)).toBe('842');
+    expect(compactCount(1800)).toBe('1.8k');
+    expect(compactCount(3240)).toBe('3.2k');
+    expect(compactCount(12_400)).toBe('12k');
+    expect(compactCount(1_250_000)).toBe('1.3m');
+  });
+
+  it('formats countdowns and match clocks', async () => {
+    const { formatCountdown, formatMatchClock } = await import('./format');
+    expect(formatCountdown(8073_000)).toBe('02:14:33');
+    expect(formatCountdown(-5)).toBe('00:00:00');
+    expect(formatMatchClock((36 * 60 + 31) * 1000)).toBe('36:31');
+    expect(formatMatchClock(75 * 60 * 1000)).toBe('75:00');
+  });
+
+  it('writes relative times with Arabic plural forms', async () => {
+    const { formatRelativeTime } = await import('./format');
+    const now = new Date('2026-09-28T20:00:00Z');
+    expect(formatRelativeTime('2026-09-28T18:00:00Z', 'en', now)).toBe('2 hours ago');
+    expect(formatRelativeTime('2026-09-28T18:00:00Z', 'ar', now)).toBe('قبل ساعتين');
+  });
+
+  it('builds initials like the design', async () => {
+    const { initials } = await import('./format');
+    expect(initials('عمر المالكي')).toBe('ع.م');
+    expect(initials('سيف الكيلاني')).toBe('س.ك');
+    expect(initials('Omar Malki')).toBe('OM');
+    expect(initials('يزن')).toBe('ي');
+  });
+});

@@ -32,8 +32,9 @@ function baseKeys(flat: Record<string, string>): Set<string> {
   return new Set(Object.keys(flat).map((key) => key.replace(PLURAL_SUFFIX, '')));
 }
 
+/** The distinct variables a string interpolates (a language may repeat one, e.g. "5 ضد 5"). */
 function placeholders(value: string): string[] {
-  return [...value.matchAll(/\{\{\s*(\w+)\s*\}\}/g)].map((m) => m[1] ?? '').sort();
+  return [...new Set([...value.matchAll(/\{\{\s*(\w+)\s*\}\}/g)].map((m) => m[1] ?? ''))].sort();
 }
 
 describe('translation files', () => {

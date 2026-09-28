@@ -122,3 +122,15 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
 - Screens are thin containers; presentational components take view-model props.
 - While R0 has no backend, every query resolves from typed preview data (`src/preview/`). Each feature swaps to Supabase in its milestone without touching the views.
 - `EXPO_PUBLIC_PREVIEW=1` keeps preview data for design reviews.
+
+**D-020 NativeWind 5.0.0-rc.0 with Tailwind 4, pinned exactly.**
+
+- NativeWind 4 targets older Expo SDKs. The 5.0.0-rc.0 / react-native-css 3.1.0-rc.0 pair is the one the NativeWind team verified on our exact stack (Expo 57, RN 0.86.3, Reanimated 4.5.1, Worklets 0.10.1).
+- Tailwind 4 is also what the prototype was written in, so its `@theme` tokens port directly.
+- Settings:
+  - `lightningcss` is overridden to 1.30.1 so Tailwind and react-native-css share one build; mixed versions break native compilation.
+  - Metro runs with `inlineVariables: false` so the colour tokens stay runtime CSS variables on native. Otherwise the dark values are baked in and the light theme cannot switch.
+- Spike results on Android:
+  - Compiled natively: gradients (to `experimental_backgroundImage`), glows (`boxShadow`), `animate-ping`/`pulse` (Reanimated CSS animations), `active:scale-*` and opacity modifiers on tokens (runtime `color-mix`).
+  - `backdrop-blur` does nothing on native, so the header and tab bar use `expo-blur`.
+- Revisit when NativeWind 5 is final.

@@ -51,3 +51,8 @@ Thumbs.db
 .idea/
 .vscode/*
 !.vscode/extensions.json
+
+# local Expo preview config for the Claude app
+.claude/
+# tool caches
+tools/icons/.cache/
