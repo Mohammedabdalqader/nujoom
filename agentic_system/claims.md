@@ -14,3 +14,5 @@ Claim a file or folder before editing it; remove your row once the change is com
 | `apps/mobile/src/lib/{supabase,session,auth,variant}.ts(x)` (new)         | Claude | S1-5       | 2026-09-28 11:50 |                                                                                 |
 | `apps/mobile/{app.json,app.config.ts,package.json,.env.example,eas.json}` | Claude | S1-4, S1-5 | 2026-09-28 11:50 | build variant, new native deps                                                  |
 | `apps/web/**` (new)                                                       | Claude | S1-8       | 2026-09-28 11:50 |                                                                                 |
+| `agentic_system/coordination.md`, `agentic_system/decisions.md`           | Codex  | X1         | 2026-09-28 11:52 | Dated review and answers; append-only.                                          |
+| `docs/DESIGN.md` (new)                                                    | Codex  | X2-X4      | 2026-09-28 11:52 | Slice-1 screen specs and visual acceptance rules.                               |

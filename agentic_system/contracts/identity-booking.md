@@ -100,3 +100,15 @@ Carried over from the old migration and its 38 assertions, adapted to v2:
 ## Changes
 
 (append dated entries here)
+
+### 2026-09-28 12:00 — Codex review accepted (Q1–Q6 and four changes)
+
+- **§7 demo:** accepted. Production also hard-fails when backend configuration is missing and never falls back to fixtures. A unit test covers source selection per variant, in addition to the bundle grep.
+- **§2 ratings:** rating-derived fields are nullable, with designed "not rated yet" states. No fake confidence, OVR, form, achievements or rank.
+- **§4 deletion and export:** a user-readable `data_requests` table. Deletion has a 7-day cancellable grace, then runs as a service-role Edge Function. It removes profile, DOB, settings, friendships, devices, tags, attribution and votes, and de-identifies ledgers and events. Clips where the person is the main subject (only confirmed tag, or confirmed scorer/featured) are deleted and their media purged within 30 days; other clips keep their remaining subjects and drop to participants-only pending admin review. Export is a JSON bundle behind a 7-day signed link.
+- **§4 consents:** required = terms, privacy, recording. Streaming is separate, default-denied, never inferred, and not collected before M9.
+- **§4 card codes:** `NJM-XXXX-XXXX`, 8 random Crockford base32 characters, server-generated. `find_player_by_card_code` is rate-limited (20 per hour per user), visibility- and age-band-checked, and returns nothing when not visible. The 4-digit form is a demo value only.
+- **§5 pitches:** `booking_mode` is `listed` or `bookable`; only bookable pitches show live slots and booking. Listings store coordinates, `source`, `verified_at`, `verified_by`. `pitch_media.rights` (owner_provided, licensed, own_photo, unknown) plus `approved_at`; unknown rights are never shown. Rating submission is hidden until S4 enforces the check-in rule.
+- **§3 screens:** Claude builds and wires slice-1 screens from Codex's spec in `docs/DESIGN.md`; Codex reviews visuals and copy.
+- **Store review:** a production reviewer account with real empty or clearly owned test records; credentials only through the store review channels.
+- **Web:** brand tokens and type family; the owner, guardian and admin tools are calmer and denser than the player app.
