@@ -345,6 +345,57 @@ export type Database = {
           },
         ]
       }
+      facility_claims: {
+        Row: {
+          created_at: string
+          decided_at: string | null
+          decided_by: string | null
+          evidence_paths: string[]
+          facility_id: string
+          id: string
+          reason: string | null
+          status: Database["public"]["Enums"]["claim_status"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          evidence_paths?: string[]
+          facility_id: string
+          id?: string
+          reason?: string | null
+          status?: Database["public"]["Enums"]["claim_status"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          evidence_paths?: string[]
+          facility_id?: string
+          id?: string
+          reason?: string | null
+          status?: Database["public"]["Enums"]["claim_status"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "facility_claims_facility_id_fkey"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "facilities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "facility_claims_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       feature_flags: {
         Row: {
           description: string | null
@@ -513,6 +564,57 @@ export type Database = {
         }
         Relationships: []
       }
+      listing_reviews: {
+        Row: {
+          action: string
+          after: Json | null
+          before: Json | null
+          created_at: string
+          facility_id: string | null
+          id: number
+          pitch_id: string | null
+          reason: string | null
+          reviewer: string | null
+        }
+        Insert: {
+          action: string
+          after?: Json | null
+          before?: Json | null
+          created_at?: string
+          facility_id?: string | null
+          id?: never
+          pitch_id?: string | null
+          reason?: string | null
+          reviewer?: string | null
+        }
+        Update: {
+          action?: string
+          after?: Json | null
+          before?: Json | null
+          created_at?: string
+          facility_id?: string | null
+          id?: never
+          pitch_id?: string | null
+          reason?: string | null
+          reviewer?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listing_reviews_facility_id_fkey"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "facilities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "listing_reviews_pitch_id_fkey"
+            columns: ["pitch_id"]
+            isOneToOne: false
+            referencedRelation: "pitches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       neighborhoods: {
         Row: {
           city_id: number
@@ -651,6 +753,42 @@ export type Database = {
             columns: ["pitch_id"]
             isOneToOne: true
             referencedRelation: "pitches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pitch_staff: {
+        Row: {
+          created_at: string
+          facility_id: string
+          role: Database["public"]["Enums"]["staff_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          facility_id: string
+          role?: Database["public"]["Enums"]["staff_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          facility_id?: string
+          role?: Database["public"]["Enums"]["staff_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pitch_staff_facility_id_fkey"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "facilities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pitch_staff_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -859,6 +997,47 @@ export type Database = {
           },
         ]
       }
+      verification_events: {
+        Row: {
+          created_at: string
+          evidence: Json
+          from_state: Database["public"]["Enums"]["pitch_participation"]
+          id: number
+          pitch_id: string
+          reason: string | null
+          recorded_by: string | null
+          to_state: Database["public"]["Enums"]["pitch_participation"]
+        }
+        Insert: {
+          created_at?: string
+          evidence?: Json
+          from_state: Database["public"]["Enums"]["pitch_participation"]
+          id?: never
+          pitch_id: string
+          reason?: string | null
+          recorded_by?: string | null
+          to_state: Database["public"]["Enums"]["pitch_participation"]
+        }
+        Update: {
+          created_at?: string
+          evidence?: Json
+          from_state?: Database["public"]["Enums"]["pitch_participation"]
+          id?: never
+          pitch_id?: string
+          reason?: string | null
+          recorded_by?: string | null
+          to_state?: Database["public"]["Enums"]["pitch_participation"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "verification_events_pitch_id_fkey"
+            columns: ["pitch_id"]
+            isOneToOne: false
+            referencedRelation: "pitches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -874,9 +1053,48 @@ export type Database = {
         }
         Returns: Json
       }
+      admin_create_listing: {
+        Args: {
+          p_facility: Json
+          p_pitches: Json
+          p_source?: Database["public"]["Enums"]["evidence_source"]
+        }
+        Returns: string
+      }
+      admin_decide_claim: {
+        Args: { p_claim: string; p_decision: string; p_reason?: string }
+        Returns: Json
+      }
+      admin_review_listing: {
+        Args: {
+          p_action: string
+          p_id: string
+          p_patch?: Json
+          p_reason?: string
+          p_target: string
+        }
+        Returns: Json
+      }
+      admin_set_participation: {
+        Args: {
+          p_evidence?: Json
+          p_pitch: string
+          p_reason: string
+          p_to: Database["public"]["Enums"]["pitch_participation"]
+        }
+        Returns: undefined
+      }
+      admin_verify_authority: {
+        Args: { p_evidence?: Json; p_facility: string }
+        Returns: undefined
+      }
       cancel_account_deletion: { Args: never; Returns: Json }
       catalog_pitch: { Args: { p_pitch_id: string }; Returns: Json }
       check_data_rights_secret: { Args: { p_secret: string }; Returns: boolean }
+      claim_facility: {
+        Args: { p_evidence_paths?: string[]; p_facility: string }
+        Returns: string
+      }
       complete_onboarding: {
         Args: {
           p_city_id: number
@@ -932,6 +1150,14 @@ export type Database = {
       my_data_requests: { Args: never; Returns: Json }
       my_guardians: { Args: never; Returns: Json }
       name_guardian: { Args: { p_email: string }; Returns: Json }
+      owner_confirm_field: {
+        Args: { p_facts?: Json; p_operations?: Json; p_pitch: string }
+        Returns: undefined
+      }
+      owner_set_schedule_active: {
+        Args: { p_active: boolean; p_pitch: string }
+        Returns: undefined
+      }
       player_profile: { Args: { p_user: string }; Returns: Json }
       prepare_account_deletion: { Args: { p_request: string }; Returns: string }
       record_consent: {
@@ -956,6 +1182,12 @@ export type Database = {
     }
     Enums: {
       age_group: "U12" | "U14" | "U16" | "U18" | "ADULT"
+      claim_status:
+        | "submitted"
+        | "evidence_requested"
+        | "approved"
+        | "rejected"
+        | "withdrawn"
       consent_type: "terms" | "privacy" | "recording" | "streaming"
       data_request_kind: "export" | "deletion"
       data_request_status:
@@ -1010,6 +1242,7 @@ export type Database = {
         | "other"
       player_position: "GK" | "DEF" | "MID" | "FWD"
       profile_visibility: "public" | "city" | "private"
+      staff_role: "owner" | "staff"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1138,6 +1371,13 @@ export const Constants = {
   public: {
     Enums: {
       age_group: ["U12", "U14", "U16", "U18", "ADULT"],
+      claim_status: [
+        "submitted",
+        "evidence_requested",
+        "approved",
+        "rejected",
+        "withdrawn",
+      ],
       consent_type: ["terms", "privacy", "recording", "streaming"],
       data_request_kind: ["export", "deletion"],
       data_request_status: [
@@ -1199,6 +1439,7 @@ export const Constants = {
       ],
       player_position: ["GK", "DEF", "MID", "FWD"],
       profile_visibility: ["public", "city", "private"],
+      staff_role: ["owner", "staff"],
     },
   },
 } as const

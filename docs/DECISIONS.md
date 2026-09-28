@@ -399,3 +399,23 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
   - pgTAP `070-catalog.sql` has 30 assertions (231 total). It covers contract cases 1–5 and 9–10, plus privately staged operations staying out of search and failing the gate (7b's read side).
   - Live on the project: a signed-in search returns an empty list (nothing is published yet). Anon and direct table reads are refused.
 - **Next (D1b):** the review, outreach, claim and verification RPCs, and the lifecycle tests 7a/7b.
+
+**D-046 The catalog's verification lifecycle (D1b part 1) (2026-09-28).**
+
+- **New tables:** `pitch_staff` (who runs a venue), `facility_claims` ("this is my venue", with private evidence paths), and the append-only `listing_reviews` and `verification_events`. Clients read none of them directly.
+- **Admin RPCs** (checked against `app_admins`, otherwise `forbidden`):
+  - `admin_create_listing`: a candidate facility and its fields; every fact records its source.
+  - `admin_review_listing`: publish, hide, close, reject or mark duplicate (the original is required), or update facts with evidence. A school or members-only venue is refused as `access_not_public`.
+  - `admin_decide_claim`: approval makes the person owner and the venue `claimed`, never the badge.
+  - `admin_verify_authority`: only from `claimed`.
+  - `admin_set_participation`: the only badge writer. The D1a trigger re-checks verified authority and an active schedule.
+- **Operator RPCs** (staff of the venue only):
+  - `owner_confirm_field`: operator-sourced facts, plus price and slot length. Operations may be created while not verified.
+  - `owner_set_schedule_active`: turn the schedule on or off. A staged active schedule stays private and unbookable until the badge.
+- **Claims:** `claim_facility` is for adults only, one open claim per person and venue, 3 a day, with evidence paths confined to the person's own folder.
+- **Records:** every change writes a review or verification event and the audit log. The data export now lists the venues a person manages and their claims (the coverage guard enforces it); account deletion removes both.
+- **Evidence:** pgTAP `080-catalog-lifecycle.sql` has 34 assertions (265 total), all run through the real RPCs. It covers contract cases 5, 6, 7, 7a, 7b and 12:
+  - The full journey: create → publish → claim → approve → authority → confirm and price → private active schedule → verified and bookable.
+  - A pause keeps the badge but withholds booking; an ended partnership downgrades immediately.
+  - Negative paths: not-admin, youth, duplicate claim, claim-only rights, other staff, no badge before authority or schedule, append-only history.
+- **Next (part 2):** outreach contacts and attempts, community reports, and rights-cleared photos. Then the scheduled freshness downgrade (4a), and D2, the import from reviewed records.
