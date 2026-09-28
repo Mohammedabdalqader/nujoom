@@ -16,6 +16,8 @@ import { kv } from '@/lib/kv';
 
 const THEME_KEY = 'settings.theme';
 
+const THEME_VARIABLES = { dark: themeVariables('dark'), light: themeVariables('light') } as const;
+
 type ThemeContextValue = {
   theme: ThemeName;
   setTheme: (theme: ThemeName) => void;
@@ -54,9 +56,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   return (
     <ThemeContext.Provider value={value}>
-      <VariableContextProvider value={theme === 'dark' ? {} : themeVariables('light')}>
-        {children}
-      </VariableContextProvider>
+      {/* Always the full set for the active theme: on native, an empty set may not clear
+          the previous theme's values (D-029). */}
+      <VariableContextProvider value={THEME_VARIABLES[theme]}>{children}</VariableContextProvider>
     </ThemeContext.Provider>
   );
 }

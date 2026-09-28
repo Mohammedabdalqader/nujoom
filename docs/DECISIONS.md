@@ -196,3 +196,8 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
 
 - The owner saw a left-to-right layout on the phone while the web preview was right-to-left. Development builds get RTL support from the `expo-localization` plugin, but Expo Go reads `extra.supportsRTL` from the manifest and otherwise resets the direction on every launch. Our one-reload guard then stops retrying, leaving Arabic text in an LTR layout.
 - `app.json` now sets `extra.supportsRTL: true`. It must be verified on the owner's phone after restarting `npx expo start --clear`. Proper RTL and theme checks belong on a development build (`eas build --profile development`), as in the old project.
+
+**D-029 The theme provider always passes the full variable set (2026-09-28).**
+
+- Switching back to dark used to pass an empty variable set and rely on `global.css` defaults. On native, the NativeWind 5 release candidate may keep the previous light values in that case, which matches the owner's "dark/light doesn't work correctly" on the phone.
+- `ThemeProvider` now passes the complete dark or light set every time. Web is verified in both themes; the phone still needs the owner's check after `npx expo start --clear`.
