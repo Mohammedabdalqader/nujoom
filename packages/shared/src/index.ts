@@ -4,3 +4,4 @@ export * from './config';
 export * from './constants';
 export * from './format';
 export * from './phone';
+export * from './progression';

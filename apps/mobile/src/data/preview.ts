@@ -15,6 +15,7 @@ import type {
   MatchDay,
   Me,
   Pitch,
+  ProfileExtras,
 } from '@/data/types';
 
 const now = Date.now();
@@ -38,10 +39,13 @@ export const previewMe: Me = {
   avatarUrl: PHOTOS.ahmadMalki,
   city: { ar: 'عمان', en: 'Amman' },
   country: { ar: 'الأردن', en: 'Jordan' },
+  countryCode: 'JO',
   neighborhood: hara.hussein,
   position: 'FWD',
   positionTag: 'ST',
   cardCode: 'NJM-8701',
+  shirtNumber: 10,
+  accountVerified: true,
   isYouth: false,
   visibility: 'public',
   isVerifiedPlayer: true,
@@ -609,4 +613,51 @@ export const previewLeaderboard: Leaderboard = {
     elo: 1840,
     matchesToQualify: 0,
   },
+};
+
+export const previewProfileExtras: ProfileExtras = {
+  progress: [
+    { month: '2026-04', xp: 1150, goals: 7, assists: 3, matches: 6 },
+    { month: '2026-05', xp: 1480, goals: 9, assists: 4, matches: 8 },
+    { month: '2026-06', xp: 1820, goals: 12, assists: 5, matches: 9 },
+    { month: '2026-07', xp: 2150, goals: 14, assists: 4, matches: 10 },
+    { month: '2026-08', xp: 2490, goals: 11, assists: 3, matches: 7 },
+    { month: '2026-09', xp: 2840, goals: 14, assists: 5, matches: 8 },
+  ],
+  wallet: {
+    balance: 480,
+    totalEarned: 1320,
+    transactions: [
+      { id: 'tx-1', amount: 50, reason: 'mvp', at: minutes(-2 * 24 * 60), context: 'نسور العبدلي' },
+      {
+        id: 'tx-2',
+        amount: 30,
+        reason: 'hat_trick',
+        at: minutes(-4 * 24 * 60),
+        context: 'اللويبدة',
+      },
+      {
+        id: 'tx-3',
+        amount: 10,
+        reason: 'match_counted',
+        at: minutes(-4 * 24 * 60),
+        context: 'ملعب جبل الحسين',
+      },
+      {
+        id: 'tx-4',
+        amount: 10,
+        reason: 'match_counted',
+        at: minutes(-7 * 24 * 60),
+        context: 'ملعب الكرسي',
+      },
+    ],
+    counts: { match_counted: 48, mvp: 12, hat_trick: 3, tournament_win: 0 },
+  },
+  endorsements: [
+    { badge: 'finisher', count: 14, lastFrom: 'عمر الدوسري' },
+    { badge: 'sportsman', count: 9, lastFrom: 'طارق الزعبي' },
+    { badge: 'leader', count: 5, lastFrom: 'سيف العبدلي' },
+    { badge: 'playmaker', count: 4, lastFrom: null },
+  ],
+  clipsCount: 14,
 };

@@ -40,6 +40,8 @@ function Navigator() {
         <Stack.Screen name="book/[pitchId]" options={DIALOG} />
         <Stack.Screen name="checkin" options={DIALOG} />
         <Stack.Screen name="player/[id]" />
+        <Stack.Screen name="wallet" options={DIALOG} />
+        <Stack.Screen name="settings" />
       </Stack>
     </>
   );

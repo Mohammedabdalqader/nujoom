@@ -96,3 +96,13 @@ export function initials(name: string): string {
   const arabic = /[؀-ۿ]/.test(name);
   return arabic ? letters.join('.') : letters.join('').toUpperCase();
 }
+
+/** Flag emoji for an ISO 3166-1 alpha-2 country code ("JO" → 🇯🇴). */
+export function flagEmoji(countryCode: string): string {
+  return String.fromCodePoint(
+    ...countryCode
+      .toUpperCase()
+      .split('')
+      .map((c) => 0x1f1e6 + c.charCodeAt(0) - 65),
+  );
+}

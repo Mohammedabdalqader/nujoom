@@ -1,4 +1,6 @@
-import type { BusyRange, OpeningHours } from '@nujoom/shared';
+import type { BusyRange, MonthProgress, OpeningHours } from '@nujoom/shared';
+
+export type { MonthProgress };
 
 /**
  * View models the screens render. The data layer (src/data/api.ts) produces them from Supabase,
@@ -33,11 +35,16 @@ export type Me = PlayerRef & {
   firstName: string;
   city: Bilingual;
   country: Bilingual;
+  countryCode: string;
   neighborhood: Bilingual | null;
   position: Position;
   /** FIFA-style tag shown on the card: ST, CM, CB, GK … */
   positionTag: string;
   cardCode: string;
+  /** Favourite shirt number, printed on the card ("STREET CARD #10"). */
+  shirtNumber: number | null;
+  /** Email confirmed ("حساب موثق"). */
+  accountVerified: boolean;
   isYouth: boolean;
   visibility: 'public' | 'city' | 'private';
   /** Ranking-eligible ("لاعب معتمد"). */
@@ -315,4 +322,39 @@ export type Leaderboard = {
   playerOfWeek: PlayerOfWeek | null;
   rows: LeaderboardRow[];
   me: MyRank | null;
+};
+
+export type StarsReason = 'match_counted' | 'mvp' | 'hat_trick' | 'tournament_win';
+
+export type StarsTx = {
+  id: string;
+  amount: number;
+  reason: StarsReason;
+  at: string;
+  /** Context for the history line, e.g. the pitch or opponent. */
+  context: string | null;
+};
+
+export type Wallet = {
+  balance: number;
+  totalEarned: number;
+  transactions: StarsTx[];
+  counts: Record<StarsReason, number>;
+};
+
+export type EndorsementBadge =
+  'finisher' | 'playmaker' | 'wall' | 'safe_hands' | 'leader' | 'sportsman';
+
+export type EndorsementSummary = {
+  badge: EndorsementBadge;
+  count: number;
+  /** The latest player who gave it (shown only when they are visible to the viewer). */
+  lastFrom: string | null;
+};
+
+export type ProfileExtras = {
+  progress: MonthProgress[];
+  wallet: Wallet;
+  endorsements: EndorsementSummary[];
+  clipsCount: number;
 };

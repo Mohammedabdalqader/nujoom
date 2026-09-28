@@ -10,6 +10,7 @@ import {
   previewPitches,
   previewMatchDay,
   previewLeaderboard,
+  previewProfileExtras,
 } from '@/data/preview';
 import type {
   AppNotification,
@@ -21,6 +22,7 @@ import type {
   MatchDay,
   Me,
   Pitch,
+  ProfileExtras,
 } from '@/data/types';
 
 /**
@@ -36,6 +38,7 @@ export const keys = {
   pitches: ['pitches'] as const,
   areas: ['areas'] as const,
   matchDay: ['match-day'] as const,
+  profileExtras: ['profile', 'extras'] as const,
   leaderboard: (scope: string, age: string, period: string) =>
     ['leaderboard', scope, age, period] as const,
 };
@@ -79,6 +82,10 @@ export const useLeaderboard = (scope: string, age: string, period: string) =>
     queryKey: keys.leaderboard(scope, age, period),
     queryFn: preview(previewLeaderboard),
   });
+
+/** Progress charts, stars wallet, endorsements and clip count for the Me tab. */
+export const useProfileExtras = () =>
+  useQuery<ProfileExtras>({ queryKey: keys.profileExtras, queryFn: preview(previewProfileExtras) });
 
 /** Local cache updates for the preview phase; replaced by mutations with RPCs per milestone. */
 export function useCache() {

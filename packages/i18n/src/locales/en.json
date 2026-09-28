@@ -371,5 +371,214 @@
     "shareText": "🔥 My rating on {{app}}: {{elo}} points (#{{rank}} in {{scope}})! Check your rank in your hara.\n{{url}}",
     "empty": "No ranked players here yet. Play and record your matches!",
     "youthNote": "Youth boards are separate from adults, and player photos show only with a parent's permission."
+  },
+  "profile": {
+    "verified": "Verified account • {{city}} ({{visibility}})",
+    "unverified": "Unverified account • {{city}}",
+    "visibility": {
+      "public": "Public",
+      "city": "City",
+      "private": "Private"
+    },
+    "certified": "Certified player",
+    "edit": "Edit profile",
+    "card": {
+      "streetMvp": "STREET MVP",
+      "brand": "NUJOOM AL-HARA",
+      "footer": "STREET CARD #{{number}} • EDITION {{year}}",
+      "footerNoNumber": "STREET CARD • EDITION {{year}}",
+      "medal": "Golden street medal",
+      "attrs": {
+        "pac": "(Pace)",
+        "sho": "(Shooting)",
+        "pas": "(Passing)",
+        "dri": "(Dribbling)",
+        "def": "(Defending)",
+        "phy": "(Physical)"
+      }
+    },
+    "shareCard": "Share my player card on WhatsApp",
+    "shareText": "🔥 Check out {{name}}'s card ({{ovr}} {{tag}}) on {{app}}!\n⭐ Rating: {{form}} | Position: {{position}}\n📍 Hara: {{hara}}\nChallenge us next match and get the app.\n{{url}}",
+    "cardCode": "Card code: {{code}}",
+    "copied": "(Copied!)",
+    "downloadHd": "Download in HD",
+    "downloadSoon": "The HD card image arrives with the next card update.",
+    "theme": {
+      "title": "App look and lighting",
+      "sub": "Pick floodlit night mode or bright daylight mode",
+      "darkChip": "Night mode 🌙",
+      "lightChip": "Daylight mode ☀️",
+      "dark": "Night (floodlights)",
+      "light": "Daylight (bright and clean)"
+    },
+    "career": {
+      "title": "Career stats",
+      "season": "Season {{season}}",
+      "betaRating": "BETA RATING",
+      "hara": "Hara rating (Beta)",
+      "confidence": "{{level}} confidence ({{value}}%) from {{count}} matches",
+      "levelHigh": "High",
+      "levelMedium": "Medium",
+      "levelLow": "Low",
+      "last30": "Last 30 days",
+      "matches": "Matches played",
+      "matchesUnit": "matches",
+      "goals": "Goals scored",
+      "goalsUnit": "goals",
+      "assists": "Assists",
+      "assistsUnit": "assists",
+      "mvps": "Player of the match (MVP)",
+      "mvpsUnit": "gold shields"
+    },
+    "form": {
+      "title": "Last 5 matches (Form)",
+      "summary": "{{w}} W • {{d}} D • {{l}} L",
+      "mvp": "Player of the match",
+      "empty": "Play your first recorded match and your results show up here."
+    },
+    "charts": {
+      "title": "Level and goals over time",
+      "rising": "Trending up 📈",
+      "steady": "Steady",
+      "xpTab": "XP growth",
+      "goalsTab": "Goals scored",
+      "combinedTab": "Overview",
+      "currentXp": "Current XP",
+      "xpThisMonth": "{{value}} this month",
+      "goalRate": "Scoring rate",
+      "perMatch": "goals / match",
+      "bestMonth": "Best scoring month",
+      "current": "{{month}} (current)",
+      "xpTitle": "Player level and XP curve",
+      "goalsTitle": "Monthly goals and assists",
+      "combinedTitle": "Overall performance (XP and goals)",
+      "source": "From your recorded matches over the last {{count}} months",
+      "legendGoals": "Goals",
+      "legendAssists": "Assists",
+      "tipMonth": "{{month}}",
+      "tipXp": "XP:",
+      "tipMatches": "Matches played:",
+      "tipMatchesValue": "{{count}} matches",
+      "tipGoals": "Goals:",
+      "tipGoalsValue": "⚽ {{count}} goals",
+      "tipAssists": "Assists:",
+      "tipAssistsValue": "👟 {{count}} assists",
+      "insightUp": "<b>Great upward form:</b> your scoring rate is up {{value}}% over the last 3 months.",
+      "insightDown": "<b>Watch your form:</b> your scoring rate is down {{value}}% over the last 3 months.",
+      "insightFlat": "<b>Rock steady:</b> your scoring rate held over the last 3 months.",
+      "insightNone": "<b>Just getting started:</b> play more and your performance insights show up here."
+    },
+    "wallet": {
+      "title": "Digital wallet and stars",
+      "instant": "Instant balance ⭐",
+      "name": "Nujoom al-Hara wallet",
+      "badge": "BETA",
+      "sub": "Reward points for what you achieve on the pitch",
+      "tier": {
+        "bronze": "Bronze",
+        "silver": "Silver",
+        "gold": "Gold",
+        "legend": "Legendary"
+      },
+      "balanceLabel": "Your current stars balance",
+      "unit": "stars",
+      "totalEarned": "Total earned: <b>{{value}} ⭐</b>",
+      "nextTier": "{{value}} more to reach {{tier}}",
+      "topTier": "Top tier in the hara 👑",
+      "playEarn": "Play and earn stars",
+      "history": "Transaction history",
+      "noCash": "Stars are rewards and have no cash value.",
+      "earnTitle": "How to earn more stars",
+      "earnFree": "Earn as you play",
+      "ways": {
+        "tournament_win": {
+          "title": "Win a hara tournament",
+          "sub": "Given automatically to league champions",
+          "status": "Coming with tournaments"
+        },
+        "mvp": {
+          "title": "Player of the match (MVP)",
+          "sub": "Most votes in the hara vote",
+          "status": "Won {{count}} times"
+        },
+        "match_counted": {
+          "title": "Play a recorded match",
+          "sub": "Scan the pitch QR code when you arrive",
+          "status": "{{count}} recorded matches"
+        },
+        "hat_trick": {
+          "title": "Score a hat-trick",
+          "sub": "3 confirmed goals in one match",
+          "status": "{{count}} hat-tricks so far"
+        }
+      },
+      "historyTitle": "Stars transaction history",
+      "available": "Available balance:",
+      "earned": "Earned",
+      "closeHistory": "Close history",
+      "reason": {
+        "match_counted": "Recorded match at {{context}} ⚽",
+        "mvp": "MVP shield against {{context}} 🥇",
+        "hat_trick": "Hat-trick against {{context}} 🎯",
+        "tournament_win": "Won the {{context}} tournament 🏆"
+      },
+      "empty": "No transactions yet. Your first recorded match brings your first stars!"
+    },
+    "friends": {
+      "title": "Your hara squad and friends",
+      "manage": "Manage squad ({{count}})",
+      "online": "{{count}} online now",
+      "inMatch": "{{count}} in a match",
+      "oneTap": "One-tap invite",
+      "invite": "Invite",
+      "invited": "Match invite sent to {{name}}!",
+      "noMatchToInvite": "Book a match first to invite your friends",
+      "open": "Open friends and add new players",
+      "empty": "No friends yet. Add players with their card code."
+    },
+    "clips": {
+      "title": "My best goals and clips",
+      "count": "{{count}} clips",
+      "all": "View all",
+      "verifiedGoal": "Confirmed goal ⚽",
+      "assist": "Assist 👟",
+      "promptTitle": "Got a crazy moment?",
+      "promptBody": "Hit \"Clip it!\" during the match and it lands here once confirmed",
+      "promptCta": "Clip button",
+      "empty": "No clips of you yet. Your first one lands here."
+    },
+    "endorsements": {
+      "title": "Respect badges",
+      "count": "{{count}} endorsements from captains",
+      "badges": {
+        "finisher": {
+          "name": "Finisher",
+          "desc": "Clinical inside the box"
+        },
+        "playmaker": {
+          "name": "Playmaker",
+          "desc": "Passes that open defences"
+        },
+        "wall": {
+          "name": "The Wall",
+          "desc": "Nobody gets past them"
+        },
+        "safe_hands": {
+          "name": "Safe hands",
+          "desc": "A keeper you can count on"
+        },
+        "leader": {
+          "name": "Leader",
+          "desc": "Organises and fires up the team"
+        },
+        "sportsman": {
+          "name": "Sportsman",
+          "desc": "Fair play even in heated minutes"
+        }
+      },
+      "times": "× {{count}}",
+      "lastFrom": "Latest from {{name}}",
+      "empty": "After each match, teammates can give you respect badges."
+    }
   }
 }
