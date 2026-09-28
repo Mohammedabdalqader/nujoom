@@ -529,3 +529,20 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
   - a school-access venue can't be published and the reason (`access_not_public`) is shown
   - no page errors
 - **Next:** photo approval, authority verification, the badge (with the operator's schedule gate) and the outreach log.
+
+**D-056 Web admin: authority, the badge, photos and outreach (2026-09-29).**
+
+- **New decisions on the venue page** (server actions over the existing admin RPCs):
+  - **Verify authority** on a claimed venue.
+  - **Grant badge / Remove badge** per field. The database still refuses a grant without verified authority and an active schedule, and the page shows the reason (e.g. `schedule_not_active`).
+  - **Approve / reject** pending photos, with a preview.
+  - **Add contact** (name, phone, email) and **Log contact**: channel, outcome, internal note and follow-up date.
+- **Admin photo previews:** the `pitch-media` storage read rule now lets admins see pending and rejected photos, since they must see a photo before approving it. Players still see only approved photos of published listings. Previews are 10-minute signed links generated server-side with the admin's session. pgTAP +1 (352 total).
+- **Verified end to end** on the production build against the live project (temporary admin, a fresh owner tester and a `smoke_test` venue, all removed afterwards; nothing left in admins, venues, staff or photos):
+  - publish → claim → approve → verify authority (web)
+  - the badge is refused before the owner's schedule is active, then granted (web), and the field is bookable
+  - the owner uploads an owner-granted photo; the admin previews and approves it; it appears on the listing
+  - contact and outreach are logged, and outreach doesn't undo the partnership
+  - removing the badge hides the operations at once
+  - no page errors
+- **Also confirmed:** the claim rate limit (3 a day per person) triggered on repeated test runs, so the tests now use a fresh owner per run.

@@ -1262,9 +1262,38 @@
         "approve": "موافقة",
         "request_evidence": "طلب إثبات",
         "accepted": "قبول",
-        "rejected": "رفض"
+        "rejected": "رفض",
+        "verify_authority": "توثيق الصلاحية",
+        "grant_badge": "منح التوثيق",
+        "remove_badge": "إزالة التوثيق",
+        "approved": "اعتماد",
+        "add_contact": "أضف جهة اتصال",
+        "log_outreach": "سجّل التواصل"
       },
-      "done": "تم."
+      "done": "تم.",
+      "form": {
+        "name": "الاسم",
+        "phone": "الهاتف",
+        "email": "الإيميل",
+        "channel": "الطريقة",
+        "outcome": "النتيجة",
+        "note": "ملاحظة داخلية",
+        "followUp": "موعد المتابعة"
+      },
+      "channel": {
+        "phone": "هاتف",
+        "visit": "زيارة",
+        "whatsapp": "واتساب",
+        "email": "إيميل"
+      },
+      "outcome": {
+        "no_answer": "ما رد",
+        "interested": "مهتم",
+        "agreed": "وافق",
+        "declined": "رفض",
+        "wrong_contact": "رقم خطأ",
+        "opted_out": "ما بدو تواصل"
+      }
     }
   }
 }

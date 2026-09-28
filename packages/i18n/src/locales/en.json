@@ -1230,9 +1230,38 @@
         "approve": "Approve",
         "request_evidence": "Ask for evidence",
         "accepted": "Accept",
-        "rejected": "Reject"
+        "rejected": "Reject",
+        "verify_authority": "Verify authority",
+        "grant_badge": "Grant badge",
+        "remove_badge": "Remove badge",
+        "approved": "Approve",
+        "add_contact": "Add contact",
+        "log_outreach": "Log contact"
       },
-      "done": "Done."
+      "done": "Done.",
+      "form": {
+        "name": "Name",
+        "phone": "Phone",
+        "email": "Email",
+        "channel": "Channel",
+        "outcome": "Outcome",
+        "note": "Internal note",
+        "followUp": "Follow-up date"
+      },
+      "channel": {
+        "phone": "Phone",
+        "visit": "Visit",
+        "whatsapp": "WhatsApp",
+        "email": "Email"
+      },
+      "outcome": {
+        "no_answer": "No answer",
+        "interested": "Interested",
+        "agreed": "Agreed",
+        "declined": "Declined",
+        "wrong_contact": "Wrong contact",
+        "opted_out": "Opted out"
+      }
     }
   }
 }

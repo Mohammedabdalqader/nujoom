@@ -9,7 +9,16 @@ import { AdminFrame } from '@/components/AdminFrame';
 import { adminSession } from '@/lib/admin';
 import { getT, localeFrom } from '@/lib/i18n';
 
-import { decideClaim, decideReport, reviewListing } from './actions';
+import {
+  addContact,
+  decideClaim,
+  decideReport,
+  logOutreach,
+  reviewListing,
+  reviewMedia,
+  setBadge,
+  verifyAuthority,
+} from './actions';
 
 type Props = {
   params: Promise<{ locale: string; id: string }>;
@@ -153,6 +162,15 @@ export default async function AdminVenue({ params, searchParams }: Props) {
   const name = (locale === 'ar' ? (f.name_ar ?? f.name_en) : (f.name_en ?? f.name_ar)) as
     string | null;
   const base = { locale, facility: id };
+  // Short-lived previews of this venue's photos (admins may view pending ones, D-056).
+  const mediaPaths = list('media').map((m) => String(m.path));
+  const { data: signed } =
+    session && mediaPaths.length
+      ? await session.supabase.storage.from('pitch-media').createSignedUrls(mediaPaths, 600)
+      : { data: [] as { path: string | null; signedUrl: string; error: string | null }[] };
+  const previews = new Map((signed ?? []).map((x) => [x.path, x.error ? null : x.signedUrl]));
+  const input =
+    'rounded-md border border-border bg-surface-container-low px-2 py-1 text-sm text-on-surface';
   const listingButtons = (target: 'facility' | 'pitch', targetId: string, state: unknown) =>
     (NEXT[String(state)] ?? []).map(({ action, tone }) => (
       <Act
@@ -195,6 +213,14 @@ export default async function AdminVenue({ params, searchParams }: Props) {
       ) : null}
       <div className="mb-5 flex flex-wrap gap-2">
         {listingButtons('facility', id, f.listing_state)}
+        {f.operator_state === 'claimed' ? (
+          <Act
+            action={verifyAuthority}
+            fields={base}
+            label={t('web.admin.actions.verify_authority')}
+            tone="primary"
+          />
+        ) : null}
       </div>
 
       <Section title={t('web.admin.sections.facts')}>
@@ -237,6 +263,21 @@ export default async function AdminVenue({ params, searchParams }: Props) {
               (r) => (
                 <span className="flex flex-wrap gap-1">
                   {listingButtons('pitch', String(r.id), r.listing_state)}
+                  {r.participation === 'verified' ? (
+                    <Act
+                      action={setBadge}
+                      fields={{ ...base, pitch: String(r.id), to: 'not_verified' }}
+                      label={t('web.admin.actions.remove_badge')}
+                      tone="danger"
+                    />
+                  ) : f.operator_state === 'authority_verified' ? (
+                    <Act
+                      action={setBadge}
+                      fields={{ ...base, pitch: String(r.id), to: 'verified' }}
+                      label={t('web.admin.actions.grant_badge')}
+                      tone="primary"
+                    />
+                  ) : null}
                 </span>
               ),
             ],
@@ -348,9 +389,38 @@ export default async function AdminVenue({ params, searchParams }: Props) {
         <Rows
           rows={list('media')}
           cols={[
-            ['', (r) => text(r.path)],
+            [
+              '',
+              (r) =>
+                previews.get(String(r.path)) ? (
+                  // eslint-disable-next-line @next/next/no-img-element -- short-lived signed admin preview
+                  <img
+                    src={previews.get(String(r.path))!}
+                    alt=""
+                    className="h-16 w-24 rounded object-cover"
+                  />
+                ) : null,
+            ],
             ['', (r) => text(r.rights)],
+            ['', (r) => (r.attribution ? <bdi>{String(r.attribution)}</bdi> : null)],
             ['', (r) => text(r.status)],
+            [
+              '',
+              (r) =>
+                r.status === 'pending' ? (
+                  <span className="flex flex-wrap gap-1">
+                    {(['approved', 'rejected'] as const).map((decision) => (
+                      <Act
+                        key={decision}
+                        action={reviewMedia}
+                        fields={{ ...base, media: String(r.id), decision }}
+                        label={t(`web.admin.actions.${decision}`)}
+                        tone={decision === 'approved' ? 'primary' : 'danger'}
+                      />
+                    ))}
+                  </span>
+                ) : null,
+            ],
           ]}
         />
       </Section>
@@ -372,6 +442,37 @@ export default async function AdminVenue({ params, searchParams }: Props) {
             ['', (r) => text(r.email)],
           ]}
         />
+        <form action={addContact} className="mt-2 flex flex-wrap items-end gap-2">
+          <input type="hidden" name="locale" value={locale} />
+          <input type="hidden" name="facility" value={id} />
+          <input
+            name="name"
+            placeholder={t('web.admin.form.name')}
+            aria-label={t('web.admin.form.name')}
+            className={input}
+          />
+          <input
+            name="phone"
+            dir="ltr"
+            placeholder="+9627…"
+            aria-label={t('web.admin.form.phone')}
+            className={input}
+          />
+          <input
+            name="email"
+            dir="ltr"
+            type="email"
+            placeholder="name@example.com"
+            aria-label={t('web.admin.form.email')}
+            className={input}
+          />
+          <button
+            type="submit"
+            className="rounded-md border border-border-strong px-2.5 py-1 text-xs"
+          >
+            {t('web.admin.actions.add_contact')}
+          </button>
+        </form>
       </Section>
       <Section title={t('web.admin.sections.outreach')} count={list('outreach').length}>
         <Rows
@@ -383,6 +484,52 @@ export default async function AdminVenue({ params, searchParams }: Props) {
             ['', (r) => when(r.at)],
           ]}
         />
+        <form action={logOutreach} className="mt-2 flex flex-wrap items-end gap-2">
+          <input type="hidden" name="locale" value={locale} />
+          <input type="hidden" name="facility" value={id} />
+          <select name="channel" aria-label={t('web.admin.form.channel')} className={input}>
+            {(['phone', 'visit', 'whatsapp', 'email'] as const).map((c) => (
+              <option key={c} value={c}>
+                {t(`web.admin.channel.${c}`)}
+              </option>
+            ))}
+          </select>
+          <select name="outcome" aria-label={t('web.admin.form.outcome')} className={input}>
+            {(
+              [
+                'no_answer',
+                'interested',
+                'agreed',
+                'declined',
+                'wrong_contact',
+                'opted_out',
+              ] as const
+            ).map((o) => (
+              <option key={o} value={o}>
+                {t(`web.admin.outcome.${o}`)}
+              </option>
+            ))}
+          </select>
+          <input
+            name="note"
+            maxLength={500}
+            placeholder={t('web.admin.form.note')}
+            aria-label={t('web.admin.form.note')}
+            className={`${input} min-w-48 flex-1`}
+          />
+          <input
+            name="follow_up"
+            type="date"
+            aria-label={t('web.admin.form.followUp')}
+            className={input}
+          />
+          <button
+            type="submit"
+            className="rounded-md border border-border-strong px-2.5 py-1 text-xs"
+          >
+            {t('web.admin.actions.log_outreach')}
+          </button>
+        </form>
       </Section>
       <Section
         title={t('web.admin.sections.history')}

@@ -1,6 +1,6 @@
 -- D1b part 2b: pitch photos with usage rights (D-049).
 begin;
-select plan(16);
+select plan(17);
 
 create function pg_temp.city(p_slug text) returns bigint language sql as $$
   select id from public.cities where slug = p_slug $$;
@@ -67,6 +67,10 @@ select is(private.can_view_pitch_media('00000000-0000-4000-8000-0000000000f1/fro
   'nor readable from storage');
 select throws_ok(format($$ select public.admin_review_media(%L, 'approved') $$, tests.id('m1')),
   'forbidden', 'players cannot approve photos');
+select tests.act_as(tests.id('admin'));
+select is(private.can_view_pitch_media('00000000-0000-4000-8000-0000000000f1/front.jpg'), true,
+  'admins can preview a pending photo before deciding');
+select tests.act_as(tests.id('player'));
 
 -- Approval ----------------------------------------------------------------------------------------------
 select tests.act_as(tests.id('admin'));
