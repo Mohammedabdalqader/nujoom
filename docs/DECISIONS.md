@@ -489,3 +489,16 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
   - Dry run on Codex's intake: both pitches awaiting review, nothing sent, as intended.
   - `smoke` passes 7/7 live: a reviewed record created as an unpublished candidate with its facts and evidence, an unreviewed one left out, a re-import unchanged. It cleans up after itself, and nothing is left on the project.
 - **Found along the way:** a source record that evidence still points at can't be deleted, because the append-only evidence refuses the `set null`. That's the intended audit behaviour, and it's documented in the smoke cleanup (delete the venue first).
+
+**D-053 The catalog's admin read side (2026-09-29).**
+
+- **Admin-only RPCs** (`forbidden` for everyone else; players still see only published listings):
+  - `admin_catalog_summary()`: counts per queue, meaning candidates to review, changed sources, open claims, pending reports and photos, and freshness downgrades due.
+  - `admin_catalog_listings(p)`: venues in any state (default: candidates), with Arabic-aware name search, city filter and a cursor. Each venue comes with its fields and what's waiting on it.
+  - `admin_catalog_detail(facility)`: everything a reviewer needs to decide.
+    - facts, fields with their operations and gate result
+    - evidence and the source records behind it
+    - review and badge history
+    - staff, claims, contacts, outreach, photos and reports
+- **What it's for:** the web admin screens that publish imports and handle claims, reports and photos.
+- **Evidence:** pgTAP `130-catalog-admin-reads.sql` has 11 assertions (351 total), live on the project.

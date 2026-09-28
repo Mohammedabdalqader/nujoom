@@ -1402,6 +1402,8 @@ export type Database = {
         }
         Returns: string
       }
+      admin_catalog_detail: { Args: { p_facility: string }; Returns: Json }
+      admin_catalog_listings: { Args: { p?: Json }; Returns: Json }
       admin_catalog_reports: {
         Args: {
           p_limit?: number
@@ -1409,6 +1411,7 @@ export type Database = {
         }
         Returns: Json
       }
+      admin_catalog_summary: { Args: never; Returns: Json }
       admin_create_listing: {
         Args: {
           p_facility: Json
