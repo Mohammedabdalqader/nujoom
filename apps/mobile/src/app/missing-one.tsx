@@ -1,10 +1,8 @@
-import { Dialog } from '@/ui/Dialog';
-import { Text } from '@/ui/Text';
+import { useLocalSearchParams } from 'expo-router';
 
-export default function Placeholder() {
-  return (
-    <Dialog>
-      <Text className="text-on-surface">missing-one</Text>
-    </Dialog>
-  );
+import { MissingOneDialog } from '@/features/home/MissingOneDialog';
+
+export default function MissingOneRoute() {
+  const { id } = useLocalSearchParams<{ id?: string }>();
+  return <MissingOneDialog id={id} />;
 }

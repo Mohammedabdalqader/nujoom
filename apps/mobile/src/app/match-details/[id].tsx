@@ -1,10 +1,8 @@
-import { Dialog } from '@/ui/Dialog';
-import { Text } from '@/ui/Text';
+import { useLocalSearchParams } from 'expo-router';
 
-export default function Placeholder() {
-  return (
-    <Dialog>
-      <Text className="text-on-surface">match-details/[id]</Text>
-    </Dialog>
-  );
+import { MatchDetailsDialog } from '@/features/match/MatchDetailsDialog';
+
+export default function MatchDetailsRoute() {
+  const { id } = useLocalSearchParams<{ id: string }>();
+  return <MatchDetailsDialog bookingId={id} />;
 }

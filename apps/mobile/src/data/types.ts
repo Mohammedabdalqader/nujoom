@@ -167,9 +167,26 @@ export type UpcomingMatch = {
   shareUrl: string;
 };
 
+export type LineupPlayer = PlayerRef & {
+  bib: number | null;
+  position: Position | null;
+  form: number | null;
+  captain: boolean;
+};
+
+/** "تشكيلة وتفاصيل المباراة": a booking's teams and line-ups, for its players. */
+export type MatchDetails = UpcomingMatch & {
+  size: number;
+  /** Whose phone records the match, null until the organizer picks one. */
+  recordingBy: string | null;
+  lineups: [LineupPlayer[], LineupPlayer[]];
+};
+
 export type MissingOne = {
   id: string;
   bookingId: string;
+  /** Who posted the open spot (the booking's organizer). */
+  organizer: PlayerRef;
   pitchName: Bilingual;
   size: number;
   startsAt: string;

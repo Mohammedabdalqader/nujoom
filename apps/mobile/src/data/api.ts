@@ -16,6 +16,7 @@ import {
   previewSquad,
   previewGear,
   previewKitty,
+  previewMatchDetails,
 } from '@/data/preview';
 import type {
   AppNotification,
@@ -33,6 +34,7 @@ import type {
   Squad,
   GearList,
   Kitty,
+  MatchDetails,
 } from '@/data/types';
 
 /**
@@ -54,6 +56,7 @@ export const keys = {
   squad: ['squad'] as const,
   gear: ['gear'] as const,
   kitty: ['kitty'] as const,
+  matchDetails: (bookingId: string) => ['match-details', bookingId] as const,
   leaderboard: (scope: string, age: string, period: string) =>
     ['leaderboard', scope, age, period] as const,
 };
@@ -130,6 +133,13 @@ export const useGear = () =>
 /** The next match's kitty (R3: the booking's price and each player's payment mark). */
 export const useKitty = () =>
   useQuery<Kitty>({ queryKey: keys.kitty, queryFn: preview(previewKitty) });
+
+/** A booking's line-ups; null when it doesn't exist or you're not in it (R2: RLS decides). */
+export const useMatchDetails = (bookingId: string) =>
+  useQuery<MatchDetails | null>({
+    queryKey: keys.matchDetails(bookingId),
+    queryFn: preview(previewMatchDetails.bookingId === bookingId ? previewMatchDetails : null),
+  });
 
 export async function findPlayerByCardCode(code: string): Promise<FriendSuggestion | null> {
   const known = [...previewFriendSuggestions, ...previewFriendRequests.map((r) => r.from)];

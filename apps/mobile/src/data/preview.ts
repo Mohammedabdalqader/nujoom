@@ -6,6 +6,9 @@ import { PHOTOS } from '@/data/preview-photos';
 import { dateInAmman } from '@nujoom/shared';
 
 import type {
+  LineupPlayer,
+  MatchDetails,
+  Position,
   Kitty,
   GearList,
   Squad,
@@ -394,6 +397,7 @@ export const previewHome: HomeFeed = {
     {
       id: 'mo-1',
       bookingId: 'bk-9',
+      organizer: { id: 'r1', name: 'عمر المالكي', avatarUrl: null },
       pitchName: { ar: 'ملعب النزهة الدولي', en: 'Nuzha International Pitch' },
       size: 5,
       startsAt: minutes(90),
@@ -410,6 +414,7 @@ export const previewHome: HomeFeed = {
     {
       id: 'mo-2',
       bookingId: 'bk-10',
+      organizer: { id: 'r4', name: 'مؤمن الحياري', avatarUrl: null },
       pitchName: { ar: 'ملعب حديقة النزهة الشعبي', en: 'Nuzha Park Community Pitch' },
       size: 5,
       startsAt: minutes(40),
@@ -422,6 +427,7 @@ export const previewHome: HomeFeed = {
     {
       id: 'mo-3',
       bookingId: 'bk-11',
+      organizer: { id: 'r5', name: 'بلال السعايدة', avatarUrl: null },
       pitchName: { ar: 'ملعب الكرسي الملكي', en: 'Al-Kursi Royal Pitch' },
       size: 7,
       startsAt: minutes(200),
@@ -458,6 +464,40 @@ export const previewHome: HomeFeed = {
       pitchName: { ar: 'قفص ماركا الليلي', en: 'Marka Night Cage' },
       hara: hara.marka,
     },
+  ],
+};
+
+const lineup = (
+  id: string,
+  name: string,
+  bib: number,
+  position: Position,
+  form: number,
+  avatarUrl: string | null = null,
+  captain = false,
+): LineupPlayer => ({ id, name, bib, position, form, avatarUrl, captain });
+
+export const previewMatchDetails: MatchDetails = {
+  ...previewHome.nextMatch!,
+  size: 6,
+  recordingBy: 'أحمد المالكي',
+  lineups: [
+    [
+      lineup('me', 'أحمد المالكي', 1, 'FWD', 8.4, PHOTOS.ahmadMalki, true),
+      lineup('ps-3', 'موسى الدوايمة', 4, 'DEF', 8.1, PHOTOS.mousaDawaimeh),
+      lineup('l-7', 'محمود الشويكي', 7, 'MID', 7.8),
+      lineup('l-9', 'عمر أبوعلي', 9, 'MID', 7.9, PHOTOS.omarAbuali),
+      lineup('ps-2', 'يزن الشقير', 10, 'FWD', 8.5, PHOTOS.yazanShuqair),
+      lineup('fr-4', 'حمزة الكيلاني', 12, 'GK', 8.2, PHOTOS.hamzaKeilani),
+    ],
+    [
+      lineup('l-1', 'سيف الحارة', 1, 'MID', 8.8, null, true),
+      lineup('fr-2', 'طارق الزعبي', 3, 'DEF', 8.0),
+      lineup('sq-9', 'ليث أبو رمان', 8, 'MID', 7.6, PHOTOS.rosterB),
+      lineup('fr-1', 'عمر الدوسري', 11, 'FWD', 8.3, PHOTOS.omarDosari),
+      lineup('l-14', 'باسم القاضي', 14, 'FWD', 7.5),
+      lineup('sq-8', 'نور الدين عورتاني', 22, 'GK', 7.9, PHOTOS.noorAwartani),
+    ],
   ],
 };
 

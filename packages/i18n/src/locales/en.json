@@ -818,5 +818,42 @@
         "footer": "Cheers everyone, please settle up before kick-off! 🙏⚽"
       }
     }
+  },
+  "matchDetails": {
+    "title": "Match line-ups and details",
+    "meta": "{{pitch}} • {{when}}",
+    "size": "Size: {{value}} v {{value}}",
+    "duration": "Length: {{value}} min",
+    "recordedBy": "Filmed on {{name}}'s phone",
+    "notRecorded": "Recording phone not picked yet",
+    "team": "{{name}} ({{kit}})",
+    "kit": {
+      "blue": "blue",
+      "orange": "orange"
+    },
+    "captain": "{{name}} (C)",
+    "empty": "No players yet",
+    "share": "Share the line-up on WhatsApp",
+    "shareText": "⚽ Line-ups for {{when}}: {{teamA}} vs {{teamB}}!\n🏟️ {{pitch}}\n\n🔵 {{teamA}}:\n{{listA}}\n\n🟠 {{teamB}}:\n{{listB}}\n\nCome and watch, and catch the clips afterwards on {{app}}.\n{{url}}",
+    "notFound": "This match isn't available, or you're not one of its players."
+  },
+  "missingOne": {
+    "title": "One short (urgent)",
+    "listTitle": "Teams near you one short",
+    "starts": "Starts {{relative}}",
+    "position": "Position needed: {{position}}",
+    "anyPosition": "Any position",
+    "share": "Your share:",
+    "jodLong": "{{value}} JOD",
+    "captain": "Captain: {{name}}",
+    "spots_one": "One spot left",
+    "spots_other": "{{count}} spots left",
+    "join": "I'm in! Join the line-up",
+    "joined": "You're in! ⚽",
+    "joinedToast": "You're in the line-up! The match is now on your home screen.",
+    "shareButton": "Share the request with friends",
+    "details": "Details",
+    "empty": "No teams near you are one short right now.",
+    "gone": "This request has ended or the squad is full."
   }
 }
