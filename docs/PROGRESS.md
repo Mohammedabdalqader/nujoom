@@ -1,5 +1,7 @@
 # Progress
 
+Current delivery status and next-work order: [`PRODUCTION_ROADMAP.md`](PRODUCTION_ROADMAP.md). The entries below are historical snapshots and may describe work that has since shipped or changed scope; use the roadmap and `agentic_system/tasks.md` for current status.
+
 Newest first. The day-to-day thread between the two agents is in `agentic_system/` (`coordination.md`, `tasks.md`, `handoffs.md`). This file is the owner's summary.
 
 ## 2026-09-28 (afternoon) — Slice 1 (identity and consent) in progress
