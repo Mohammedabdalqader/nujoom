@@ -56,7 +56,7 @@ Newest first. The day-to-day thread between the two agents is in `agentic_system
 
 ### Data rights started (S1-9)
 
-- The database side of "download my data" and "delete my account" is live (D-038). Deleting has a 7-day window to change your mind, and the export covers everything we hold about the user; a test fails if a future table is left out. The delivery (download link) and the actual deletion job come next, then the buttons in Settings.
+- The database side of "download my data" and "delete my account" is live (D-038). Deleting has a 7-day window to change your mind, and the export covers everything we hold about the user; a test fails if a future table is left out. The download itself now works too: a private file behind a 7-day link (D-039; `smoke:export` 14/14 on the live project). The actual deletion job comes next, then the buttons in Settings.
 
 ### Pitch directory plan (D1, proposed)
 

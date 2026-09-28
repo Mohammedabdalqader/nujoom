@@ -294,3 +294,15 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
   - An Edge Function that builds the bundle, stores it in a private bucket and returns a 7-day signed link.
   - The scheduled deletion of due accounts: auth user, avatar and main-subject clips later.
   - App and web screens.
+
+**D-039 "Download my data" delivery (S1-9, part 2) (2026-09-28).**
+
+- **Edge Function `data-export`:** POST, for the signed-in user. It reuses a ready export whose link hasn't expired. Otherwise it records a request as the user, so the database applies idempotency and the 2-per-day limit.
+- **Building the bundle:** the function builds it with the service role (`export_user_data`) and stores it at `exports/<user>/<request>.json`, in a new private bucket with **no storage policies** (service role only, 10 MB, JSON only). It marks the request ready and returns a signed download link that expires with the request (7 days), named `nujoom-data-<date>.json`.
+- **Housekeeping:** older bundles of the same user are removed. A failure marks the request `failed` and returns `export_failed`.
+- **Verified live:** `pnpm --filter @nujoom/tools-tester-code smoke:export` passes 14/14.
+  - Signed-out callers are refused.
+  - The download contains the profile, email, date of birth and consents.
+  - Asking again reuses the same export.
+  - The user's own session can neither list nor download from the bucket.
+- **Open:** expired bundles of users who never ask again stay until the scheduled cleanup (part 3, with the deletion job).

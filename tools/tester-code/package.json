@@ -7,7 +7,8 @@
     "code": "node code.mjs",
     "smoke": "node smoke-identity.mjs",
     "guardian-link": "node guardian-link.mjs",
-    "smoke:guardian": "node smoke-guardian.mjs"
+    "smoke:guardian": "node smoke-guardian.mjs",
+    "smoke:export": "node smoke-data-export.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.2"
