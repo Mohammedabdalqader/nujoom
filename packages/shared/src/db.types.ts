@@ -187,6 +187,45 @@ export type Database = {
         }
         Relationships: []
       }
+      data_requests: {
+        Row: {
+          error: string | null
+          expires_at: string | null
+          export_path: string | null
+          id: string
+          kind: Database["public"]["Enums"]["data_request_kind"]
+          processed_at: string | null
+          requested_at: string
+          scheduled_for: string
+          status: Database["public"]["Enums"]["data_request_status"]
+          user_id: string | null
+        }
+        Insert: {
+          error?: string | null
+          expires_at?: string | null
+          export_path?: string | null
+          id?: string
+          kind: Database["public"]["Enums"]["data_request_kind"]
+          processed_at?: string | null
+          requested_at?: string
+          scheduled_for?: string
+          status?: Database["public"]["Enums"]["data_request_status"]
+          user_id?: string | null
+        }
+        Update: {
+          error?: string | null
+          expires_at?: string | null
+          export_path?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["data_request_kind"]
+          processed_at?: string | null
+          requested_at?: string
+          scheduled_for?: string
+          status?: Database["public"]["Enums"]["data_request_status"]
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       events: {
         Row: {
           created_at: string
@@ -544,6 +583,7 @@ export type Database = {
         }
         Returns: Json
       }
+      cancel_account_deletion: { Args: never; Returns: Json }
       complete_onboarding: {
         Args: {
           p_city_id: number
@@ -560,6 +600,7 @@ export type Database = {
         Returns: Json
       }
       decline_guardian_invite: { Args: { p_token: string }; Returns: undefined }
+      export_user_data: { Args: { p_user: string }; Returns: Json }
       guardian_invite_preview: { Args: { p_token: string }; Returns: Json }
       issue_guardian_invite: {
         Args: { p_link_id: string; p_youth: string }
@@ -570,11 +611,20 @@ export type Database = {
           youth_name: string
         }[]
       }
+      mark_data_export_ready: {
+        Args: { p_path: string; p_request: string }
+        Returns: Json
+      }
+      mark_data_request_failed: {
+        Args: { p_error: string; p_request: string }
+        Returns: undefined
+      }
       mark_guardian_invite_sent: {
         Args: { p_link_id: string }
         Returns: undefined
       }
       me: { Args: never; Returns: Json }
+      my_data_requests: { Args: never; Returns: Json }
       my_guardians: { Args: never; Returns: Json }
       name_guardian: { Args: { p_email: string }; Returns: Json }
       player_profile: { Args: { p_user: string }; Returns: Json }
@@ -586,6 +636,8 @@ export type Database = {
         }
         Returns: Json
       }
+      request_account_deletion: { Args: never; Returns: Json }
+      request_data_export: { Args: never; Returns: Json }
       set_settings: { Args: { p_patch: Json }; Returns: Json }
       set_visibility: {
         Args: {
@@ -598,6 +650,13 @@ export type Database = {
     Enums: {
       age_group: "U12" | "U14" | "U16" | "U18" | "ADULT"
       consent_type: "terms" | "privacy" | "recording" | "streaming"
+      data_request_kind: "export" | "deletion"
+      data_request_status:
+        | "pending"
+        | "ready"
+        | "completed"
+        | "cancelled"
+        | "failed"
       dominant_foot: "left" | "right" | "both"
       guardian_status: "pending" | "confirmed" | "revoked"
       job_status: "queued" | "running" | "succeeded" | "dead"
@@ -732,6 +791,14 @@ export const Constants = {
     Enums: {
       age_group: ["U12", "U14", "U16", "U18", "ADULT"],
       consent_type: ["terms", "privacy", "recording", "streaming"],
+      data_request_kind: ["export", "deletion"],
+      data_request_status: [
+        "pending",
+        "ready",
+        "completed",
+        "cancelled",
+        "failed",
+      ],
       dominant_foot: ["left", "right", "both"],
       guardian_status: ["pending", "confirmed", "revoked"],
       job_status: ["queued", "running", "succeeded", "dead"],

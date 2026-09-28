@@ -54,6 +54,10 @@ Newest first. The day-to-day thread between the two agents is in `agentic_system
 - **Run it:** copy `apps/web/.env.example` to `apps/web/.env.local`, fill in the project URL and anon key (the same values as the app's), then `pnpm --filter @nujoom/web dev` and open http://localhost:3000.
 - **After pulling this change:** run `pnpm install`, then restart Expo with `npx expo start --clear`. The mobile colours moved into a shared package, and a Metro that was already running can't find it until it restarts.
 
+### Data rights started (S1-9)
+
+- The database side of "download my data" and "delete my account" is live (D-038). Deleting has a 7-day window to change your mind, and the export covers everything we hold about the user; a test fails if a future table is left out. The delivery (download link) and the actual deletion job come next, then the buttons in Settings.
+
 ### Pitch directory plan (D1, proposed)
 
 - The data contract for the prepared Jordan pitch catalog is in `agentic_system/contracts/pitch-catalog.md`.

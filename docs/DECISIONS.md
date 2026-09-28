@@ -278,3 +278,19 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
 - **Hardening:** malformed tokens get a 404. The route sends `Referrer-Policy: no-referrer` and `Cache-Control: no-store` (the token is the whole secret), and is `noindex`. The youth's name is wrapped in `<bdi>`, so either script keeps the sentence's direction.
 - **Verified on the live project** with the production build: Arabic through sign-in, and English through a real magic link returning to the page. In both, the adult check refused an under-18 guardian, the approval went through, and the used link then showed as invalid. The magic-link run also shows the project accepts `http://localhost:3000/**` redirects.
 - **Switching the email to the web page:** once the web app is hosted, set the Edge Function secret `APPROVAL_URL=https://<domain>/{locale}/guardian/accept`. Until then the email keeps using the app link, `nujoom://guardian/accept/<token>`.
+
+**D-038 Data export and account deletion requests (S1-9, part 1) (2026-09-28).**
+
+- **Table:** `data_requests` has one row per export or deletion request, with at most one open request of each kind per user. Users read their own rows, but never the storage path or internal errors. Writes happen only through RPCs:
+  - `request_data_export`: idempotent while pending, 2 per day.
+  - `request_account_deletion`: idempotent, scheduled after a 7-day grace, audited.
+  - `cancel_account_deletion`: audited.
+  - `my_data_requests`
+- **Export bundle:** `export_user_data(user)` (service role only) returns one JSON document: account email, profile, date of birth, settings, every consent record (marking guardian-given ones), guardians named and youths guarded, analytics events and data requests. It carries no token hashes and no other person's data.
+- **Coverage guard:** a pgTAP test fails as soon as a new table references a user without being exported or listed as a known exclusion (admin role and setting metadata). Later slices therefore extend the bundle as they add personal data.
+- **Deletion record:** the request row outlives the account with `user_id` set to null, as the record that deletion happened.
+- **Settings:** grace period, link lifetime and daily limit are in `config.data_rights`.
+- **Still to do (part 2):**
+  - An Edge Function that builds the bundle, stores it in a private bucket and returns a 7-day signed link.
+  - The scheduled deletion of due accounts: auth user, avatar and main-subject clips later.
+  - App and web screens.
