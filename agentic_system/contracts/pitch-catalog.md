@@ -1,6 +1,6 @@
 # Contract: prepared Jordan pitch catalog (D1)
 
-Status: **proposal** by Claude, 2026-09-28. Codex reviews presentation-facing parts; the owner decides the open questions (§10). Nothing here is built yet. Premise: D-032, `docs/PRODUCT_SPEC.md` §6.4, `docs/PRODUCTION_ROADMAP.md` G1/D1–D6.
+Status: **proposal, revised after Codex's review** (Claude, 2026-09-28; changes at the end). Codex reviews presentation-facing parts; the owner decides the open questions (§10). Nothing here is built yet. Premise: D-032, `docs/PRODUCT_SPEC.md` §6.4, `docs/PRODUCTION_ROADMAP.md` G1/D1–D6.
 
 ## 1. Principles
 
@@ -50,21 +50,21 @@ Checks: `published` requires `access in ('public_rental','public_free')` (pendin
 
 **`pitches`**: one physical field. This replaces the mobile prototype's pitch concept at the data level.
 
-| Column                 | Type / rule                                                                                                                                |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `id`                   | uuid pk                                                                                                                                    |
-| `facility_id`          | FK not null                                                                                                                                |
-| `label_ar`, `label_en` | text null ("ملعب 2"); null when the facility has one field                                                                                 |
-| `players_per_side`     | smallint null, check 3–11 (5/6/7 are the pilot's sizes; 8 and 11 exist in Jordan)                                                          |
-| `futsal`               | boolean null (hard court with futsal goals)                                                                                                |
-| `length_m`, `width_m`  | numeric(5,1) null, sane ranges                                                                                                             |
-| `surface`              | enum null `artificial_turf` \| `natural_grass` \| `hard_court` \| `sand` \| `other`                                                        |
-| `indoor`, `lights`     | boolean null                                                                                                                               |
-| `amenities`            | text[] not null default `{}`: only evidenced items from a closed list (`changing_rooms`, `parking`, `water`, `seating`, `toilets`, `cafe`) |
-| `listing_state`        | same enum as facilities                                                                                                                    |
-| `participation`        | enum `not_verified` \| `verified`, default `not_verified`; changed only by `admin_set_participation` (§6)                                  |
-| `pitch_level`          | existing concept (`listed` \| `dock` \| `verified`): recording trust weight (§6.10), admin-set, independent of the badge                   |
-| `verified_at`          | timestamptz null                                                                                                                           |
+| Column                 | Type / rule                                                                                                                                                                                                         |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`                   | uuid pk                                                                                                                                                                                                             |
+| `facility_id`          | FK not null                                                                                                                                                                                                         |
+| `label_ar`, `label_en` | text null ("ملعب 2"); null when the facility has one field                                                                                                                                                          |
+| `players_per_side`     | smallint null, check 3–11 (5/6/7 are the pilot's sizes; 8 and 11 exist in Jordan)                                                                                                                                   |
+| `futsal`               | boolean null (hard court with futsal goals)                                                                                                                                                                         |
+| `length_m`, `width_m`  | numeric(5,1) null, sane ranges                                                                                                                                                                                      |
+| `surface`              | enum null `artificial_turf` \| `natural_grass` \| `hard_court` \| `sand` \| `other`                                                                                                                                 |
+| `indoor`, `lights`     | boolean null                                                                                                                                                                                                        |
+| `amenities`            | text[] **null** = unknown; `{}` = checked, none; otherwise only evidenced items from a closed list (`changing_rooms`, `parking`, `water`, `seating`, `toilets`, `cafe`). Each non-null value needs `pitch_evidence` |
+| `listing_state`        | same enum as facilities                                                                                                                                                                                             |
+| `participation`        | enum `not_verified` \| `verified`, default `not_verified`; changed only by `admin_set_participation` (§6)                                                                                                           |
+| `pitch_level`          | existing concept (`listed` \| `dock` \| `verified`): recording trust weight (§6.10), admin-set, independent of the badge                                                                                            |
+| `verified_at`          | timestamptz null                                                                                                                                                                                                    |
 
 Checks: a pitch is searchable only when it and its facility are both `published`. `participation = 'verified'` requires the facility's `operator_state = 'authority_verified'`, enforced in the RPC and by a trigger.
 
@@ -113,7 +113,18 @@ participation (pitch):            not_verified → verified   only when operator
                                   verified → not_verified   (operator leaves, schedule wrong, admin action)
 ```
 
-A verified field without `schedule_active` shows the badge but no slots or Book button. The badge promises that the operator participates, not that it is open now (Codex to confirm copy, §10).
+A verified field without `schedule_active` shows the badge but no slots or Book button. The badge promises that the operator participates, not that it is open now.
+
+### 3.1 Pause and freshness (Codex's review; the numbers are proposals, stored in `config.catalog_freshness`)
+
+| Situation                                                                                 | Result                                                                                                                                                                    |
+| ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| First verification                                                                        | Needs an **active** schedule (`schedule_active = true`) and operator-confirmed facts (D-032)                                                                              |
+| Operator pauses the schedule                                                              | Badge stays, "Bookings unavailable right now" (`الحجز غير متاح حالياً`), for at most `pause_days` (proposed 30)                                                           |
+| Pause longer than `pause_days`, or operator facts older than `confirm_days` (proposed 90) | The listing enters the admin review queue as `stale`; after `grace_days` more (proposed 14) without re-confirmation, a scheduled job downgrades the badge to not verified |
+| Partnership ends, or the integration is found wrong                                       | An admin downgrades immediately (`admin_set_participation`)                                                                                                               |
+
+Every downgrade, including the scheduled one (`recorded_by` = system), writes a `verification_events` row. Re-verification follows the first-verification rule.
 
 ## 4. The booking gate
 
@@ -123,7 +134,7 @@ A verified field without `schedule_active` shows the badge but no slots or Book 
 
 ### 5.1 `search_pitches(p jsonb) returns jsonb`
 
-Input (all optional): `city_id`, `neighborhood_id`, `q` (name text), `players_per_side[]`, `surface[]`, `indoor`, `lights`, `badge` (`all` \| `verified`), `near` {`lat`, `lng`, `km` ≤ 25}, `bbox` {`s`, `w`, `n`, `e`} for the map viewport, `limit` ≤ 50, `cursor`.
+Input (all optional): `city_id`, `neighborhood_id`, `q` (name text), `players_per_side[]`, `surface[]`, `indoor`, `lights`, `badge` (`all` \| `verified` \| `not_verified`; default `all`), `near` {`lat`, `lng`, `km` ≤ 25}, `bbox` {`s`, `w`, `n`, `e`} for the map viewport, `limit` ≤ 50, `cursor`.
 
 Output: `{ items: [...], next_cursor }`. Each item is a **catalog listing**, and it is the same record for list and map:
 
@@ -140,7 +151,7 @@ Output: `{ items: [...], next_cursor }`. Each item is a **catalog listing**, and
   "surface": null,
   "indoor": false,
   "lights": true,
-  "amenities": [],
+  "amenities": null,
   "location": { "lat": 31.99, "lng": 35.84, "confidence": "map_checked" },
   "distance_km": 2.4,
   "access": "public_rental",
@@ -151,7 +162,7 @@ Output: `{ items: [...], next_cursor }`. Each item is a **catalog listing**, and
 }
 ```
 
-A `verified` item adds `"operations": { "price_per_hour": 25, "price_note": {…}, "slot_minutes": 60, "bookable": true }`, plus its rating once ratings exist. A `not_verified` item always has `operations: null`, so there is nothing the app could render as a price or slot.
+A `verified` item adds `"operations": { "price_per_hour": 25, "price_note": {…}, "slot_minutes": 60, "bookable": <pitch_is_bookable> }`, plus its rating once ratings exist. `bookable` is the gate's actual result. When it is false (a paused schedule, §3.1), the app shows "Bookings unavailable right now" and no slots or Book button. "No times available right now" is a different state: the schedule is active but every slot is taken. A `not_verified` item always has `operations: null`, so there is nothing the app could render as a price or slot.
 
 ### 5.2 `catalog_pitch(p_pitch_id uuid) returns jsonb`
 
@@ -159,7 +170,7 @@ The same item, plus `siblings` (the facility's other searchable fields with thei
 
 ### 5.3 Location precision
 
-`unchecked` → `location: null` (city and neighbourhood only; no pin, no directions). `approximate` → pin, "approximate" label, no turn-by-turn. `map_checked` / `site_checked` → pin and directions. Codex specifies the labels.
+`unchecked` → `location: null` (city and neighbourhood only, list only; no pin or directions): "الموقع غير مؤكد / Location not confirmed". `approximate` → an approximate marker, no turn-by-turn: "موقع تقريبي / Approximate location". `map_checked` / `site_checked` → pin and directions to the facility entrance. Labels per Codex's G1 section in `docs/DESIGN.md`.
 
 ### 5.4 Search implementation (no PostGIS in D1)
 
@@ -212,7 +223,9 @@ Negative and positive cases:
 1. `search_pitches` returns F1-A and F1-B with their own badges, and F2 with nulls (no defaults) and `location: null`.
 2. F3 cannot be published (`access_not_public`) and never appears.
 3. F4 does not appear after `mark_duplicate`; candidate, hidden, rejected and closed rows never appear, whether by facility or by pitch state.
-4. `pitch_is_bookable`: F1-A true; F1-B, F2 and a verified field with an inactive schedule false.
+4. `pitch_is_bookable`: F1-A true; F1-B, F2 and a verified field with a paused schedule false. `search_pitches` returns F1-A with `bookable: true`, a paused verified field with `bookable: false` and badge `verified`, and F1-B with `operations: null`. The `badge: not_verified` filter returns only F1-B and F2.
+   4a. Freshness: a paused field past `pause_days + grace_days` and a field with facts older than `confirm_days + grace_days` are downgraded by the scheduled job, with a system `verification_events` row; a fresh paused field is not. Verification is refused while the schedule is inactive.
+   4b. Amenities: `null` and `{}` round-trip distinctly; a non-null value without evidence is refused.
 5. `anon` and `authenticated` cannot select any catalog table or call any `admin_*` RPC. A non-admin calling them gets `forbidden`.
 6. `admin_set_participation(F1-B, 'verified')` fails while `operator_state <> 'authority_verified'` and while no operations exist. Approving a claim leaves the badge `not_verified`.
 7. `owner_set_schedule_active` on a not-verified field fails. Staff of F1 cannot edit F2.
@@ -224,14 +237,14 @@ Negative and positive cases:
 
 ## 10. Open questions
 
-| #   | For   | Question                                                                                                                  | Proposed default until answered                       |
-| --- | ----- | ------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| Q1  | owner | Do members-only or school fields count as "available"?                                                                    | Not published (roadmap default)                       |
-| Q2  | owner | Can signed-out web visitors search the catalog (SEO), or signed-in app users only?                                        | Signed-in only; revisit with S1-8 web                 |
-| Q3  | Codex | Badge copy for a verified field whose schedule isn't active yet, and the labels for `approximate` / `unchecked` locations | Badge shown, no slots; "approximate location" label   |
-| Q4  | owner | An operator who opts out: keep their publicly accessible field as not verified, or remove it?                             | Keep as not verified, remove contacts                 |
-| Q5  | owner | Staff a field team (a role beyond admins)?                                                                                | Admins only                                           |
-| Q6  | Codex | Which design attributes appear on the card and which only on the detail view (dimensions, amenities)                      | Card: size, surface, indoor, lights; detail: the rest |
+| #   | For   | Question                                                                                      | Proposed default until answered                                                                                                                                                                     |
+| --- | ----- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Q1  | owner | Do members-only or school fields count as "available"?                                        | Not published (roadmap default)                                                                                                                                                                     |
+| Q2  | owner | Can signed-out web visitors search the catalog (SEO), or signed-in app users only?            | Signed-in only; revisit with S1-8 web                                                                                                                                                               |
+| Q3  | Codex | Badge copy for a paused verified field; location labels                                       | **Answered** (17:22): badge stays with "Bookings unavailable right now" within the pause SLA (§3.1); labels in §5.3                                                                                 |
+| Q4  | owner | An operator who opts out: keep their publicly accessible field as not verified, or remove it? | Keep as not verified, remove contacts                                                                                                                                                               |
+| Q5  | owner | Staff a field team (a role beyond admins)?                                                    | Admins only                                                                                                                                                                                         |
+| Q6  | Codex | Card vs detail attributes                                                                     | **Answered** (17:22): card shows facility and field label, city/area, badge, and known players-per-side, surface, indoor/outdoor, lights; dimensions, amenities and rights-cleared photos on detail |
 
 ## 11. Implementation order after acceptance
 
@@ -240,3 +253,13 @@ Negative and positive cases:
 3. **D2 import tool** (`tools/catalog-import`): Geofabrik Jordan PBF → football `leisure=pitch` / sports centres → `admin_upsert_source_record`. The tool choice (e.g. `pyosmium` under `uv`, matching the Python worker) gets logged as a dependency when it lands. The first run is counts only, nothing published.
 4. **Mobile:** `CatalogListing`, `searchPitches`, production Pitches tab on real (empty, then reviewed) data, per Codex's list/map/card spec.
 5. **Review tooling** in the web admin (S1-8 scaffold first).
+
+## Changes
+
+- **2026-09-28 19:55, after Codex's 17:22 review.**
+  - `amenities` is nullable: null means unknown and `{}` means checked, none.
+  - `operations.bookable` returns the gate's actual result.
+  - The badge filter gains `not_verified`.
+  - A pause and freshness rule is added (§3.1), with proposed numbers in config and tests 4a and 4b.
+  - Codex's location labels are adopted, and Q3 and Q6 are marked answered.
+  - Unchanged: not-verified items keep `operations: null` (no price and no slots).
