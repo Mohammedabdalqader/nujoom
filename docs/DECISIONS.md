@@ -590,3 +590,15 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
 - **Why:** the owner page should show the photos an owner uploaded while they wait for review, and which ones were rejected. Until now only admins could open a photo before approval (D-056).
 - **Rule:** the `pitch-media` read check also lets a venue's current staff open any file in that venue's folder, whatever its review status and even while the venue is hidden. It uses the same folder rule as uploading. Players still see only approved photos of published venues and fields. Someone removed from the staff loses access at once.
 - **Evidence:** pgTAP `160-owner-media.sql` has 6 assertions (375 total), live on the project.
+
+**D-062 Owners add venue photos on the website (2026-09-29).**
+
+- **Where:** a "Venue photos" section in each venue card on `/[locale]/venue`. It shows the owner's photos with their review status (under review, shown to players, rejected), through 10-minute signed links (D-061).
+- **Adding a photo:**
+  - The owner picks a JPEG, PNG or WebP. When the venue has more than one field, they also choose whether it shows the whole venue or one field.
+  - They must confirm that they took the photo or have the right to use it, that it shows the venue as it is now, and that no one can be recognised in it.
+  - The browser shrinks the photo to at most 1600 px and a JPEG under 2 MB (the bucket limit), because phone photos are larger. It uploads straight into the venue's private folder with the owner's own session, then registers the photo as `owner_granted` for admin review (`add_pitch_media`).
+  - Players see it only after an admin approves it (D-049).
+- **Why in the browser:** server actions cap request bodies at 1 MB by default, and the storage rules already limit each owner to their venue's folder, so no server hop is needed.
+- **Known gap:** if the upload succeeds but registering it fails, the file stays in the venue's folder unlisted. Only the owner and admins can open it. A clean-up job can come later.
+- **Verified live:** a 2400×1800 image was stored as a 1600×1200 JPEG under 2 MB and registered as pending. The owner sees it; a player can't open it before approval; a second upload appears without a reload; all files were removed afterwards (27/27 checks).

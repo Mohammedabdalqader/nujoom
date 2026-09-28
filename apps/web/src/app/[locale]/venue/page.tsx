@@ -3,13 +3,14 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import type { ReactNode } from 'react';
 
-import { errorKey } from '@nujoom/shared';
+import { ERROR_KEYS, errorKey } from '@nujoom/shared';
 
 import { SiteShell } from '@/components/SiteShell';
 import { getT, localeFrom, type Locale } from '@/lib/i18n';
 import { serverSupabase } from '@/lib/supabase/server';
 
 import { claimVenue, confirmField, createProfileAndClaim, setSchedule } from './actions';
+import { PhotoUpload, type PhotoStrings } from './PhotoUpload';
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -149,6 +150,31 @@ export default async function VenuePage({ params, searchParams }: Props) {
     const id = String(row.facility_id);
     if (!found.has(id)) found.set(id, row);
   }
+  // Short-lived previews of the owner's own photos, any review status (D-061).
+  const photoPaths = venues.flatMap((v) =>
+    ((v.photos as Json[] | undefined) ?? []).map((m) => String(m.path)),
+  );
+  const { data: signed } =
+    supabase && photoPaths.length
+      ? await supabase.storage.from('pitch-media').createSignedUrls(photoPaths, 600)
+      : { data: [] as { path: string | null; signedUrl: string; error: string | null }[] };
+  const previews = new Map((signed ?? []).map((x) => [x.path, x.error ? null : x.signedUrl]));
+  const photoStrings: PhotoStrings = {
+    ...(Object.fromEntries(
+      [
+        'add',
+        'choose',
+        'where',
+        'wholeVenue',
+        'rights',
+        'upload',
+        'uploading',
+        'sent',
+        'unreadable',
+      ].map((k) => [k, t(`web.owner.photos.${k}`)]),
+    ) as Omit<PhotoStrings, 'errors'>),
+    errors: Object.fromEntries(ERROR_KEYS.map((key) => [key, t(key)])),
+  };
 
   return (
     <SiteShell locale={locale} path="/venue">
@@ -277,6 +303,45 @@ export default async function VenuePage({ params, searchParams }: Props) {
                     </div>
                   );
                 })}
+                <div className="mt-4 border-t border-border pt-4">
+                  <h4 className="mb-2 font-headline font-bold">{t('web.owner.photos.title')}</h4>
+                  {((v.photos as Json[] | undefined) ?? []).length === 0 ? (
+                    <p className="text-sm text-on-surface-variant">{t('web.owner.photos.none')}</p>
+                  ) : (
+                    <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                      {((v.photos as Json[] | undefined) ?? []).map((m) => {
+                        const src = previews.get(String(m.path));
+                        return (
+                          <li key={String(m.id)} className="flex flex-col gap-1">
+                            {src ? (
+                              // eslint-disable-next-line @next/next/no-img-element -- short-lived signed link
+                              <img
+                                src={src}
+                                alt=""
+                                className="aspect-[4/3] w-full rounded-lg border border-border object-cover"
+                              />
+                            ) : (
+                              <div className="aspect-[4/3] w-full rounded-lg border border-border bg-surface-container-low" />
+                            )}
+                            <span
+                              className={`text-xs ${m.status === 'approved' ? 'text-secondary' : m.status === 'rejected' ? 'text-error' : 'text-on-surface-variant'}`}
+                            >
+                              {t(`web.owner.photos.status.${String(m.status)}`)}
+                            </span>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                  <PhotoUpload
+                    facilityId={String(v.facility_id)}
+                    fields={fields.map((f) => ({
+                      id: String(f.pitch_id),
+                      label: pick(f.label, locale) ?? pick(v.name, locale) ?? '',
+                    }))}
+                    strings={photoStrings}
+                  />
+                </div>
               </Card>
             );
           })}

@@ -1321,7 +1321,25 @@
       "createAndClaim": "Save and claim the venue",
       "done": "Done.",
       "priceNoteAr": "Price note (Arabic)",
-      "priceNoteEn": "Price note (English)"
+      "priceNoteEn": "Price note (English)",
+      "photos": {
+        "title": "Venue photos",
+        "none": "No photos yet.",
+        "add": "Add a photo",
+        "choose": "Choose a photo (JPEG, PNG or WebP)",
+        "where": "This photo shows",
+        "wholeVenue": "The whole venue",
+        "rights": "I took this photo or have the right to use it, it shows the venue as it is now, and no one can be recognised in it.",
+        "upload": "Upload photo",
+        "uploading": "Uploading…",
+        "sent": "Photo received. Players will see it once we've reviewed it.",
+        "unreadable": "We couldn't open this photo. Try a JPEG or PNG.",
+        "status": {
+          "pending": "Under review",
+          "approved": "Shown to players",
+          "rejected": "Rejected"
+        }
+      }
     }
   }
 }
