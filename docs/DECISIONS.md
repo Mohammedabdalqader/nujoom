@@ -168,11 +168,13 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
 - Card codes are `NJM-XXXX-XXXX`: 8 random Crockford base32 characters (about 10^12 codes), assigned by a trigger and never changed. Spec §6.2 says `NJM-####`, but four digits are easy to enumerate and would collide as the network grows. The code is not readable from the table; its owner gets it from `me()`, and lookups (slice 3) are exact-match, rate-limited and visibility-checked. The 4-digit form survives only as a demo value.
 - Database rate limits use `private.hit_rate_limit(key, window, max)` over an unlogged counter table.
 
-**D-026 Recording is a separate consent that gates recorded matches, not the account (2026-09-28; pending owner and legal confirmation).**
+**D-026 Recording is a separate consent that gates recorded matches, not the account (2026-09-28; owner approved as C-010 at 12:19; legal review before launch).**
 
-- Codex flagged that a sign-up checkbox shouldn't count as freely given permission to film every later match, especially for youth. Spec §6.1 lists recording among the required consents; this is a stricter reading, so it's adopted now and flagged for the owner.
+- Codex flagged that a sign-up checkbox shouldn't count as freely given permission to film every later match, especially for youth. The owner approved using the app while declining recording (C-010), and spec §6.1 and §7 now say so.
 - **Terms and privacy** gate the account: a newer version sends the user to a re-consent step (`me().stage = 'consent'`).
 - **Recording** is asked separately, with a real "no". A yes is stored with its version and a no is stored as `granted = false`. Declining never blocks the account; it closes recorded matches (`can_join_recorded = false`) until the player says yes in Settings.
 - **Youth** need their own yes **and** a yes from a confirmed guardian; either no closes recorded matches.
 - **Streaming** is a separate type, default-denied, never collected or inferred before M9. Only the "no live" opt-out can be recorded now.
-- A newer recording version closes recorded matches until the player re-confirms. Slices 2 and 4 check this at join, check-in and capture.
+- A newer recording version closes recorded matches until the player re-confirms.
+- **Unanswered** (the key missing at onboarding) counts as no and stores no row; an explicit no is stored.
+- **Later slices fail closed:** joining a recorded booking (S2), QR check-in (S4) and starting capture on the recording phone (S4) each call `private.can_join_recorded_matches` for the player, and capture is refused if any checked-in participant fails it.

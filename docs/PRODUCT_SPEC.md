@@ -113,9 +113,11 @@ The visual design, tone of voice and sounds come from the owner's design prototy
   - display name and date of birth
   - city and neighbourhood
   - position (GK / DEF / MID / FWD), dominant foot (optional), photo (optional), handle (optional, unique, `@handle`)
-- **Consent (required, versioned):**
-  - terms and privacy
-  - that matches may be recorded, and that clip visibility follows privacy settings
+- **Consent (versioned; owner decision C-010, 2026-09-28):**
+  - Required for the account: terms and privacy.
+  - Recording is a separate, optional yes/no, asked at onboarding and changeable in Settings. Declining never blocks the account or unrecorded use. It only closes recorded matches. Youth also need a confirmed guardian's yes.
+  - Each recorded match re-checks every participant's recording permission before capture and fails closed.
+  - Public sharing and future streaming are separate permissions, never inferred from recording.
 - **Age gate:**
   - Under 13 is rejected.
   - 13–17 enters the youth flow (§7), with a guardian named by email.
@@ -125,7 +127,7 @@ The visual design, tone of voice and sounds come from the owner's design prototy
   - notification types, visibility, presence sharing
   - guardian status, export data, delete account, sign out
 
-**Acceptance:** sign-up in under 60 seconds; consent stored; a youth cannot join recorded matches or appear anywhere public until a guardian confirms.
+**Acceptance:** sign-up in under 60 seconds; consents stored with their versions, including a declined recording choice; a player who declines recording can still use the app; a youth cannot join recorded matches or appear anywhere public until a guardian confirms.
 
 ### 6.2 Profile, card and progression
 
@@ -334,7 +336,7 @@ An `events` table (PostHog later) records:
   - **Social rules:** friendships and "missing one" stay within the same age band.
   - **Live:** youth matches are never live-streamed publicly.
 - **No messaging:** no DMs, comments or free-text reviews or testimonials.
-- **Consent:** versioned and append-only (terms, privacy, recording; streaming separately before M9). "No live" opt-out.
+- **Consent:** versioned and append-only. Terms and privacy gate the account; recording is an optional, revocable yes/no that gates recorded matches only (C-010); youth need their own and a guardian's yes. Streaming is separate and default-denied before M9. "No live" opt-out.
 - **Reporting:** a report button on every clip and profile; admins can hide instantly.
 - **Data rights:** export and delete. Deletion removes the profile and tags; clips where the user is the main subject are removed.
 - **Security:**

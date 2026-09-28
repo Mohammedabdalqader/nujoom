@@ -1,7 +1,7 @@
 -- S1 identity: onboarding, profiles, visibility, youth rules, consents, settings, card codes.
 -- Contract: agentic_system/contracts/identity-booking.md §4. Spec §6.1, §6.2, §7.
 begin;
-select plan(74);
+select plan(76);
 
 -- Fixtures -------------------------------------------------------------------
 create function pg_temp.city(p_slug text) returns bigint language sql as $$
@@ -51,6 +51,15 @@ select tests.act_as(tests.id('fresh'));
 select is(public.me() ->> 'stage', 'onboarding', 'a new account starts at onboarding');
 select throws_ok($$ select public.update_profile('{"display_name":"X Y"}') $$, 'not_onboarded',
   'profile edits need onboarding first');
+select is(
+  public.complete_onboarding('Fresh Player', pg_temp.years_ago(20), pg_temp.city('zarqa'), null, 'GK',
+    pg_temp.consents() - 'recording') ->> 'stage',
+  'app', 'an unanswered recording choice never blocks the account (C-010)');
+select ok(
+  not (public.me() ->> 'recording_consent')::boolean
+  and not (public.me() ->> 'can_join_recorded')::boolean
+  and not exists (select 1 from public.consents where user_id = tests.id('fresh') and type = 'recording'),
+  'unanswered means no recording permission and no stored row');
 
 -- Adult onboarding --------------------------------------------------------------
 select tests.act_as(tests.id('adult'));

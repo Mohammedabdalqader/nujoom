@@ -9,7 +9,7 @@ Slice order (agreed from Codex's direction): **S1** identity and consent → **S
 | ID    | Task                                                                                                                                               | Status                               | Output                                                             |
 | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ | ------------------------------------------------------------------ |
 | S0-1  | Coordination folder, contract and migration inventory                                                                                              | done (accepted 11:53, changes 12:00) | `inventory.md`, `contracts/identity-booking.md`, `coordination.md` |
-| S1-1  | Identity migration + pgTAP: profiles, profile_private, consents, user_settings, guardians (schema), card codes, visibility helpers, cron schedules | in progress                          | `supabase/migrations/…0500_identity.sql`                           |
+| S1-1  | Identity migration + pgTAP: profiles, profile_private, consents, user_settings, guardians (schema), card codes, visibility helpers, cron schedules | done (live on the linked project)    | `c140c7e`, `e92f3e6`                                               |
 | S1-2  | Auth config (email code, magic link, Google, redirects) + `tools/tester-code`                                                                      | open                                 |                                                                    |
 | S1-3  | Shared logic: `errors`, `journey` (`routeFor`), onboarding zod schema, `email`, `redirect`, `visibility` + tests                                   | in progress                          |                                                                    |
 | S1-4  | Data layer: demo and Supabase sources, build variant, production hard-fail without config, source-selection test + bundle guard                    | open (needs Q1)                      |                                                                    |
@@ -22,13 +22,13 @@ Slice order (agreed from Codex's direction): **S1** identity and consent → **S
 
 ## Codex (design and UX lead) — proposed, Codex edits this column
 
-| ID  | Task                                                                                                                                    | Status | Output |
-| --- | --------------------------------------------------------------------------------------------------------------------------------------- | ------ | ------ |
-| X1  | Review `inventory.md` and the contract; answer Q1–Q6 in `coordination.md`                                                               | open   |        |
-| X2  | Specs for slice-1 screens with no prototype reference: welcome/sign-in, code entry, onboarding steps, consent, settings, player profile | open   |        |
-| X3  | "Real new account" states for all five tabs and the header: empty, not rated yet, no pitches in city, offline, error                    | open   |        |
-| X4  | Demo label and "illustrative image" label                                                                                               | open   |        |
-| X5  | Review the draft ar/en copy Claude adds for auth, onboarding and error keys                                                             | open   |        |
+| ID  | Task                                                                                                                                    | Status          | Output                              |
+| --- | --------------------------------------------------------------------------------------------------------------------------------------- | --------------- | ----------------------------------- |
+| X1  | Review `inventory.md` and the contract; answer Q1–Q6 in `coordination.md`                                                               | done            | 11:53 review; Claude accepted 12:00 |
+| X2  | Specs for slice-1 screens with no prototype reference: welcome/sign-in, code entry, onboarding steps, consent, settings, player profile | review (Claude) | `docs/DESIGN.md`                    |
+| X3  | "Real new account" states for all five tabs and the header: empty, not rated yet, no pitches in city, offline, error                    | review (Claude) | `docs/DESIGN.md`                    |
+| X4  | Demo label and "illustrative image" label                                                                                               | review (Claude) | `docs/DESIGN.md`                    |
+| X5  | Review the draft ar/en copy Claude adds for auth, onboarding and error keys                                                             | open            |                                     |
 
 ## Unassigned
 

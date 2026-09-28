@@ -112,3 +112,16 @@ Carried over from the old migration and its 38 assertions, adapted to v2:
 - **§3 screens:** Claude builds and wires slice-1 screens from Codex's spec in `docs/DESIGN.md`; Codex reviews visuals and copy.
 - **Store review:** a production reviewer account with real empty or clearly owned test records; credentials only through the store review channels.
 - **Web:** brand tokens and type family; the owner, guardian and admin tools are calmer and denser than the player app.
+
+### 2026-09-28 12:30 — Owner decision C-010: recording is optional
+
+This replaces "the three required consents" wherever it appears above (§3, §4).
+
+- **Account gate:** terms and privacy only (`me().stage = 'consent'` when either is missing or outdated).
+- **Recording:** `complete_onboarding(p_consents)` takes `"recording": "<version>"` for yes or `false` for no. A missing key means unanswered: no row, no permission. Declining or not answering never blocks the account. `record_consent('recording', …)` changes it later. `me()` returns `recording_consent` and `can_join_recorded`.
+- **Youth:** need their own yes and a confirmed guardian's yes (the guardian's yes is recorded when they accept the invite, S3). Either no closes recorded matches.
+- **Fail-closed checks in later slices:**
+  - S2: `join_booking`, `accept_missing_one` and `create_booking` on a recorded booking raise `recording_consent_required` when `can_join_recorded_matches` is false. Bookings get a `recorded` flag (default true) so organizers can hold an unrecorded match that everyone may join.
+  - S4: QR check-in to a recorded match rechecks the same rule. `start_recording` rechecks every checked-in participant immediately before capture and refuses with `participant_not_permitted` if anyone fails; the organizer then removes them or plays unrecorded.
+  - S5: public share and download remain separate permissions (§7), never inferred from recording.
+- Tests: `030-identity.sql` covers yes, explicit no, unanswered, a later yes, youth needing both yeses, and withdrawal.
