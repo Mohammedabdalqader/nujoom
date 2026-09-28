@@ -185,15 +185,14 @@ export function ProgressChart({
         </Svg>
       ) : null}
 
-      {/* Tap targets: one column per month. Charts are left-to-right in every language. */}
-      {/* eslint-disable-next-line rtl/no-physical-style */}
+      {/* Tap targets: one column per month (the chart box is LTR, so start is the left edge). */}
       <View
         style={{
           position: 'absolute',
           top: 0,
           bottom: 0,
-          left: PAD.left,
-          right: PAD.right,
+          start: PAD.left,
+          end: PAD.right,
           flexDirection: 'row',
         }}
       >
