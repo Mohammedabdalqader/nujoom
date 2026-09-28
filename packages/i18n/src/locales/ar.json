@@ -1169,6 +1169,91 @@
     "comingSoon": "قريباً على أندرويد وآيفون.",
     "account": "حسابي",
     "accountSignedOut": "سجّل دخول بإيميل حسابك عشان تنزّل بياناتك أو تحذف حسابك.",
-    "accountLink": "حذف الحساب وتنزيل البيانات"
+    "accountLink": "حذف الحساب وتنزيل البيانات",
+    "admin": {
+      "title": "الإدارة",
+      "notAllowed": "هاي الصفحة للإدارة بس.",
+      "catalog": "دليل الملاعب",
+      "summary": {
+        "candidates": "بانتظار المراجعة",
+        "published": "أماكن منشورة",
+        "verified_fields": "ملاعب موثّقة",
+        "sources_changed": "مصادر تغيّرت",
+        "open_claims": "طلبات ملكية",
+        "pending_reports": "بلاغات اللاعبين",
+        "pending_media": "صور بانتظار الموافقة",
+        "stale_due": "توثيق مستحق الإلغاء"
+      },
+      "states": {
+        "all": "الكل",
+        "candidate": "مرشّح",
+        "published": "منشور",
+        "hidden": "مخفي",
+        "duplicate": "مكرر",
+        "closed": "مغلق",
+        "rejected": "مرفوض"
+      },
+      "operator": {
+        "none": "ما تم التواصل",
+        "contacted": "تم التواصل",
+        "responded": "ردّ",
+        "claimed": "مُطالَب به",
+        "authority_verified": "الصلاحية موثّقة",
+        "declined": "رفض",
+        "opted_out": "طلب عدم التواصل"
+      },
+      "badge": {
+        "verified": "موثّق",
+        "not_verified": "غير موثّق"
+      },
+      "columns": {
+        "name": "الاسم",
+        "city": "المدينة",
+        "fields": "الملاعب",
+        "waiting": "بانتظار",
+        "state": "الحالة",
+        "operator": "المشغّل"
+      },
+      "waiting": {
+        "sources_changed": "مصدر تغيّر",
+        "claims": "طلب ملكية",
+        "reports": "بلاغ",
+        "media": "صورة"
+      },
+      "field": {
+        "label": "الملعب",
+        "badge": "التوثيق",
+        "state": "الحالة",
+        "size": "اللاعبين لكل فريق",
+        "surface": "الأرضية",
+        "price": "السعر/ساعة",
+        "bookable": "قابل للحجز"
+      },
+      "fact": {
+        "access": "الدخول",
+        "location": "الموقع",
+        "reviewed": "آخر مراجعة",
+        "yes": "نعم",
+        "no": "لا"
+      },
+      "search": "ابحث بالاسم",
+      "searchButton": "بحث",
+      "empty": "ما في إشي هون.",
+      "next": "التالي",
+      "backToList": "رجوع للقائمة",
+      "unknown": "غير معروف",
+      "sections": {
+        "facts": "المعلومات",
+        "fields": "الملاعب",
+        "evidence": "الأدلة والمصادر",
+        "history": "السجل",
+        "claims": "طلبات الملكية",
+        "reports": "البلاغات",
+        "media": "الصور",
+        "outreach": "التواصل مع المشغّل",
+        "contacts": "جهات الاتصال",
+        "staff": "الموظفون"
+      }
+    }
   }
 }

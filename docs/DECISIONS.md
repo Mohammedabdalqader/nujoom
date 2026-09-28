@@ -502,3 +502,19 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
     - staff, claims, contacts, outreach, photos and reports
 - **What it's for:** the web admin screens that publish imports and handle claims, reports and photos.
 - **Evidence:** pgTAP `130-catalog-admin-reads.sql` has 11 assertions (351 total), live on the project.
+
+**D-054 Web admin: catalog review screens, read-only first (2026-09-29).**
+
+- **Pages:**
+  - `/[locale]/admin`: queue counts, each linking to its list.
+  - `/[locale]/admin/catalog`: venues by state (default candidates), with an Arabic-aware name search, a dense table and paging.
+  - `/[locale]/admin/catalog/[id]`: facts, fields with price and gate result, cited evidence with source links, claims, reports, photos, staff, contacts, outreach and history.
+- **Access:** a server-side gate sends signed-out visitors to sign-in and shows non-admins "admins only" with no data. The database still refuses every admin RPC to non-admins; the page only chooses what to render. All pages are `noindex`.
+- **Presentation:** calmer and denser than the player app (Codex Q6). Dates, coordinates and English evidence notes are isolated with `<bdi>`, so they keep their order in Arabic rows. Internal codes such as `public_rental` and `field_existence` are shown as-is for operators for now.
+- **Verified** on the production build against the live project, with a temporary admin tester and a `smoke_test` venue that were both removed afterwards:
+  - signed out → sign-in → admin home
+  - the candidate list shows the import; its detail shows the fields and cited evidence
+  - English search by the Arabic name works
+  - a player sees "admins only"
+  - no page errors
+- **Next:** the actions: publish, hide, reject, decide claims and reports, approve photos, set the badge. They'll use the existing admin RPCs.
