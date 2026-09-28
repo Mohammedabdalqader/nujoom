@@ -1221,7 +1221,18 @@
         "outreach": "Operator outreach",
         "contacts": "Contacts",
         "staff": "Staff"
-      }
+      },
+      "actions": {
+        "publish": "Publish",
+        "hide": "Hide",
+        "mark_closed": "Closed",
+        "reject": "Reject",
+        "approve": "Approve",
+        "request_evidence": "Ask for evidence",
+        "accepted": "Accept",
+        "rejected": "Reject"
+      },
+      "done": "Done."
     }
   }
 }

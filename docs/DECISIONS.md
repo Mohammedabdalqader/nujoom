@@ -518,3 +518,14 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
   - a player sees "admins only"
   - no page errors
 - **Next:** the actions: publish, hide, reject, decide claims and reports, approve photos, set the badge. They'll use the existing admin RPCs.
+
+**D-055 Web admin decisions: listings, claims, reports (2026-09-29).**
+
+- **What the venue page can now do:** publish, hide, close or reject the venue and each field, with only the decisions that make sense from the current state. It can approve, reject or ask for evidence on open ownership claims, and accept or reject pending player reports (their structured payload is shown).
+- **How it works:** Next.js server actions (`actions.ts`) call `admin_review_listing`, `admin_decide_claim` and `admin_decide_report` with the admin's own session. Inputs are re-validated on the server: locale, UUIDs, allowed actions. The database checks admin rights and every rule again. Buttons are plain forms, so they work without client JavaScript. The outcome returns as `?done=` or `?error=`, shown with the translated message plus the code.
+- **Verified** on the production build against the live project (temporary admin tester, `smoke_test` venue and a tester player, all removed afterwards):
+  - publish the imported venue, then its field; players find it as not verified
+  - the player claims and reports it; the admin approves the claim (venue `claimed`, badge untouched) and accepts the report
+  - a school-access venue can't be published and the reason (`access_not_public`) is shown
+  - no page errors
+- **Next:** photo approval, authority verification, the badge (with the operator's schedule gate) and the outreach log.

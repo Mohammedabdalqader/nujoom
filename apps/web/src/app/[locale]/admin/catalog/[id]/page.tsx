@@ -3,11 +3,18 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { ReactNode } from 'react';
 
+import { errorKey } from '@nujoom/shared';
+
 import { AdminFrame } from '@/components/AdminFrame';
 import { adminSession } from '@/lib/admin';
 import { getT, localeFrom } from '@/lib/i18n';
 
-type Props = { params: Promise<{ locale: string; id: string }> };
+import { decideClaim, decideReport, reviewListing } from './actions';
+
+type Props = {
+  params: Promise<{ locale: string; id: string }>;
+  searchParams: Promise<{ done?: string; error?: string }>;
+};
 type Json = Record<string, unknown>;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
@@ -79,9 +86,57 @@ const when = (v: unknown) =>
   ) : null;
 const text = (v: unknown) => (v === null || v === undefined || v === '' ? null : String(v));
 
-/** One venue, everything a reviewer needs (D-053). Actions arrive with the next step. */
-export default async function AdminVenue({ params }: Props) {
+type Tone = 'plain' | 'primary' | 'danger';
+
+/** One decision button: a tiny form posting to a server action (works without client JS). */
+function Act({
+  action,
+  fields,
+  label,
+  tone = 'plain',
+}: {
+  action: (form: FormData) => Promise<void>;
+  fields: Record<string, string>;
+  label: string;
+  tone?: Tone;
+}) {
+  const cls = {
+    plain: 'border-border-strong text-on-surface hover:border-primary',
+    primary: 'border-primary-container bg-primary-container font-bold text-on-primary',
+    danger: 'border-error/60 text-error',
+  }[tone];
+  return (
+    <form action={action} className="inline">
+      {Object.entries(fields).map(([k, v]) => (
+        <input key={k} type="hidden" name={k} value={v} />
+      ))}
+      <button type="submit" className={`rounded-md border px-2.5 py-1 text-xs ${cls}`}>
+        {label}
+      </button>
+    </form>
+  );
+}
+
+// Which listing decisions make sense from each state.
+const NEXT: Record<string, { action: string; tone: Tone }[]> = {
+  candidate: [
+    { action: 'publish', tone: 'primary' },
+    { action: 'reject', tone: 'danger' },
+  ],
+  published: [
+    { action: 'hide', tone: 'plain' },
+    { action: 'mark_closed', tone: 'danger' },
+  ],
+  hidden: [
+    { action: 'publish', tone: 'primary' },
+    { action: 'mark_closed', tone: 'danger' },
+  ],
+};
+
+/** One venue, everything a reviewer needs (D-053), and the decisions on it (D-055). */
+export default async function AdminVenue({ params, searchParams }: Props) {
   const { locale: rawLocale, id } = await params;
+  const { done, error } = await searchParams;
   const locale = localeFrom(rawLocale);
   if (!UUID.test(id)) notFound();
   const t = getT(locale);
@@ -97,6 +152,17 @@ export default async function AdminVenue({ params }: Props) {
     v === true ? t('web.admin.fact.yes') : v === false ? t('web.admin.fact.no') : null;
   const name = (locale === 'ar' ? (f.name_ar ?? f.name_en) : (f.name_en ?? f.name_ar)) as
     string | null;
+  const base = { locale, facility: id };
+  const listingButtons = (target: 'facility' | 'pitch', targetId: string, state: unknown) =>
+    (NEXT[String(state)] ?? []).map(({ action, tone }) => (
+      <Act
+        key={action}
+        action={reviewListing}
+        fields={{ ...base, target, id: targetId, action }}
+        label={t(`web.admin.actions.${action}`)}
+        tone={tone}
+      />
+    ));
 
   return (
     <AdminFrame locale={locale} path={`/admin/catalog/${id}`} allowed={session !== null}>
@@ -107,10 +173,29 @@ export default async function AdminVenue({ params }: Props) {
         {t('web.admin.backToList')}
       </Link>
       <h1 className="mb-1 font-headline text-2xl font-bold">{name ?? t('web.admin.unknown')}</h1>
-      <p className="mb-5 text-sm text-on-surface-variant">
+      <p className="mb-3 text-sm text-on-surface-variant">
         {text(f.listing_state) ? t(`web.admin.states.${f.listing_state}`) : null} ·{' '}
         {text(f.operator_state) ? t(`web.admin.operator.${f.operator_state}`) : null}
       </p>
+      {done ? (
+        <p
+          role="status"
+          className="mb-3 rounded-md border border-secondary/50 p-2 text-sm text-secondary"
+        >
+          {t('web.admin.done')}
+        </p>
+      ) : null}
+      {error ? (
+        <p role="alert" className="mb-3 rounded-md border border-error/50 p-2 text-sm text-error">
+          {t(errorKey(error))}{' '}
+          <bdi dir="ltr" className="font-numeric">
+            ({error})
+          </bdi>
+        </p>
+      ) : null}
+      <div className="mb-5 flex flex-wrap gap-2">
+        {listingButtons('facility', id, f.listing_state)}
+      </div>
 
       <Section title={t('web.admin.sections.facts')}>
         <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
@@ -147,6 +232,14 @@ export default async function AdminVenue({ params }: Props) {
               (r) => text((r.operations as Json | null)?.price_per_hour),
             ],
             [t('web.admin.field.bookable'), (r) => yesNo(r.bookable)],
+            [
+              '',
+              (r) => (
+                <span className="flex flex-wrap gap-1">
+                  {listingButtons('pitch', String(r.id), r.listing_state)}
+                </span>
+              ),
+            ],
           ]}
         />
       </Section>
@@ -190,6 +283,29 @@ export default async function AdminVenue({ params }: Props) {
             ['', (r) => text(r.name)],
             ['', (r) => text(r.status)],
             ['', (r) => when(r.created_at)],
+            [
+              '',
+              (r) =>
+                ['submitted', 'evidence_requested'].includes(String(r.status)) ? (
+                  <span className="flex flex-wrap gap-1">
+                    {(['approve', 'request_evidence', 'reject'] as const).map((decision) => (
+                      <Act
+                        key={decision}
+                        action={decideClaim}
+                        fields={{ ...base, claim: String(r.id), decision }}
+                        label={t(`web.admin.actions.${decision}`)}
+                        tone={
+                          decision === 'approve'
+                            ? 'primary'
+                            : decision === 'reject'
+                              ? 'danger'
+                              : 'plain'
+                        }
+                      />
+                    ))}
+                  </span>
+                ) : null,
+            ],
           ]}
         />
       </Section>
@@ -198,8 +314,33 @@ export default async function AdminVenue({ params }: Props) {
           rows={list('reports')}
           cols={[
             ['', (r) => text(r.kind)],
+            [
+              '',
+              (r) => (
+                <bdi dir="ltr" className="font-numeric text-xs">
+                  {JSON.stringify(r.payload)}
+                </bdi>
+              ),
+            ],
             ['', (r) => text(r.status)],
             ['', (r) => when(r.created_at)],
+            [
+              '',
+              (r) =>
+                r.status === 'pending' ? (
+                  <span className="flex flex-wrap gap-1">
+                    {(['accepted', 'rejected'] as const).map((decision) => (
+                      <Act
+                        key={decision}
+                        action={decideReport}
+                        fields={{ ...base, report: String(r.id), decision }}
+                        label={t(`web.admin.actions.${decision}`)}
+                        tone={decision === 'accepted' ? 'primary' : 'danger'}
+                      />
+                    ))}
+                  </span>
+                ) : null,
+            ],
           ]}
         />
       </Section>

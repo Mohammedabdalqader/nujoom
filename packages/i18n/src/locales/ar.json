@@ -1253,7 +1253,18 @@
         "outreach": "التواصل مع المشغّل",
         "contacts": "جهات الاتصال",
         "staff": "الموظفون"
-      }
+      },
+      "actions": {
+        "publish": "نشر",
+        "hide": "إخفاء",
+        "mark_closed": "مغلق",
+        "reject": "رفض",
+        "approve": "موافقة",
+        "request_evidence": "طلب إثبات",
+        "accepted": "قبول",
+        "rejected": "رفض"
+      },
+      "done": "تم."
     }
   }
 }
