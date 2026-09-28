@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
+import { AccountLink } from '@/components/AccountLink';
 import { getT, otherLocale, type Locale } from '@/lib/i18n';
 
 /**
@@ -31,11 +32,14 @@ export function SiteShell({
               {APP_NAME[locale]}
             </span>
           </Link>
+          <span className="ms-auto">
+            <AccountLink locale={locale} signIn={t('auth.title')} signOut={t('settings.signOut')} />
+          </span>
           <Link
             href={`/${other}${path}`}
             hrefLang={other}
             lang={other}
-            className="ms-auto rounded-full border border-border-strong px-4 py-1.5 text-sm text-on-surface-variant hover:text-on-surface"
+            className="rounded-full border border-border-strong px-4 py-1.5 text-sm text-on-surface-variant hover:text-on-surface"
           >
             {t('auth.language')}
           </Link>

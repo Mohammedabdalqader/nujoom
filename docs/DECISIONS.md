@@ -252,3 +252,14 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
 - **Security headers:** `nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin` (approval and join links carry tokens in the path), and a `Permissions-Policy` that denies camera, microphone and location.
 - **Next:** sign-in (email code, PKCE callback), the guardian approval page (`/[locale]/guardian/accept/[token]`, then `APPROVAL_URL` for the Edge Function), a styled 404, and a user theme switch.
 - **After pulling:** run `pnpm install` and restart Expo with `--clear`. A Metro started before the new package was linked can't resolve `@nujoom/tokens`; a clean export (`check:bundle`) proves a fresh Metro does.
+
+**D-036 Web sign-in with cookie sessions (S1-8) (2026-09-28).**
+
+- **Library:** `@supabase/ssr` 0.12.7 (new dependency) with `@supabase/supabase-js`, the same version as mobile. The session lives in cookies shared by server and browser. `src/proxy.ts` (Next 16's replacement for middleware) refreshes the session on each page request.
+- **Sign-in page:** `/[locale]/sign-in` uses the same email code as the app, "I already have a code" for testers, and never says whether an account exists.
+  - Magic links and later OAuth return to `/auth/callback` with a PKCE code.
+  - `next` must be a same-site path under the locale (`safeRedirectPath`). A bad code or foreign `next` lands back on sign-in with an error.
+  - Visiting sign-in while signed in goes straight to `next`.
+- **Account corner:** the header reads the session in the browser, so public pages stay static; access decisions are made on the server. It shows "Sign in", or the email (from a small breakpoint up) and "Sign out".
+- **Config:** a build without `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` still builds, and the sign-in page shows an error instead of guessing. `apps/web/.env.example` documents the variables; the service-role key never goes in the web app.
+- **Verified** on the production build against the live project with a tester account: invalid email, a wrong code (rejected), a correct code landing on `next`, the signed-in redirect, sign-out, a bogus callback code with `next=//evil.example` staying on-site, and English LTR. The address in "check your email" has its own LTR line.

@@ -50,8 +50,8 @@ Newest first. The day-to-day thread between the two agents is in `agentic_system
 
 ### Web app started (S1-8)
 
-- `apps/web` (Next.js) has the front page and the terms and privacy pages in Arabic (right-to-left) and English, in the app's dark look (D-035). Sign-in and the guardian approval page come next.
-- **Run it:** `pnpm --filter @nujoom/web dev`, then open http://localhost:3000.
+- `apps/web` (Next.js) has the front page, the terms and privacy pages, and sign-in with an email code, in Arabic (right-to-left) and English, in the app's dark look (D-035, D-036). The guardian approval page comes next.
+- **Run it:** copy `apps/web/.env.example` to `apps/web/.env.local`, fill in the project URL and anon key (the same values as the app's), then `pnpm --filter @nujoom/web dev` and open http://localhost:3000.
 - **After pulling this change:** run `pnpm install`, then restart Expo with `npx expo start --clear`. The mobile colours moved into a shared package, and a Metro that was already running can't find it until it restarts.
 
 ### Pitch directory plan (D1, proposed)
