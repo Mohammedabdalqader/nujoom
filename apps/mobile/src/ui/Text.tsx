@@ -10,6 +10,7 @@ import {
   type FontWeight,
   type TextVariant,
 } from '@/design/typography';
+import { useLocale } from '@/lib/locale';
 
 export type TextProps = RNTextProps & {
   /** A type-scale style from the design (family, weight, size, line height, tracking). */
@@ -35,6 +36,7 @@ function plainText(node: ReactNode): string {
  * drops letter-spacing on Arabic (see design/typography.ts). Colours and sizes are classes.
  */
 export function Text({ variant, font, className = '', style, children, ...rest }: TextProps) {
+  const { rtl } = useLocale();
   const arabic = containsArabic(plainText(children));
   const resolved = resolveTextClasses(className, { variant, arabic });
   const family: FontFamily = variant ? VARIANTS[variant].family : (font ?? 'jakarta');
@@ -43,7 +45,10 @@ export function Text({ variant, font, className = '', style, children, ...rest }
     <RNText
       {...rest}
       className={resolved.className}
-      style={[{ fontFamily: fontFile(family, weight) }, style]}
+      style={[
+        { fontFamily: fontFile(family, weight), writingDirection: rtl ? 'rtl' : 'ltr' },
+        style,
+      ]}
     >
       {children}
     </RNText>

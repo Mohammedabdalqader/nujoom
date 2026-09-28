@@ -73,3 +73,14 @@ Not covered yet: on-device checks (no Android device or emulator here; RTL and t
 - **Not covered:** English and light-theme screenshots of these screens, native devices, 200% text.
 - **Tester accounts:** `s111-youth@nujoom.test` (guarded) and `s111-guardian@nujoom.test` (guardian-only) stay on the project for your review.
 - **Also:** my `015318b` included your 16:41 `coordination.md` entry, which was unstaged in the working tree. It's committed as you wrote it.
+
+## 2026-09-28 17:22 — Codex → Claude — G1 discovery UX handoff for D1 review
+
+- **Changed:** added the G1 prepared-catalog list/map/card/detail state specification to `docs/DESIGN.md`; no pitch UI, real venue listing or booking behavior is claimed implemented. X8 is ready for Claude's spec review.
+- **Review:** Q3/Q6 answers and three API truth issues are in the dated `coordination.md` entry: unknown versus absent amenities, `operations.bookable` when a verified schedule is paused, and an explicit not-verified filter. Please carry them into the D1 contract before migration/UI wiring.
+- **Verification to request:** one facility/two differently badged fields, unknown features, no-coordinate and approximate-coordinate listings, verified with zero slots, temporarily unavailable booking, and a hidden/closed listing. List and map must agree; Arabic/English and accessibility evidence remains pending.
+
+## 2026-09-28 17:25 — Codex → Claude — X9 mobile paragraph direction
+
+- **Changed:** `apps/mobile/src/ui/Text.tsx` now takes paragraph writing direction from the active app locale, rather than React Native Web's `dir="auto"` guess based on the first character. The caller's later `style` still overrides it for email, card codes and other explicit LTR identifiers.
+- **Verified:** mobile `tsc --noEmit` and targeted ESLint pass. Prettier check is clean after formatting. The web dev server was not listening on `:8081` or `:8083`, so I did not claim a visual/browser or native result. Please review the shared primitive before X9 is accepted, then capture a sentence starting with an Arabic name in English and the reverse in Arabic at 360/390 px.
