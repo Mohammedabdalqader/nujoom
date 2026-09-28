@@ -22,3 +22,20 @@ The rest of the wipe was blocked by the local permission check (mass delete of c
 - the old `public`/`private` schemas and migration history
 
 See "Finishing the database wipe" in the handover message, or allow the action. New migrations can't be pushed until it is done.
+
+### Done since (same day)
+
+- **Database foundation:**
+  - Migrations for extensions and helpers, platform tables, places and typed settings.
+  - pgTAP runs without Docker (`pnpm db:test`, 35 assertions green).
+- **Mobile design system:**
+  - NativeWind 5 RC with theme tokens that switch at runtime (D-020); fonts, the Material Symbols subset, and the prototype's five sounds rendered sample-exact.
+  - Frosted header and bottom bar.
+- **Home tab:** ported and checked against the prototype's screenshots. It runs on typed preview data.
+- `pnpm check` is green.
+
+### Next
+
+1. Port the Pitches, Match, Leaders and Me tabs, then the dialogs: notifications, friends, match details, missing one, clip player, booking, QR, the three tools, wallet history.
+2. Screens the prototype lacks, in the same style: sign-in, onboarding, consent, guardian, settings.
+3. R1 onwards: identity schema and RPCs, then swap preview queries for Supabase feature by feature.
