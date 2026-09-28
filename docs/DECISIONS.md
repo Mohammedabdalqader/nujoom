@@ -561,3 +561,12 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
 - **Admin-only material never appears:** contacts, outreach notes, reviewer history, other claimants and player reports.
 - **Evidence:** pgTAP `140-owner-reads.sql` has 8 assertions (360 total), live on the project. It covers signed-out refused, own venue only, no admin notes, and a pending claimant managing nothing yet.
 - **Next:** the owner pages on the website: find and claim a listed venue, confirm field facts and prices, switch the schedule on or off, and upload photos.
+
+**D-059 A basic profile for web-only venue owners (2026-09-29).**
+
+- **Why:** claiming a venue needs an adult profile. Players get one from app onboarding and parents a guardian-only one (D-033), but an owner who uses only the website had none.
+- **`create_owner_profile(name, dob, accept_terms)`:**
+  - Creates a non-player adult profile (name and date of birth only; no city, position or card presence; `me()` still says `onboarding`). The existing trigger derives adulthood from the date of birth.
+  - Records acceptance of the current terms and privacy versions, and audits the creation.
+  - Refuses minors (`not_adult`), missing acceptance (`consent_required`) and bad names. It never overwrites an existing profile.
+- **Evidence:** pgTAP `150-owner-profile.sql` has 9 assertions (369 total), live on the project.

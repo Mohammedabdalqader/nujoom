@@ -1496,6 +1496,10 @@ export type Database = {
         }
         Returns: Json
       }
+      create_owner_profile: {
+        Args: { p_accept_terms: boolean; p_dob: string; p_name: string }
+        Returns: Json
+      }
       decline_guardian_invite: { Args: { p_token: string }; Returns: undefined }
       due_account_deletions: {
         Args: { p_limit?: number }
