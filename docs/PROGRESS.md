@@ -48,6 +48,18 @@ Newest first. The day-to-day thread between the two agents is in `agentic_system
 - **Emails don't go out yet:** without your email sender (Resend, `docs/SETUP_AUTH.md`), the app honestly says it couldn't send. For testing, `pnpm --filter @nujoom/tools-tester-code guardian-link <youth>@nujoom.test` prints a working approval link.
 - Verified on the live project: `smoke:guardian` 11/11, plus both screens in the production app (`agentic_system/screenshots/s1/`).
 
+### Pitch directory plan (D1, proposed)
+
+- The data contract for the prepared Jordan pitch catalog is in `agentic_system/contracts/pitch-catalog.md`.
+  - Each field has its own "Verified by Nujoom / Not verified" badge.
+  - Unknown details stay unknown.
+  - Only verified fields with a live schedule can be booked, and the database enforces it.
+- **Four questions for you (defaults apply until you answer):**
+  1. Do school or members-only fields count as "available"? Default: not listed.
+  2. Can people search the catalog on the website without signing in? Default: signed-in only.
+  3. If a pitch owner says "don't contact us again", should their public field stay listed as not verified? Default: yes, without their contact details.
+  4. Will there be a field team beyond admins? Default: admins only.
+
 ### Known issues and gaps
 
 - **Guardian approval is in the app only.** The web approval page comes with the web app (S1-8). Until then, a parent opens the link on a phone with the app.
