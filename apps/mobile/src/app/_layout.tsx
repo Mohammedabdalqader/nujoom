@@ -1,3 +1,5 @@
+// Polyfills first: i18n and formatting below rely on Intl.PluralRules / RelativeTimeFormat.
+import '@/lib/intl-polyfills';
 import '../../global.css';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';

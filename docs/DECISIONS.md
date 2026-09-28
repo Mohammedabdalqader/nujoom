@@ -132,5 +132,13 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
   - Metro runs with `inlineVariables: false` so the colour tokens stay runtime CSS variables on native. Otherwise the dark values are baked in and the light theme cannot switch.
 - Spike results on Android:
   - Compiled natively: gradients (to `experimental_backgroundImage`), glows (`boxShadow`), `animate-ping`/`pulse` (Reanimated CSS animations), `active:scale-*` and opacity modifiers on tokens (runtime `color-mix`).
-  - `backdrop-blur` does nothing on native, so the header and tab bar use `expo-blur`.
+  - `backdrop-blur` does nothing on native, so the header and tab bar use `expo-blur` on iOS and web.
+  - On Android, expo-blur 57 needs a separate capture target around the content, which the navigator's own header and tab bar can't wrap. There the bar is the same translucent surface (`bg-chrome`) without blur.
 - Revisit when NativeWind 5 is final.
+
+**D-021 Intl polyfills for Hermes.** Hermes (the JS engine on Android and iOS) has no `Intl.RelativeTimeFormat` or `Intl.PluralRules`.
+
+- The first device run crashed with "undefined cannot be used as a constructor".
+- Without PluralRules, i18next would also silently drop Arabic's six plural forms.
+- `src/lib/intl-polyfills.ts` loads the formatjs polyfills (getCanonicalLocales, Locale, PluralRules, RelativeTimeFormat) with ar/en data before anything formats text. Each installs only when the engine lacks the API, so browsers keep their built-ins.
+- Verified by removing those APIs in the browser: the app renders, "قبل …" relative times and "3 مطلوبين" plurals work. `structuredClone` is avoided for the same reason.

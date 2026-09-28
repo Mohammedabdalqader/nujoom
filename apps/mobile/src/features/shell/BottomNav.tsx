@@ -11,12 +11,6 @@ import { Icon } from '@/ui/Icon';
 import { PingDot } from '@/ui/PingDot';
 import { Text } from '@/ui/Text';
 
-const ACTIVE_GLOW = {
-  textShadowColor: 'rgba(245, 158, 11, 0.5)',
-  textShadowRadius: 8,
-  textShadowOffset: { width: 0, height: 0 },
-};
-
 /** The prototype's five-tab bar with the gold active glow and red unread dots. */
 export function BottomNav({ state, navigation }: BottomTabBarProps) {
   const { t } = useLocale();
@@ -49,8 +43,11 @@ export function BottomNav({ state, navigation }: BottomTabBarProps) {
                 <Icon
                   name={tab.icon}
                   size={22}
-                  className={active ? 'text-primary' : 'text-on-surface-variant'}
-                  style={active ? ACTIVE_GLOW : undefined}
+                  className={
+                    active
+                      ? 'text-primary text-shadow-[0_0_8px_rgba(245,158,11,0.5)]'
+                      : 'text-on-surface-variant'
+                  }
                 />
                 {unread ? (
                   <View className="absolute -top-1 -end-1">

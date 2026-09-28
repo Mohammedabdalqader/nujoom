@@ -24,7 +24,8 @@ export const keys = {
 const preview =
   <T>(value: T) =>
   () =>
-    Promise.resolve(structuredClone(value));
+    // A deep copy so cache edits never mutate the fixtures (JSON-safe data; Hermes has no structuredClone).
+    Promise.resolve(JSON.parse(JSON.stringify(value)) as T);
 
 export const useMe = () => useQuery<Me>({ queryKey: keys.me, queryFn: preview(previewMe) });
 

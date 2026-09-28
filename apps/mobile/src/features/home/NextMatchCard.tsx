@@ -100,12 +100,7 @@ export function NextMatchCard({ match }: { match: UpcomingMatch }) {
             </Text>
             <Text
               font="grotesk"
-              className="text-[24px] leading-[30px] text-on-surface font-extrabold tracking-tight"
-              style={{
-                textShadowColor: 'rgba(245, 158, 11, 0.35)',
-                textShadowRadius: 12,
-                textShadowOffset: { width: 0, height: 0 },
-              }}
+              className="text-[24px] leading-[30px] text-on-surface font-extrabold tracking-tight text-shadow-[0_0_12px_rgba(245,158,11,0.35)]"
             >
               {countdown}
             </Text>
