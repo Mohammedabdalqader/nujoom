@@ -584,3 +584,9 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
 - **How it works:** server-rendered pages and server actions that work without client JavaScript. Actions re-check their inputs, and the database checks staff membership again, so a forged field id is refused (`forbidden`).
 - **Error messages:** new shared keys for `not_adult`, `claim_exists`, `already_staff` and `no_operations`, plus neutral `not_found` and `forbidden` messages for every screen.
 - **Not yet:** owner photo upload from the website, opening hours and field facts. The app upload path and the RPCs already exist (D-054).
+
+**D-061 Venue staff preview their own photos (2026-09-29).**
+
+- **Why:** the owner page should show the photos an owner uploaded while they wait for review, and which ones were rejected. Until now only admins could open a photo before approval (D-056).
+- **Rule:** the `pitch-media` read check also lets a venue's current staff open any file in that venue's folder, whatever its review status and even while the venue is hidden. It uses the same folder rule as uploading. Players still see only approved photos of published venues and fields. Someone removed from the staff loses access at once.
+- **Evidence:** pgTAP `160-owner-media.sql` has 6 assertions (375 total), live on the project.
