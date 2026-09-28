@@ -41,6 +41,7 @@ let demoAccount: Account = {
   canJoinRecorded: true,
   visibility: 'public',
   settings: { locale: 'ar', sharePresence: true, shareInMatch: false },
+  guardians: [],
 };
 const update = (patch: Partial<Account>) => {
   demoAccount = { ...demoAccount, ...patch };
@@ -69,6 +70,15 @@ export const demoSource: DataSource & { marker: string } = {
   setSettings: (patch) => update({ settings: { ...demoAccount.settings, ...patch } }),
   setVisibility: (visibility) => update({ visibility }),
   acceptCurrentConsents: () => copy(demoAccount),
+  // The demo persona is an adult: there is no guardian flow to show.
+  guardian: {
+    name: demoOnly,
+    links: () => copy([]),
+    sendInvite: demoOnly,
+    preview: () => Promise.resolve(null),
+    accept: demoOnly,
+    decline: demoOnly,
+  },
   setRecordingConsent: (granted) => update({ recordingConsent: granted, canJoinRecorded: granted }),
   me: () => copy(previewMe),
   friends: () => copy(previewFriends),

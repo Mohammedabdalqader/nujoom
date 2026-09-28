@@ -10,10 +10,18 @@ import {
   type FeatureFlag,
   type GuardianState,
 } from '@nujoom/shared';
+import { FunctionsFetchError, FunctionsHttpError } from '@supabase/supabase-js';
 import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
 
-import type { Account, BackendConfig, City, DataSource, Session } from '@/data/source';
+import type {
+  Account,
+  BackendConfig,
+  City,
+  DataSource,
+  GuardianLink,
+  Session,
+} from '@/data/source';
 import type { Me, Position } from '@/data/types';
 import { createSupabase } from '@/lib/supabase';
 
@@ -42,7 +50,32 @@ type MeRow = {
   recording_consent?: boolean;
   can_join_recorded?: boolean;
   settings?: { locale?: string; share_presence?: boolean; share_in_match?: boolean };
+  guardians?: GuardianLinkRow[];
 };
+
+/** private.guardian_links_json (supabase/migrations/*_guardian_invites.sql). */
+type GuardianLinkRow = {
+  id: string;
+  contact_email: string;
+  status: string;
+  invite_sent_at: string | null;
+  invite_expires_at: string | null;
+};
+
+const toGuardianLinks = (rows: GuardianLinkRow[] | null | undefined): GuardianLink[] =>
+  (rows ?? []).flatMap((row) =>
+    row.status === 'pending' || row.status === 'confirmed'
+      ? [
+          {
+            id: row.id,
+            email: row.contact_email,
+            status: row.status,
+            sentAt: row.invite_sent_at,
+            expiresAt: row.invite_expires_at,
+          },
+        ]
+      : [],
+  );
 
 /** FIFA-style card tag per position. */
 const POSITION_TAG: Record<Position, string> = { GK: 'GK', DEF: 'CB', MID: 'CM', FWD: 'ST' };
@@ -61,6 +94,7 @@ const toAccount = (raw: MeRow): Account => ({
     sharePresence: raw.settings?.share_presence === true,
     shareInMatch: raw.settings?.share_in_match === true,
   },
+  guardians: toGuardianLinks(raw.guardians),
 });
 
 export function createSupabaseSource(config: BackendConfig): DataSource {
@@ -207,6 +241,46 @@ export function createSupabaseSource(config: BackendConfig): DataSource {
           p_granted: true,
         }),
       );
+    },
+    guardian: {
+      async name(email) {
+        const raw = await rpc<{ link_id: string }>('name_guardian', { p_email: email });
+        return raw.link_id;
+      },
+      links: async () => toGuardianLinks(await rpc<GuardianLinkRow[]>('my_guardians')),
+      async sendInvite(linkId, locale) {
+        const { data, error } = await db.functions.invoke<{ sent?: boolean }>('guardian-invite', {
+          body: { linkId, locale },
+        });
+        if (error instanceof FunctionsHttpError) {
+          const body = (await (error.context as Response)
+            .json()
+            .catch(() => null)) as { error?: string } | null;
+          throw new Error(body?.error ?? 'email_failed');
+        }
+        if (error instanceof FunctionsFetchError) throw new Error('fetch failed');
+        if (error) throw error;
+        if (data?.sent !== true) throw new Error('email_failed');
+      },
+      async preview(token) {
+        const raw = await rpc<{ youth_name: string; expires_at: string | null } | null>(
+          'guardian_invite_preview',
+          { p_token: token },
+        );
+        return raw ? { youthName: raw.youth_name, expiresAt: raw.expires_at } : null;
+      },
+      async accept(token, approval) {
+        await rpc('accept_guardian_invite', {
+          p_token: token,
+          p_visibility: approval.visibility,
+          p_recording: approval.recording,
+          p_guardian_name: approval.name ?? null,
+          p_guardian_dob: approval.dob ?? null,
+        });
+      },
+      async decline(token) {
+        await rpc('decline_guardian_invite', { p_token: token });
+      },
     },
     async setRecordingConsent(granted) {
       const version = granted ? (await consentVersions()).recording : null;

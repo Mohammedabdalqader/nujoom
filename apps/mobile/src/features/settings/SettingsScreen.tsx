@@ -7,6 +7,7 @@ import { ActivityIndicator, Pressable, View } from 'react-native';
 import { getSource, type Account } from '@/data/source';
 import { setSoundsMuted, soundsMuted } from '@/design/sound';
 import { useTheme } from '@/design/theme';
+import { GuardianInvitePanel } from '@/features/guardian/GuardianInvitePanel';
 import { changeLocale } from '@/lib/i18n';
 import { useLocale } from '@/lib/locale';
 import { accountKey, useAccount, useSession, useSignOut } from '@/lib/session';
@@ -153,6 +154,17 @@ export function SettingsScreen() {
               }
             />
           )}
+        </Section>
+      ) : null}
+
+      {a?.isYouth && !IS_DEMO ? (
+        <Section title={t('settings.guardian')} icon="family_restroom">
+          <GuardianInvitePanel
+            initial={a.guardians}
+            onChange={() =>
+              void queryClient.invalidateQueries({ queryKey: accountKey(session?.userId) })
+            }
+          />
         </Section>
       ) : null}
 

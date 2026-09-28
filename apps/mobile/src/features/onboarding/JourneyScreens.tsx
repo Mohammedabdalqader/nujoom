@@ -4,10 +4,11 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { ActivityIndicator, Image, Pressable, View } from 'react-native';
 
-import { getSource, type ConfigError } from '@/data/source';
+import { getSource, type ConfigError, type GuardianLink } from '@/data/source';
 import { useTheme } from '@/design/theme';
+import { GuardianInvitePanel } from '@/features/guardian/GuardianInvitePanel';
 import { useLocale } from '@/lib/locale';
-import { accountKey, useSession, useSignOut } from '@/lib/session';
+import { accountKey, useAccount, useSession, useSignOut } from '@/lib/session';
 import { Icon } from '@/ui/Icon';
 import { Page } from '@/ui/Page';
 import { Text } from '@/ui/Text';
@@ -128,12 +129,19 @@ export function ReconsentScreen() {
 }
 
 /**
- * The `guardian` stage (spec §7). Until the invite email lands (S1-11), this states plainly that
- * guardian approval is required and that sending the invite isn't available yet.
+ * The `guardian` stage (spec §7, S1-11): a youth names their guardian and we email an approval
+ * link. Once an invite is pending the youth may continue into the app; recorded matches and any
+ * visibility stay closed until the guardian approves. The account refreshes only on "Continue",
+ * so the send result stays on screen.
  */
 export function GuardianStepScreen() {
   const { t } = useLocale();
+  const queryClient = useQueryClient();
+  const { session } = useSession();
+  const account = useAccount();
   const signOut = useSignOut();
+  const [links, setLinks] = useState<GuardianLink[] | null>(null);
+  const named = (links ?? account.data?.guardians ?? []).length > 0;
   return (
     <Page className="gap-5 pt-10">
       <Icon name="family_restroom" size={48} className="text-primary" />
@@ -143,9 +151,20 @@ export function GuardianStepScreen() {
       <Text className="text-[16px] leading-[25px] text-on-surface-variant">
         {t('guardianStep.body')}
       </Text>
-      <View className="rounded-xl bg-surface-container border border-border p-3">
-        <Text className="text-[15px] leading-[23px] text-on-surface">{t('guardianStep.soon')}</Text>
-      </View>
+      <GuardianInvitePanel initial={account.data?.guardians ?? []} onChange={setLinks} />
+      {named ? (
+        <Pressable
+          onPress={() =>
+            void queryClient.invalidateQueries({ queryKey: accountKey(session?.userId) })
+          }
+          accessibilityRole="button"
+          className="min-h-[52px] rounded-xl border border-primary/60 items-center justify-center"
+        >
+          <Text font="rubik" className="text-[16px] text-primary font-bold">
+            {t('guardianStep.continue')}
+          </Text>
+        </Pressable>
+      ) : null}
       <Pressable
         onPress={() => void signOut()}
         className="min-h-[44px] items-center justify-center"

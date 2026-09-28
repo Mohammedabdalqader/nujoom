@@ -6,6 +6,7 @@ export * from './constants';
 export * from './email';
 export * from './errors';
 export * from './format';
+export * from './guardian';
 export * from './journey';
 export * from './onboarding';
 export * from './phone';

@@ -6,8 +6,9 @@
 // and only then records the invite as sent. The plain token never reaches the youth's device.
 //
 // Env: SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY (provided by Supabase);
-//      APPROVAL_URL: where the email link lands, e.g. https://<web domain>/{locale}/guardian/accept
-//      (the web app, S1-8). Until it is set, the app's own link is used.
+//      APPROVAL_URL: where the email link lands, the token appended as the last path segment,
+//      e.g. https://<web domain>/{locale}/guardian/accept (the web app, S1-8). Until it is set,
+//      the app's own route is used: nujoom://guardian/accept/<token>.
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2';
 
 import { corsHeaders, errorResponse, json } from '../_shared/http.ts';
@@ -22,8 +23,8 @@ function sqlErrorCode(error: { message?: string } | null): string {
 
 function approvalLink(locale: Locale, token: string): string {
   const base = Deno.env.get('APPROVAL_URL');
-  if (base) return `${base.replace('{locale}', locale).replace(/\/$/, '')}?token=${token}`;
-  return `nujoom://guardian/accept?token=${token}`;
+  const prefix = base ? base.replace('{locale}', locale).replace(/\/$/, '') : 'nujoom://guardian/accept';
+  return `${prefix}/${token}`;
 }
 
 /**

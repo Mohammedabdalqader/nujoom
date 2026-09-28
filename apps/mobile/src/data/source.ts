@@ -44,6 +44,45 @@ export type Account = {
   canJoinRecorded: boolean;
   visibility: ProfileVisibility | null;
   settings: { locale: 'ar' | 'en'; sharePresence: boolean; shareInMatch: boolean };
+  /** A youth's guardian links, pending and confirmed (empty for adults). */
+  guardians: GuardianLink[];
+};
+
+/** One guardian a youth named (S1-11). `sentAt` is set only after the email went out. */
+export type GuardianLink = {
+  id: string;
+  email: string;
+  status: 'pending' | 'confirmed';
+  sentAt: string | null;
+  expiresAt: string | null;
+};
+
+/** What an invited guardian sees before approving: never more than the youth's name. */
+export type GuardianInvite = { youthName: string; expiresAt: string | null };
+
+export type GuardianApproval = {
+  visibility: ProfileVisibility;
+  /** The guardian's own recording decision for this youth; null leaves it unanswered (C-010). */
+  recording: boolean | null;
+  /** Only for a guardian without an account profile: their name and adult date of birth. */
+  name?: string;
+  dob?: string;
+};
+
+export type GuardianApi = {
+  /** The youth names (or corrects) the guardian's email; returns the pending link's id. */
+  name(email: string): Promise<string>;
+  /** The youth's guardian links, fresh from the server. */
+  links(): Promise<GuardianLink[]>;
+  /**
+   * Emails the approval link (Edge Function `guardian-invite`). Resolves only when the email
+   * went out; otherwise throws with a code (`email_failed`, `invite_rate_limited`, …).
+   */
+  sendInvite(linkId: string, locale: 'ar' | 'en'): Promise<void>;
+  /** The invited guardian's view of a token; null when it isn't theirs, is used or expired. */
+  preview(token: string): Promise<GuardianInvite | null>;
+  accept(token: string, approval: GuardianApproval): Promise<void>;
+  decline(token: string): Promise<void>;
 };
 
 export type City = {
@@ -94,6 +133,7 @@ export type DataSource = {
   setRecordingConsent(granted: boolean): Promise<Account>;
   /** Re-accepts the current terms and privacy versions (the `consent` stage). */
   acceptCurrentConsents(): Promise<Account>;
+  guardian: GuardianApi;
   me(): Promise<Me>;
   friends(): Promise<Friend[]>;
   friendRequests(): Promise<FriendRequest[]>;

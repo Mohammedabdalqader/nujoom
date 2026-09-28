@@ -29,7 +29,7 @@ try {
   if (error) throw new Error(error.message);
 
   console.log(`\n  Guardian invite for ${email} → ${issued.contact_email}`);
-  console.log(`  App link:  nujoom://guardian/accept?token=${issued.token}`);
+  console.log(`  App link:  nujoom://guardian/accept/${issued.token}`);
   console.log(`  Expires:   ${issued.expires_at}\n`);
   console.log('  Sign in as the guardian address (pnpm tester-code <guardian>) and open the link.');
   console.log('  Not marked as "sent": no email was delivered.');

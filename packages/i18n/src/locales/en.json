@@ -900,7 +900,18 @@
       "streaming": "Live streaming isn't available yet."
     },
     "guardian": {
-      "tooMany": "You've already added the maximum number of guardians."
+      "tooMany": "You've already added the maximum number of guardians.",
+      "notYouth": "Only players under 18 add a guardian.",
+      "sameEmail": "Use your guardian's email, not yours.",
+      "duplicate": "This person is already your guardian.",
+      "wait": "Wait a minute before sending again.",
+      "limit": "You've reached the send limit for this email. Check the address, or ask your guardian to look in their spam folder.",
+      "notPending": "This invite is no longer waiting for approval. Refresh and try again.",
+      "sendFailed": "We couldn't send the email, so nothing reached your guardian. Try again in a minute.",
+      "invalidInvite": "This link has expired or was already used. Ask the player to send a new one.",
+      "contactMismatch": "This invite went to a different email. Sign in with the email that received it.",
+      "self": "You can't approve your own account.",
+      "adult": "A guardian must be 18 or older."
     },
     "retry": "Try again"
   },
@@ -987,8 +998,23 @@
   "guardianStep": {
     "title": "We need your guardian's approval",
     "body": "Because you're under 18, your guardian must approve before you join recorded matches or your profile is shown to anyone.",
-    "soon": "Emailing your guardian is being set up. As soon as it's ready you can send the invite from here.",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "emailLabel": "Guardian's email",
+    "emailHint": "We'll email them a link to approve. Their email is never shown to anyone.",
+    "send": "Send the invite",
+    "sending": "Sending…",
+    "sent": "Invite sent to {{email}}.",
+    "sentAt": "Sent {{date}} · expires {{expires}}",
+    "notSent": "The invite to {{email}} hasn't been sent yet.",
+    "expired": "The invite to {{email}} expired. Send a new one.",
+    "confirmed": "{{email}} approved. You're all set.",
+    "waiting": "Until they approve, you can use the app, but you can't join recorded matches and your profile stays hidden.",
+    "checkSpam": "Ask your guardian to check their spam folder too.",
+    "resend": "Send again",
+    "resendIn": "Send again in {{time}}",
+    "change": "Change email",
+    "cancel": "Cancel",
+    "continue": "Continue to the app"
   },
   "legal": {
     "terms": "Terms of Use",
@@ -1035,6 +1061,7 @@
     "signOut": "Sign out",
     "signingOut": "Signing out…",
     "saved": "Saved",
-    "comingSoon": "Downloading your data and deleting your account arrive in the next update."
+    "comingSoon": "Downloading your data and deleting your account arrive in the next update.",
+    "guardian": "Guardian"
   }
 }

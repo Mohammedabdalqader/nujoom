@@ -31,8 +31,21 @@ const SQL_ERROR_KEYS = {
   consent_outdated: 'errors.consent.outdated',
   invalid_consent: 'errors.consent.invalid',
   streaming_not_available: 'errors.consent.streaming',
-  // Guardians
+  // Guardians (S1-11): the youth naming one, the email, and the guardian approving
   too_many_guardians: 'errors.guardian.tooMany',
+  not_youth: 'errors.guardian.notYouth',
+  invalid_email: 'errors.auth.emailInvalid',
+  same_email: 'errors.guardian.sameEmail',
+  duplicate_guardian: 'errors.guardian.duplicate',
+  invite_rate_limited: 'errors.guardian.wait',
+  invite_limit_reached: 'errors.guardian.limit',
+  invite_not_pending: 'errors.guardian.notPending',
+  invite_failed: 'errors.guardian.sendFailed',
+  email_failed: 'errors.guardian.sendFailed',
+  invalid_invite: 'errors.guardian.invalidInvite',
+  contact_mismatch: 'errors.guardian.contactMismatch',
+  cannot_guard_self: 'errors.guardian.self',
+  guardian_must_be_adult: 'errors.guardian.adult',
 } as const;
 
 /** Supabase Auth error codes (AuthError.code) we explain specifically. */
