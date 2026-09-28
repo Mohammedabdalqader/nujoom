@@ -15,6 +15,8 @@ export type LocationConfidence = 'approximate' | 'map_checked' | 'site_checked';
 /** A name that may exist in one language only. */
 export type Localized = { ar: string | null; en: string | null };
 
+export type CatalogPhoto = { path: string; url: string | null; attribution: string | null };
+
 export type CatalogOperations = {
   pricePerHour: number;
   priceNote: Localized | null;
@@ -47,8 +49,11 @@ export type CatalogListing = {
   /** Where the facts came from: osm, operator, field_team, community, reviewer. */
   sources: string[];
   lastReviewedAt: string | null;
-  /** Rights-cleared photos arrive later; never a generated or borrowed image. */
-  photo: string | null;
+  /**
+   * An approved photo with a recorded right to use it (D-049), or null. `url` is a short-lived
+   * signed link filled in by the data source; show `attribution` whenever it is set.
+   */
+  photo: CatalogPhoto | null;
   /** Always null for a not-verified field, so there is no price or slot to show. */
   operations: CatalogOperations | null;
 };
@@ -140,7 +145,11 @@ export function toCatalogListing(raw: unknown): CatalogListing {
       ? r.sources.filter((s): s is string => typeof s === 'string')
       : [],
     lastReviewedAt: str(r.last_reviewed_at),
-    photo: str(r.photo),
+    photo: (() => {
+      const p = obj(r.photo);
+      const path = str(p?.path);
+      return p && path ? { path, url: null, attribution: str(p.attribution) } : null;
+    })(),
     // Fail closed: operations only for a verified field with a complete, valid record.
     operations:
       r.badge === 'verified' && ops && price !== null && (slot === 60 || slot === 90)

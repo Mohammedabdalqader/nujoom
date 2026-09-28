@@ -853,6 +853,72 @@ export type Database = {
           },
         ]
       }
+      pitch_media: {
+        Row: {
+          attribution: string | null
+          created_at: string
+          facility_id: string
+          id: string
+          pitch_id: string | null
+          reason: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          rights: Database["public"]["Enums"]["media_rights"]
+          sort_order: number
+          source_url: string | null
+          status: Database["public"]["Enums"]["media_status"]
+          storage_path: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          attribution?: string | null
+          created_at?: string
+          facility_id: string
+          id?: string
+          pitch_id?: string | null
+          reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          rights: Database["public"]["Enums"]["media_rights"]
+          sort_order?: number
+          source_url?: string | null
+          status?: Database["public"]["Enums"]["media_status"]
+          storage_path: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          attribution?: string | null
+          created_at?: string
+          facility_id?: string
+          id?: string
+          pitch_id?: string | null
+          reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          rights?: Database["public"]["Enums"]["media_rights"]
+          sort_order?: number
+          source_url?: string | null
+          status?: Database["public"]["Enums"]["media_status"]
+          storage_path?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pitch_media_facility_id_fkey"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "facilities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pitch_media_pitch_id_fkey"
+            columns: ["pitch_id"]
+            isOneToOne: false
+            referencedRelation: "pitches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pitch_operations: {
         Row: {
           confirmed_at: string
@@ -1196,6 +1262,17 @@ export type Database = {
         }
         Returns: Json
       }
+      add_pitch_media: {
+        Args: {
+          p_attribution?: string
+          p_facility: string
+          p_path: string
+          p_pitch: string
+          p_rights: Database["public"]["Enums"]["media_rights"]
+          p_source_url?: string
+        }
+        Returns: string
+      }
       admin_add_contact: {
         Args: {
           p_email: string
@@ -1251,6 +1328,14 @@ export type Database = {
           p_target: string
         }
         Returns: Json
+      }
+      admin_review_media: {
+        Args: {
+          p_decision: Database["public"]["Enums"]["media_status"]
+          p_media: string
+          p_reason?: string
+        }
+        Returns: undefined
       }
       admin_set_participation: {
         Args: {
@@ -1411,6 +1496,8 @@ export type Database = {
         | "approximate"
         | "map_checked"
         | "site_checked"
+      media_rights: "owner_granted" | "staff_photo" | "cc_by" | "cc_by_sa"
+      media_status: "pending" | "approved" | "rejected"
       operator_state:
         | "none"
         | "contacted"
@@ -1621,6 +1708,8 @@ export const Constants = {
         "map_checked",
         "site_checked",
       ],
+      media_rights: ["owner_granted", "staff_photo", "cc_by", "cc_by_sa"],
+      media_status: ["pending", "approved", "rejected"],
       operator_state: [
         "none",
         "contacted",

@@ -7,6 +7,7 @@
 // Usage: pnpm db:test [filter]   (filter = substring of test file names to run)
 import EmbeddedPostgres from 'embedded-postgres';
 import fs from 'node:fs';
+import net from 'node:net';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -15,7 +16,9 @@ import pg from 'pg';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repo = path.resolve(here, '../..');
 const filter = process.argv[2] ?? '';
-const PORT = 47330;
+// A free port per run: a Postgres worker left behind by an interrupted run (seen on Windows,
+// PG 18 io workers) must not block the next run on a fixed port.
+const PORT = await freePort();
 
 installPgTap();
 
@@ -130,4 +133,16 @@ function installPgTap() {
     const dest = path.join(target, f);
     if (!fs.existsSync(dest)) fs.copyFileSync(path.join(here, 'vendor', f), dest);
   }
+}
+
+/** An unused local TCP port. */
+function freePort() {
+  return new Promise((resolve, reject) => {
+    const srv = net.createServer();
+    srv.once('error', reject);
+    srv.listen(0, '127.0.0.1', () => {
+      const { port } = srv.address();
+      srv.close(() => resolve(port));
+    });
+  });
 }

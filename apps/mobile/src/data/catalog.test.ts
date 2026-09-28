@@ -84,6 +84,13 @@ describe('toCatalogListing', () => {
     expect(toCatalogListing({ ...unknown, operations: verified.operations }).operations).toBeNull();
   });
 
+  it('maps an approved photo with its credit; the link is signed later', () => {
+    expect(
+      toCatalogListing({ ...verified, photo: { path: 'f/a.jpg', attribution: 'CC BY 4.0' } }).photo,
+    ).toEqual({ path: 'f/a.jpg', url: null, attribution: 'CC BY 4.0' });
+    expect(toCatalogListing({ ...verified, photo: 'f/a.jpg' }).photo).toBeNull();
+  });
+
   it('keeps a paused verified field unbookable', () => {
     const paused = { ...verified, operations: { ...verified.operations, bookable: false } };
     expect(toCatalogListing(paused).operations?.bookable).toBe(false);

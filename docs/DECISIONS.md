@@ -442,3 +442,13 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
   - **An opt-out** deletes the operator's contacts and immediately downgrades their verified fields, recording each as `operator_opted_out` (owner Q4 default: the public field stays listed as not verified).
 - **Evidence:** pgTAP `090-catalog-reports-outreach.sql` has 29 assertions (294 total), live on the project.
 - **Next (part 2b):** rights-cleared photos in a private bucket, then the scheduled freshness downgrade (contract 4a).
+
+**D-049 Pitch photos with usage rights (D1b part 2b) (2026-09-28).**
+
+- **Storage:** `pitch_media` records each photo's right to use: `owner_granted`, `staff_photo`, `cc_by` or `cc_by_sa`. A Creative Commons photo must carry its credit and source URL.
+  - Files live in a new **private** `pitch-media` bucket (JPEG/WebP, 2 MB), under `<facility>/`.
+  - Storage policies: signed-in players can read **only** approved photos of published venues and fields. Only admins, and a venue's own staff in that venue's folder, can upload.
+- **Who registers photos:** `add_pitch_media`. Staff can register owner-granted photos of their own venue only; admins can record any right with its evidence. `admin_review_media` approves or rejects (audited). Nothing shows while pending or rejected.
+- **In listings:** a listing's `photo` is the first approved photo, the field's own before the venue's, as a storage path plus attribution. The app's data layer signs one batch of short-lived links per page; a photo that can't be signed shows as none. Show the attribution whenever it is set. No generated or borrowed images, ever (D-032).
+- **Evidence:** pgTAP `100-catalog-media.sql` has 16 assertions (310 total). Live: the bucket is private with its limits, and a player's upload is refused.
+- **Test runner fix:** `tools/db-test` now takes a free port per run. A Postgres worker left behind by an interrupted run (a shell timeout) used to block the next run on the fixed port and look like a hang.

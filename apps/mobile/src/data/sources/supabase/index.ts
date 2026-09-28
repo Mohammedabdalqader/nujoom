@@ -14,7 +14,12 @@ import { FunctionsFetchError, FunctionsHttpError } from '@supabase/supabase-js';
 import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
 
-import { toCatalogDetail, toCatalogListing, toSearchParams } from '@/data/catalog';
+import {
+  toCatalogDetail,
+  toCatalogListing,
+  toSearchParams,
+  type CatalogListing,
+} from '@/data/catalog';
 import type {
   Account,
   BackendConfig,
@@ -150,6 +155,20 @@ export function createSupabaseSource(config: BackendConfig): DataSource {
     const { data: files } = await db.storage.from('avatars').list(userId);
     const stale = (files ?? []).map((f) => `${userId}/${f.name}`).filter((p) => p !== keep);
     if (stale.length) await db.storage.from('avatars').remove(stale);
+  }
+
+ /**
+   * Approved pitch photos are private (storage RLS lets signed-in players read exactly those):
+   * one batch of short-lived signed links per page. A photo that can't be signed shows as none.
+   */
+  async function signPhotos<T extends CatalogListing>(items: T[]): Promise<T[]> {
+    const paths = [...new Set(items.flatMap((i) => (i.photo ? [i.photo.path] : [])))];
+    if (!paths.length) return items;
+    const { data } = await db.storage.from('pitch-media').createSignedUrls(paths, 3600);
+    const urls = new Map((data ?? []).map((d) => [d.path, d.error ? null : d.signedUrl]));
+    return items.map((i) =>
+      i.photo ? { ...i, photo: urls.get(i.photo.path) ? { ...i.photo, url: urls.get(i.photo.path)! } : null } : i,
+    );
   }
 
   const toSession = (s: { user: { id: string; email?: string | null } } | null): Session | null =>
@@ -439,11 +458,12 @@ export function createSupabaseSource(config: BackendConfig): DataSource {
       const raw = await rpc<{ items: unknown[]; next_cursor: number | null }>('search_pitches', {
         p: toSearchParams(filters),
       });
-      return { items: raw.items.map(toCatalogListing), nextCursor: raw.next_cursor ?? null };
+      const items = await signPhotos(raw.items.map(toCatalogListing));
+      return { items, nextCursor: raw.next_cursor ?? null };
     },
     async catalogPitch(pitchId) {
       const raw = await rpc<unknown>('catalog_pitch', { p_pitch_id: pitchId });
-      return raw ? toCatalogDetail(raw) : null;
+      return raw ? (await signPhotos([toCatalogDetail(raw)]))[0]! : null;
     },
     async areas() {
       // The pitch filter's areas are Amman's neighbourhoods (real reference data).
