@@ -1,0 +1,11 @@
+{
+  "name": "@nujoom/tools-admin",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "grant": "node grant.mjs grant",
+    "revoke": "node grant.mjs revoke",
+    "list": "node grant.mjs list"
+  }
+}

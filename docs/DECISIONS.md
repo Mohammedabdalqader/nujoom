@@ -546,3 +546,10 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
   - removing the badge hides the operations at once
   - no page errors
 - **Also confirmed:** the claim rate limit (3 a day per person) triggered on repeated test runs, so the tests now use a fresh owner per run.
+
+**D-057 Granting web-admin access (2026-09-29).**
+
+- **The command:** `pnpm --filter @nujoom/tools-admin grant <email> [--note "…"]`, plus `revoke <email>` and `list`. It's an operator script on the service role (through the Supabase CLI login), like the other tools, and runs on developer machines only.
+- **Rules:** the person must have signed in once, so the account exists. Every grant and revoke is written to `audit_log` (`admin.granted` / `admin.revoked`).
+- **Verified live:** grant, list, revoke and an unknown email on a tester account; both audit entries were written, and no admins remain.
+- **Windows fix:** the tool sets `process.exitCode` instead of calling `process.exit()`, which crashes Node on Windows while network handles are still closing.
