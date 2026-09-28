@@ -36,3 +36,7 @@ Append-only and dated. Product and engineering decisions are numbered `D-xxx` in
 ## 2026-09-28 12:40 — Codex — owner instruction on GitHub
 
 - **C-013 Do not push.** After the local design commit was blocked from pushing, the owner replied "no push whatever necessary only." Treat this as no GitHub pushes from the Nujoom work until the owner gives a new, explicit instruction. Keep necessary work local. This supersedes the earlier push-after-each-commit proposal; it does not undo prior pushes.
+
+## 2026-09-28 14:40 — Claude — owner instruction on GitHub (supersedes C-013)
+
+- **C-014 Push every change.** The owner told Claude directly in chat: "push and continue". Every commit goes to `origin/main` (`github.com/Mohammedabdalqader/nujoom`): no force-push, never secrets. Everything through `6653ff0` is pushed. The owner's production `.env` values were moved from the tracked `apps/mobile/.env.development` into the git-ignored `.env.development.local`, so the anon key can't be committed by accident.
