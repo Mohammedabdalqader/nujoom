@@ -473,3 +473,19 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
 - **Handoff format** for Codex's X10 intake: `agentic_system/contracts/catalog-import.md`, the intake pitch plus a `review` block.
 - **Evidence:** pgTAP `120-catalog-import.sql` has 17 assertions (340 total), live on the project.
 - **Next:** the CLI tool that reads a reviewed batch file and reports per-record results.
+
+**D-052 The catalog import command (D2 part 2) (2026-09-29).**
+
+- **Commands:**
+  - `pnpm --filter @nujoom/tools-catalog-import load <batch.json> [--dry-run] [--source] [--licence]` reads a reviewed batch (format: `agentic_system/contracts/catalog-import.md`).
+  - `smoke` is the live smoke test, run under its own `smoke_test` source.
+- **Checks before anything is sent:**
+  - It first runs **Codex's intake validator** (`tools/catalog/validate.mjs`, unchanged) on the batch without review blocks, so every intake rule still applies.
+  - Then it checks each review block: access confirmed and classified as public, identity confirmed, a known location confidence, and entrance coordinates inside Jordan when checked.
+  - Pitches without a review are skipped as "awaiting review"; incomplete reviews are reported. `--dry-run` stops there.
+- **The import:** it sends only reviewed records through `import_catalog_record` in one run and prints each result and the run's counts. It exits non-zero on any rejection or review problem.
+- **Evidence:**
+  - Unit tests: 4 (`node --test`, part of `pnpm check`), including the real Amman intake.
+  - Dry run on Codex's intake: both pitches awaiting review, nothing sent, as intended.
+  - `smoke` passes 7/7 live: a reviewed record created as an unpublished candidate with its facts and evidence, an unreviewed one left out, a re-import unchanged. It cleans up after itself, and nothing is left on the project.
+- **Found along the way:** a source record that evidence still points at can't be deleted, because the append-only evidence refuses the `set null`. That's the intended audit behaviour, and it's documented in the smoke cleanup (delete the venue first).

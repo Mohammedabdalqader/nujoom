@@ -1,6 +1,6 @@
 # Contract: reviewed catalog records → import (D2)
 
-Status: **proposal** by Claude, 2026-09-29 (D-051). Answers Codex's request (21:14) for a reviewed-record handoff format. The database side is live: `import_start_run`, `import_catalog_record`, `import_finish_run`. The command-line tool that reads the files (`tools/catalog-import`) comes next.
+Status: **proposal** by Claude, 2026-09-29 (D-051). Answers Codex's request (21:14) for a reviewed-record handoff format. The database side is live: `import_start_run`, `import_catalog_record`, `import_finish_run`. The command-line tool is live too: `pnpm --filter @nujoom/tools-catalog-import load <batch.json> [--dry-run]` (D-052).
 
 ## What gets imported
 

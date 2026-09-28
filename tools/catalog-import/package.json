@@ -1,0 +1,11 @@
+{
+  "name": "@nujoom/tools-catalog-import",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "load": "node import.mjs",
+    "test": "node --test lib.test.mjs",
+    "smoke": "node smoke.mjs"
+  }
+}
