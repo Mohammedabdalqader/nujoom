@@ -24,6 +24,7 @@
     "@formatjs/intl-relativetimeformat": "12.3.15",
     "@nujoom/i18n": "workspace:*",
     "@nujoom/shared": "workspace:*",
+    "@nujoom/tokens": "workspace:*",
     "@supabase/supabase-js": "^2.117.2",
     "@tanstack/react-query": "^5.104.0",
     "expo": "~57.0.25",

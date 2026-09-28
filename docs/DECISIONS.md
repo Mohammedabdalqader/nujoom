@@ -242,3 +242,13 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
   - **Not sent or expired:** "Your guardian hasn't been told yet", a plain statement of the limits, and a "Continue with limits" button.
 - The retry countdown starts only when the server actually counted the attempt: a token was issued, or the cooldown refused the send. The failure message explains the once-a-minute limit. A network error shows no countdown.
 - `docs/DESIGN.md` onboarding row updated to match (Codex is paused; noted in `coordination.md`).
+
+**D-035 The web app scaffold (S1-8) (2026-09-28).**
+
+- **Stack:** `apps/web` on Next.js 16.3.6 (App Router) with React 19.2.3, the same React as the mobile app, and Tailwind 4.1.12, the same as mobile, through `@tailwindcss/postcss`. Lint is our shared ESLint config, including the RTL rule, plus `@next/eslint-plugin-next`. New dependencies: `next`, `@tailwindcss/postcss`, `@next/eslint-plugin-next`, `@types/react-dom`.
+- **Locales:** `/ar` and `/en` are route segments; the root layout sets `lang` and `dir` from them, and `/` redirects to `/ar`. Strings come from `@nujoom/i18n` through one isolated i18next instance per locale, with no extra i18n library. Any other locale is a 404.
+- **Tokens:** the colour tokens moved from `apps/mobile/src/design/tokens.ts` to a new `@nujoom/tokens` package, values unchanged, and mobile re-exports them. The web `globals.css` mirrors them as Tailwind theme variables (dark default, `[data-theme='light']` override), and a web unit test keeps the two equal, as mobile's test does for its `global.css`. Fonts load through `next/font` (Rubik with Arabic, Plus Jakarta Sans, Space Grotesk).
+- **Pages so far:** the front page, which honestly says "coming soon", and the terms and privacy drafts. The stores need these at public URLs. All are static.
+- **Security headers:** `nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin` (approval and join links carry tokens in the path), and a `Permissions-Policy` that denies camera, microphone and location.
+- **Next:** sign-in (email code, PKCE callback), the guardian approval page (`/[locale]/guardian/accept/[token]`, then `APPROVAL_URL` for the Edge Function), a styled 404, and a user theme switch.
+- **After pulling:** run `pnpm install` and restart Expo with `--clear`. A Metro started before the new package was linked can't resolve `@nujoom/tokens`; a clean export (`check:bundle`) proves a fresh Metro does.

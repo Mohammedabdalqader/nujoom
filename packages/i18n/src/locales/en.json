@@ -1109,5 +1109,8 @@
     "saved": "Saved",
     "comingSoon": "Downloading your data and deleting your account arrive in the next update.",
     "guardian": "Guardian"
+  },
+  "web": {
+    "comingSoon": "Coming soon to Android and iPhone."
   }
 }

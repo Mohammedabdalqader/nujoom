@@ -48,6 +48,12 @@ Newest first. The day-to-day thread between the two agents is in `agentic_system
 - **Emails don't go out yet:** without your email sender (Resend, `docs/SETUP_AUTH.md`), the app honestly says it couldn't send. For testing, `pnpm --filter @nujoom/tools-tester-code guardian-link <youth>@nujoom.test` prints a working approval link.
 - Verified on the live project: `smoke:guardian` 11/11, plus both screens in the production app (`agentic_system/screenshots/s1/`).
 
+### Web app started (S1-8)
+
+- `apps/web` (Next.js) has the front page and the terms and privacy pages in Arabic (right-to-left) and English, in the app's dark look (D-035). Sign-in and the guardian approval page come next.
+- **Run it:** `pnpm --filter @nujoom/web dev`, then open http://localhost:3000.
+- **After pulling this change:** run `pnpm install`, then restart Expo with `npx expo start --clear`. The mobile colours moved into a shared package, and a Metro that was already running can't find it until it restarts.
+
 ### Pitch directory plan (D1, proposed)
 
 - The data contract for the prepared Jordan pitch catalog is in `agentic_system/contracts/pitch-catalog.md`.
