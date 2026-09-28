@@ -644,9 +644,9 @@
     "add": "Add player",
     "cancel": "Cancel",
     "addTitle": "Add a player by card code (NJM)",
-    "codePlaceholder": "Card code (NJM-8702)",
+    "codePlaceholder": "Card code (NJM-7K3Q-M9XR)",
     "sendRequest": "Send request ✅",
-    "badCode": "The code looks like NJM-8702",
+    "badCode": "Check the code. It should look like NJM-7K3Q-M9XR",
     "notFound": "No player with that code, or their profile is private",
     "ownCode": "That's your own code 😄",
     "alreadyFriend": "{{name}} is already in your squad",
@@ -858,14 +858,14 @@
   },
   "errors": {
     "generic": "Something went wrong. Please try again.",
-    "network": "You're offline. Check your connection and try again.",
+    "network": "We couldn't connect. Check your connection and try again.",
     "rateLimited": "Too many attempts. Wait a moment and try again.",
     "auth": {
       "signedOut": "Your session ended. Please sign in again.",
-      "codeInvalid": "That code is wrong or has expired. Request a new one.",
+      "codeInvalid": "Check the code and try again, or request a new one.",
       "emailInvalid": "Check the email address and try again.",
-      "emailUnavailable": "We can't send a code to this address right now. Try again later.",
-      "tooManyCodes": "You've requested several codes. Wait a minute before asking for another.",
+      "emailUnavailable": "We couldn't send a code right now. Try again later.",
+      "tooManyCodes": "You've requested several codes. Wait before asking for another.",
       "unavailable": "This sign-in method isn't available right now."
     },
     "onboarding": {
@@ -889,7 +889,7 @@
     },
     "consent": {
       "required": "Accept the terms and privacy policy to continue.",
-      "outdated": "The terms were updated. Please read and accept the new version.",
+      "outdated": "The terms or privacy policy changed. Review the new version to continue.",
       "invalid": "We couldn't save your choice. Try again.",
       "streaming": "Live streaming isn't available yet."
     },
