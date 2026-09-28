@@ -46,7 +46,8 @@ select results_eq(
   'admins can update config and are stamped as the editor'
 );
 select results_eq(
-  $$ select action, target_id, actor_id from public.audit_log where target_type = 'config' $$,
+  $$ select action, target_id, actor_id from public.audit_log
+     where target_type = 'config' and target_id = 'voting' $$,
   $$ values ('config.update', 'voting', tests.id('admin')) $$,
   'config changes are written to the audit log'
 );

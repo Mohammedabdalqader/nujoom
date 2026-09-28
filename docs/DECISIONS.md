@@ -306,3 +306,20 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
   - Asking again reuses the same export.
   - The user's own session can neither list nor download from the bucket.
 - **Open:** expired bundles of users who never ask again stay until the scheduled cleanup (part 3, with the deletion job).
+
+**D-040 Carrying out account deletions (S1-9, part 3) (2026-09-28).**
+
+- **Schedule:** every hour at :17, pg_cron calls the `data-deletion` Edge Function through pg_net. The call carries a random secret that only exists in the database vault, created by the migration and never committed. The function has JWT verification off and accepts only that secret or a service-role key. It tests the key by using it for a service-only read, because key formats differ between the CLI and the function environment.
+- **Per due request:**
+  1. `prepare_account_deletion` revokes the guardian links the person holds. Their youths return to the guardian step with recorded matches closed; a confirmed link can't lose its guardian.
+  2. The person's storage files are removed: avatar and export bundles.
+  3. The auth user is deleted. Profile, date of birth, settings, consents and links cascade; analytics events and the request remain, de-identified.
+  4. `finish_account_deletion` marks the request completed. Every step is audited.
+  - A failure leaves the request pending for the next run.
+- **Expired exports:** the same run removes export files whose 7-day link has expired and closes their requests.
+- **Bug found by the tests:** deleting a guardian who had given a youth's recording consent failed, because the consent's `given_by` is set to null and consents were strictly append-only. `consents` now allows exactly that one change (the person who gave it is de-identified); every other update is still refused.
+- **Evidence:**
+  - pgTAP 22 new assertions (201 total).
+  - `pnpm --filter @nujoom/tools-tester-code smoke:deletion` passes 13/13 live. The job refuses no secret, a wrong secret and a user session; does nothing inside the grace period; afterwards removes the auth user, profile, avatar and export file; and leaves a completed request that no longer points at the person.
+  - The scheduled path (vault secret through pg_net) is checked with a canary account after the first hourly run.
+- **Another environment:** set `config.data_rights.functions_url` for that project.

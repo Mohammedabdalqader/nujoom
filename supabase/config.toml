@@ -428,3 +428,12 @@ s3_secret_key = "env(S3_SECRET_KEY)"
 [functions.guardian-invite]
 enabled = true
 verify_jwt = true
+
+[functions.data-export]
+enabled = true
+verify_jwt = true
+
+# Called by pg_cron without a user; the function checks its own secret (D-040).
+[functions.data-deletion]
+enabled = true
+verify_jwt = false
