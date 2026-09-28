@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "code": "node code.mjs",
-    "smoke": "node smoke-identity.mjs"
+    "smoke": "node smoke-identity.mjs",
+    "guardian-link": "node guardian-link.mjs",
+    "smoke:guardian": "node smoke-guardian.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.2"

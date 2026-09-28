@@ -45,3 +45,9 @@ Run with Playwright against the production build (`EXPO_PUBLIC_APP_VARIANT=produ
 | English on the sign-in screen → `dir="ltr"`, English copy                              | pass                                                                        |
 
 Not covered yet: on-device checks (no Android device or emulator here; RTL and theme on Expo Go are waiting for the owner, D-028/D-029), 200% text, screen-reader focus order, youth guardian path (S1-11). Screenshots are in the Claude session scratchpad (`e2e/`, `e2e2/`); I'll put the final S1 set in `agentic_system/screenshots/s1/` with the S1-11 handoff.
+
+## 2026-09-28 16:41 — Codex → Claude — D-032 prepared catalog and verification rule
+
+- **Changed:** appended D-032 in `docs/DECISIONS.md` and aligned the product spec, design acceptance and production roadmap. The owner's clarification is explicit: collect a broad, reviewed real-pitch list with known field designs; app search uses only this prepared catalog; both public badge states are searchable; only fields whose operators joined and whose schedules are active get Verified by Nujoom and in-app booking/match actions.
+- **Please review:** propose a facility-versus-field schema, nullable/provenanced design attributes, a published-catalog search API returning both statuses, operator-outreach/claim evidence, per-field badge transition and negative RLS/booking tests. Keep unverified fields informational. No production venue import or map is claimed as done by this handoff.
+- **Evidence to request for D1:** a single venue with two physical fields (one verified/bookable, one not), a field with unknown size/surface, an inaccessible school field held out of public search, an unverified search result denied by the booking RPC, and idempotent source re-import without duplicate public listings.

@@ -76,7 +76,8 @@ The visual design, tone of voice and sounds come from the owner's design prototy
   - career stats, form, XP and stars (reward points), charts
 - **Friends:** requests by card code or from shared matches; presence (online/offline); invites to a booking.
 - **Pitches:**
-  - search (area, date, size), availability, slots, favourites, star ratings, map view
+  - a prepared, reviewed Jordan directory searchable by area/name and known field features; both verified and unverified pitches have explicit status badges
+  - availability, slots, favourites, star ratings and in-app booking only for verified participating fields; geographic map view of both statuses
   - owner web dashboard and QR poster
 - **Booking:** double-booking protection, WhatsApp invite links, join, teams and bibs, "missing one".
 - **Match tools:** fair squad splitter with coin toss, gear checklist, cost splitter (tracking only; no money moves).
@@ -162,13 +163,17 @@ The visual design, tone of voice and sounds come from the owner's design prototy
 
 ### 6.4 Pitches and the owner dashboard
 
+- **Prepared directory (D-032):** collect and review as many publicly accessible football facilities and individual fields across Jordan as possible. The player searches Nujoom's own catalog; the app does not run a third-party place search at query time. A facility may contain several separately described fields. Both verified and not-verified fields appear in search and on the map with explicit badges. Do not claim full national coverage without independent evidence.
 - **Pitch profile:**
-  - names (ar/en), photos, area, GPS location, address, surface, size (5/6/7-a-side), indoor, lights
-  - amenities, price per hour, pricing note, opening hours, slot length (60/90)
-  - `pitch_level` (listed / dock / verified; admin-controlled; shown as badges)
-- **Search:** by area, date strip (14 days), size filter, availability per slot (booked / available / selected); favourites.
-- **Map view:** needs a Google Maps API key; until then the map button is hidden.
-- **Ratings:** 1–5 stars from players who checked in there, one per player per pitch, editable. No text reviews (owner decision 2 principle).
+  - names (ar/en when known), area, reviewed coordinates/entrance, public-access status and source/last-review information
+  - each physical field's evidenced format/capacity, dimensions/layout where known, surface, indoor/outdoor, lights and amenities; unknown attributes remain unknown
+  - photographs only with usable rights; an unverified venue never borrows a generated pitch image as if it were real
+  - owner-confirmed price, pricing note, opening hours and slot length exist only for participating fields
+  - **Verified by Nujoom / Not verified by Nujoom** is the player-facing participation badge per field; location confidence and `pitch_level` remain separate internal/quality concepts
+- **Verification:** an operator is contacted, agrees to join, proves authority over the facility, confirms each participating field and its details, and activates an accurate schedule. Only then does that field receive the public verified badge and become bookable. Importing a location or receiving a community submission never verifies the operator. A facility can contain fields with different statuses.
+- **Search:** by city/area/name and known field features across both statuses. The 14-day date strip, availability and slots apply only to verified participating fields. An unverified result offers details, directions where location confidence permits, and correction/reporting, but no Nujoom booking, match creation or check-in.
+- **Map view:** show the same prepared catalog and status badges as the list. A real licensed map/tile provider is required before presenting this as a geographic map; the schematic demo grid is not production map evidence. Searchable list access must work without map tiles or location permission.
+- **Ratings:** 1–5 stars only from players who checked in at a verified field, one per player per pitch, editable. No text reviews (owner decision 2 principle).
 - **Owner dashboard (web):**
   - calendar, manual bookings (name and phone), claim links, blocked slots, prices and hours
   - QR poster PDF, staff accounts
@@ -372,19 +377,19 @@ An `events` table (PostHog later) records:
 
 Detailed in the migrations. Every table has RLS and explicit grants.
 
-| Area          | Tables                                                                                                                   |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| Identity      | `profiles`, `profile_private` (DOB), `guardians`, `consents`, `user_settings`, `blocks`, `app_admins`                    |
-| Places        | `countries`, `cities`, `neighborhoods`, `pitches`, `pitch_media`, `pitch_staff`, `pitch_favorites`, `pitch_ratings`      |
-| Social        | `friendships`, `presence`                                                                                                |
-| Booking       | `bookings` (tstzrange, exclusion constraint), `booking_players`, `booking_invites`, `missing_one_requests`               |
-| Tools         | `booking_gear_items`, `booking_costs`, `booking_payments`                                                                |
-| Match         | `matches`, `checkins`, `match_events`, `recording_devices`, `segments`, `clips`, `clip_tags`, `clip_likes`, `clip_views` |
-| Post-match    | `votes`, `attribute_ratings`, `endorsements`                                                                             |
-| Ratings       | `ratings`, `rating_history`, `player_attributes`, `leaderboard_entries`, `neighborhood_standings`                        |
-| Rewards       | `xp_ledger`, `stars_ledger`                                                                                              |
-| Notifications | `notifications`, `push_devices`, `notification_settings`                                                                 |
-| Platform      | `jobs`, `config`, `feature_flags`, `events`, `reports`, `audit_log`                                                      |
+| Area          | Tables                                                                                                                                                                                              |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Identity      | `profiles`, `profile_private` (DOB), `guardians`, `consents`, `user_settings`, `blocks`, `app_admins`                                                                                               |
+| Places        | `countries`, `cities`, `neighborhoods`, facility/field catalog, source records, submissions/reviews, operator claims/verification, `pitch_media`, `pitch_staff`, `pitch_favorites`, `pitch_ratings` |
+| Social        | `friendships`, `presence`                                                                                                                                                                           |
+| Booking       | `bookings` (tstzrange, exclusion constraint), `booking_players`, `booking_invites`, `missing_one_requests`                                                                                          |
+| Tools         | `booking_gear_items`, `booking_costs`, `booking_payments`                                                                                                                                           |
+| Match         | `matches`, `checkins`, `match_events`, `recording_devices`, `segments`, `clips`, `clip_tags`, `clip_likes`, `clip_views`                                                                            |
+| Post-match    | `votes`, `attribute_ratings`, `endorsements`                                                                                                                                                        |
+| Ratings       | `ratings`, `rating_history`, `player_attributes`, `leaderboard_entries`, `neighborhood_standings`                                                                                                   |
+| Rewards       | `xp_ledger`, `stars_ledger`                                                                                                                                                                         |
+| Notifications | `notifications`, `push_devices`, `notification_settings`                                                                                                                                            |
+| Platform      | `jobs`, `config`, `feature_flags`, `events`, `reports`, `audit_log`                                                                                                                                 |
 
 ## 10. Milestones
 
@@ -396,7 +401,7 @@ Each milestone ends with a demo, tests, and an update of `docs/PROGRESS.md`.
   - every prototype screen and sheet rebuilt on typed preview data
   - visual parity checked against the prototype
 - **R1 — Accounts:** auth, onboarding, consent, age gate, guardian (app plus web approval), profile basics, settings, export and delete.
-- **R2 — Pitches and booking:** pitches, search, availability, booking, invites, join, teams, "missing one", favourites, ratings, owner dashboard.
+- **R2 — Pitches and booking:** prepared Jordan directory (verified and unverified), field details and map, operator outreach/verification, then live availability, booking, invites, join, teams, "missing one", favourites, ratings and owner dashboard.
 - **R3 — Friends and match tools.**
 - **R4a — Recording spike:** STOP and report.
 - **R4b — Match day:** check-in, device, mounting guide, recording UI, upload queue, timeline and score.
