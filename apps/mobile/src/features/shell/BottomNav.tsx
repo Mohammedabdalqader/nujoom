@@ -50,7 +50,7 @@ export function BottomNav({ state, navigation }: BottomTabBarProps) {
                   }
                 />
                 {unread ? (
-                  <View className="absolute -top-1 -end-1">
+                  <View className="absolute -top-1 -start-1">
                     <PingDot color="bg-live" size="h-2 w-2" className="border border-surface" />
                   </View>
                 ) : null}

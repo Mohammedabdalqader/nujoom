@@ -89,7 +89,7 @@ export function AppHeader({ tab }: { tab: TabKey }) {
             >
               <Icon name="group" size={21} className="text-on-surface" />
               {online > 0 ? (
-                <View className="absolute -top-1 -end-1 h-4 min-w-4 px-1 items-center justify-center rounded-full bg-secondary-container border border-surface">
+                <View className="absolute -top-1 -start-1 h-4 min-w-4 px-1 items-center justify-center rounded-full bg-secondary-container border border-surface">
                   <Text
                     font="grotesk"
                     className="text-[9px] leading-[11px] text-on-secondary-container font-black"
@@ -108,7 +108,7 @@ export function AppHeader({ tab }: { tab: TabKey }) {
             >
               <Icon name="notifications" size={22} className="text-on-surface" />
               {unread > 0 ? (
-                <View className="absolute top-2 start-2">
+                <View className="absolute top-2 end-2">
                   <PingDot color="bg-live" size="h-2.5 w-2.5" className="border-2 border-surface" />
                 </View>
               ) : null}
@@ -129,7 +129,7 @@ export function AppHeader({ tab }: { tab: TabKey }) {
                 size="w-8 h-8"
                 className="border-2 border-primary/60"
               />
-              <View className="absolute bottom-0 end-0 w-2.5 h-2.5 rounded-full bg-secondary border-2 border-surface" />
+              <View className="absolute bottom-0 start-0 w-2.5 h-2.5 rounded-full bg-secondary border-2 border-surface" />
             </Pressable>
           </View>
         </View>

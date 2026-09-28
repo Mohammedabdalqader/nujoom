@@ -38,6 +38,7 @@ function Navigator() {
         <Stack.Screen name="tools/gear" options={DIALOG} />
         <Stack.Screen name="tools/cost" options={DIALOG} />
         <Stack.Screen name="book/[pitchId]" options={DIALOG} />
+        <Stack.Screen name="checkin" options={DIALOG} />
       </Stack>
     </>
   );

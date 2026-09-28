@@ -202,3 +202,69 @@ export type Pitch = {
 };
 
 export type Area = { slug: string; name: Bilingual };
+
+export type MatchPhase = 'upcoming' | 'live' | 'voting' | 'closed';
+
+export type MatchEvent =
+  | {
+      id: string;
+      minute: number;
+      kind: 'goal';
+      team: TeamSide;
+      note: string | null;
+      scorer: string;
+      assist: string | null;
+      clip: { id: string; durationSec: number; likes: number } | null;
+    }
+  | {
+      id: string;
+      minute: number;
+      kind: 'save';
+      team: TeamSide;
+      note: string | null;
+      keeper: string;
+    }
+  | {
+      id: string;
+      minute: number;
+      kind: 'sub';
+      team: TeamSide;
+      playerIn: string;
+      playerOut: string;
+    };
+
+export type MvpCandidate = {
+  player: PlayerRef;
+  goals: number;
+  assists: number;
+  saves: number;
+  form: number;
+};
+
+export type MatchDay = {
+  bookingId: string;
+  matchId: string;
+  pitchName: Bilingual;
+  city: Bilingual;
+  size: number;
+  phase: MatchPhase;
+  startsAt: string;
+  endsAt: string;
+  startedAt: string | null;
+  half: 1 | 2;
+  teams: [Team, Team];
+  score: [number, number];
+  referee: string | null;
+  /** Whose phone records the match (spec §6.7), null until the organizer picks one. */
+  recordingBy: string | null;
+  roster: PlayerRef[];
+  checkedInIds: string[];
+  meCheckedIn: boolean;
+  events: MatchEvent[];
+  candidates: MvpCandidate[];
+  votingClosesAt: string | null;
+  myVote: string | null;
+  /** Vote shares, only once voting has closed (spec §6.10). */
+  results: { playerId: string; percent: number }[] | null;
+  costPerPlayer: number | null;
+};

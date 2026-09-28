@@ -8,8 +8,18 @@ import {
   previewNotifications,
   previewAreas,
   previewPitches,
+  previewMatchDay,
 } from '@/data/preview';
-import type { AppNotification, Area, Clip, Friend, HomeFeed, Me, Pitch } from '@/data/types';
+import type {
+  AppNotification,
+  Area,
+  Clip,
+  Friend,
+  HomeFeed,
+  MatchDay,
+  Me,
+  Pitch,
+} from '@/data/types';
 
 /**
  * The app's queries (D-019). Each resolves from Supabase once its milestone lands; until then from
@@ -23,6 +33,7 @@ export const keys = {
   myClips: ['clips', 'mine'] as const,
   pitches: ['pitches'] as const,
   areas: ['areas'] as const,
+  matchDay: ['match-day'] as const,
 };
 
 const preview =
@@ -53,6 +64,10 @@ export const usePitches = () =>
 
 export const useAreas = () =>
   useQuery<Area[]>({ queryKey: keys.areas, queryFn: preview(previewAreas) });
+
+/** The player's current match: live, next up today, or voting (null when there is none). */
+export const useMatchDay = () =>
+  useQuery<MatchDay | null>({ queryKey: keys.matchDay, queryFn: preview(previewMatchDay) });
 
 /** Local cache updates for the preview phase; replaced by mutations with RPCs per milestone. */
 export function useCache() {

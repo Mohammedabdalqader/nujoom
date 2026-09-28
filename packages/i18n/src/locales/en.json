@@ -222,5 +222,101 @@
     "phoneInvalid": "That phone number isn't valid",
     "slotTaken": "That slot was just booked. Pick another time.",
     "noSlots": "No free times at this pitch"
+  },
+  "match": {
+    "live": "LIVE",
+    "soon": "SOON",
+    "ended": "FULL TIME",
+    "pitchCity": "{{pitch}}, {{city}}",
+    "half1": "First half",
+    "half2": "Second half",
+    "halfSize": "{{half}} • {{n}}-a-side",
+    "notStarted": "Not started • {{n}}-a-side",
+    "fullTime": "Full time • {{n}}-a-side",
+    "referee": "Hara referee: {{name}}",
+    "noReferee": "No referee",
+    "recordingOn": "Recording on {{name}}'s phone",
+    "recordingOff": "No phone recording yet",
+    "tools": {
+      "title": "Smart match-day tools",
+      "sub": "Team draw, gear and the pitch bill in one place",
+      "count": "3 quick tools",
+      "squadSub": "Balanced + coin 🪙",
+      "gearSub": "Ball's pumped ⚽",
+      "costSub": "{{price}} JOD / player 💰",
+      "costSubEmpty": "Split the bill 💰"
+    },
+    "checkin": {
+      "title": "Match check-in",
+      "body": "Scan the pitch QR code to check in and earn official rating points (XP).",
+      "count": "{{checked}} / {{total}} players",
+      "remaining_one": "{{count}} more to complete the squad",
+      "remaining_other": "{{count}} more to complete the squad",
+      "pitchCode": "Pitch code",
+      "done": "You're checked in! (+{{xp}} XP)",
+      "youAreIn": "You're checked in ✔"
+    },
+    "clip": {
+      "title": "Live clip control",
+      "quality": "Instant 720p save",
+      "button": "Clip it!",
+      "tagline": "Saves the last 30 seconds instantly",
+      "hint": "Saw a crazy move, a nutmeg or a goal? Hit the button and it lands on your profile!",
+      "goal": "⚽ Worldie!",
+      "skill": "🔥 Skill or nutmeg",
+      "savedMoment": "The last 30 seconds are saved in 720p!",
+      "savedGoal": "Saved as a \"Worldie!\" goal clip ⚽",
+      "savedSkill": "Skill clip saved for the hara feed 🔥",
+      "done": "Done",
+      "needCheckin": "Check in first to save clips",
+      "notLive": "The clip button works once the match starts",
+      "noRecorder": "The organizer needs to pick a recording phone first"
+    },
+    "timeline": {
+      "title": "Live match events",
+      "live": "Live updates",
+      "goal": "⚽ Goal",
+      "goalNote": "⚽ {{note}}",
+      "assist": "{{scorer}} (assist: {{assist}})",
+      "save": "🧤 Miracle save",
+      "saveBody": "Keeper {{keeper}}: {{note}}",
+      "saveBodyPlain": "Save by keeper {{keeper}}",
+      "sub": "🔄 Tactical sub",
+      "subBody": "In: {{in}} / Out: {{out}}",
+      "keeperOf": "{{team}} keeper",
+      "watch": "Watch clip ({{duration}}s)",
+      "reactions": "{{count}} reactions",
+      "empty": "No events yet. The first goal shows up here."
+    },
+    "mvp": {
+      "title": "Hara star vote (MVP Vote)",
+      "opensAtWhistle": "Voting opens at the final whistle",
+      "votingOpen": "Vote for the player of the match (not yourself)",
+      "closed": "Final result",
+      "remaining": "{{minutes}} min left",
+      "closesIn": "Closes {{relative}}",
+      "stats": "{{stat}} • {{form}}",
+      "goals": "{{count}} goals",
+      "assists": "{{count}} assists",
+      "saves": "{{count}} saves",
+      "votes": "{{percent}}% of votes",
+      "notifyMe": "Notify me when voting opens",
+      "notifySet": "Done! We'll notify you at the final whistle.",
+      "voted": "Your vote is in ✔",
+      "cantVoteSelf": "You can't vote for yourself",
+      "needCheckin": "Only checked-in players can vote",
+      "hiddenUntilClose": "Results show when voting closes"
+    },
+    "footerTitle": "Our hara brings us together • Nujoom al-Hara",
+    "footerBody": "This match is recorded on a player's phone. The clips you save reach player cards once they're confirmed.",
+    "none": {
+      "title": "No match today",
+      "body": "Book a pitch and invite the squad. On match day you'll find check-in, the clip button and voting here.",
+      "cta": "Book a pitch"
+    }
+  },
+  "kitsShort": {
+    "blue": "Blue",
+    "orange": "Orange"
   }
 }

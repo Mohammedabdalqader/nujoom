@@ -5,7 +5,16 @@
 import { PHOTOS } from '@/data/preview-photos';
 import { dateInAmman } from '@nujoom/shared';
 
-import type { AppNotification, Area, Clip, Friend, HomeFeed, Me, Pitch } from '@/data/types';
+import type {
+  AppNotification,
+  Area,
+  Clip,
+  Friend,
+  HomeFeed,
+  MatchDay,
+  Me,
+  Pitch,
+} from '@/data/types';
 
 const now = Date.now();
 const minutes = (n: number) => new Date(now + n * 60_000).toISOString();
@@ -428,3 +437,90 @@ export const previewPitches: Pitch[] = [
     openSpot: null,
   },
 ];
+
+const liveRoster = [
+  { id: 'p1', name: 'أحمد النعيمات', avatarUrl: PHOTOS.ahmadNuaimat },
+  { id: 'p2', name: 'محمود خالد', avatarUrl: PHOTOS.hamzaKeilani },
+  { id: 'p3', name: 'نور العورتاني', avatarUrl: PHOTOS.noorAwartani },
+  { id: 'p4', name: 'يوسف أبو هاشم', avatarUrl: PHOTOS.rosterA },
+  { id: 'p5', name: 'عمر الشويكي', avatarUrl: PHOTOS.rosterB },
+  { id: 'p6', name: 'ليث أبو رمان', avatarUrl: PHOTOS.rosterC },
+  { id: 'p7', name: 'كرم الحياري', avatarUrl: PHOTOS.rosterD },
+  { id: 'p8', name: 'سامي العتوم', avatarUrl: null },
+  { id: 'p9', name: 'باسل النمري', avatarUrl: null },
+  { id: 'p10', name: 'رامي السعدي', avatarUrl: null },
+  { id: 'p11', name: 'مالك الخطيب', avatarUrl: null },
+  { id: 'me', name: 'أحمد المالكي', avatarUrl: PHOTOS.ahmadMalki },
+];
+
+export const previewMatchDay: MatchDay = {
+  bookingId: 'bk-live',
+  matchId: 'm-live',
+  pitchName: { ar: 'ملعب جبل الحسين', en: 'Jabal al-Hussein Pitch' },
+  city: { ar: 'عمان', en: 'Amman' },
+  size: 7,
+  phase: 'live',
+  startsAt: minutes(-40),
+  endsAt: minutes(50),
+  startedAt: minutes(-36.5),
+  half: 2,
+  teams: [
+    {
+      side: 'A',
+      name: 'الفريق الأزرق',
+      initials: 'ف.ز',
+      kit: 'blue',
+      hara: { ar: 'حارة الحسين', en: 'Al-Hussein hara' },
+    },
+    {
+      side: 'B',
+      name: 'الفريق البرتقالي',
+      initials: 'ف.ب',
+      kit: 'orange',
+      hara: { ar: 'حارة الصغير', en: 'Al-Sagheer hara' },
+    },
+  ],
+  score: [2, 1],
+  referee: 'كابتن مروان الشيخ',
+  recordingBy: 'كرم الحياري',
+  roster: liveRoster,
+  checkedInIds: ['p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10'],
+  meCheckedIn: false,
+  events: [
+    {
+      id: 'e3',
+      minute: 34,
+      kind: 'goal',
+      team: 'A',
+      note: 'هدف خرافي من منتصف الملعب',
+      scorer: 'أحمد النعيمات',
+      assist: 'يوسف أبو هاشم',
+      clip: { id: 'clip-1', durationSec: 28, likes: 124 },
+    },
+    {
+      id: 'e2',
+      minute: 28,
+      kind: 'save',
+      team: 'B',
+      note: 'ينقذ انفراد محقق',
+      keeper: 'نور العورتاني',
+    },
+    {
+      id: 'e1',
+      minute: 15,
+      kind: 'sub',
+      team: 'A',
+      playerIn: 'عمر الشويكي',
+      playerOut: 'ليث أبو رمان',
+    },
+  ],
+  candidates: [
+    { player: liveRoster[0]!, goals: 1, assists: 0, saves: 0, form: 8.6 },
+    { player: liveRoster[1]!, goals: 0, assists: 1, saves: 0, form: 8.1 },
+    { player: liveRoster[2]!, goals: 0, assists: 0, saves: 4, form: 7.9 },
+  ],
+  votingClosesAt: null,
+  myVote: null,
+  results: null,
+  costPerPlayer: 2.85,
+};
