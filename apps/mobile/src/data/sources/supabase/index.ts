@@ -144,6 +144,13 @@ export function createSupabaseSource(config: BackendConfig): DataSource {
     return data as T;
   }
 
+  /** Old photos in the user's own folder; best effort (a leftover is removed on the next change). */
+  async function removeAvatarFiles(userId: string, keep: string | null) {
+    const { data: files } = await db.storage.from('avatars').list(userId);
+    const stale = (files ?? []).map((f) => `${userId}/${f.name}`).filter((p) => p !== keep);
+    if (stale.length) await db.storage.from('avatars').remove(stale);
+  }
+
   const toSession = (s: { user: { id: string; email?: string | null } } | null): Session | null =>
     s ? { userId: s.user.id, email: s.user.email ?? null } : null;
 
@@ -319,6 +326,32 @@ export function createSupabaseSource(config: BackendConfig): DataSource {
       async decline(token) {
         await rpc('decline_guardian_invite', { p_token: token });
       },
+    },
+    async setAvatar({ uri, mimeType }) {
+      const { data: auth } = await db.auth.getUser();
+      const userId = auth.user?.id;
+      if (!userId) throw new Error('not_authenticated');
+      // The avatars bucket takes JPEG/WebP up to 512 KB in the user's own folder (storage RLS).
+      const body = await (await fetch(uri)).arrayBuffer();
+      const path = `${userId}/${Date.now()}.${mimeType === 'image/webp' ? 'webp' : 'jpg'}`;
+      const { error: uploadError } = await db.storage
+        .from('avatars')
+        .upload(path, body, { contentType: mimeType, upsert: false });
+      if (uploadError) throw new Error('invalid_avatar');
+      try {
+        await rpc('update_profile', { p_patch: { avatar_path: path } });
+      } catch (error) {
+        await db.storage.from('avatars').remove([path]);
+        throw error;
+      }
+      await removeAvatarFiles(userId, path);
+    },
+    async removeAvatar() {
+      const { data: auth } = await db.auth.getUser();
+      const userId = auth.user?.id;
+      if (!userId) throw new Error('not_authenticated');
+      await rpc('update_profile', { p_patch: { avatar_path: null } });
+      await removeAvatarFiles(userId, null);
     },
     dataRights: {
       list: async () => (await rpc<DataRequestRow[]>('my_data_requests')).map(toDataRequest),

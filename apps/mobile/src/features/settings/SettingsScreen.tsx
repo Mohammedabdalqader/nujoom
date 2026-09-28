@@ -9,6 +9,7 @@ import { setSoundsMuted, soundsMuted } from '@/design/sound';
 import { useTheme } from '@/design/theme';
 import { GuardianInvitePanel } from '@/features/guardian/GuardianInvitePanel';
 import { DataRightsSection } from '@/features/settings/DataRightsSection';
+import { PhotoSection } from '@/features/settings/PhotoSection';
 import { changeLocale } from '@/lib/i18n';
 import { useLocale } from '@/lib/locale';
 import { accountKey, useAccount, useSession, useSignOut } from '@/lib/session';
@@ -120,6 +121,12 @@ export function SettingsScreen() {
           }}
         />
       </Section>
+
+      {a && !IS_DEMO ? (
+        <Section title={t('settings.photo')} icon="photo_camera">
+          <PhotoSection />
+        </Section>
+      ) : null}
 
       {a ? (
         <Section title={t('settings.privacy')} icon="lock">

@@ -339,3 +339,13 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
 - **Signed out,** it explains how deletion works (7 days, cancellable, then final) and links to sign-in, which returns to the page. So the page also works as the **public account-deletion URL** that Google Play asks for. The footer links it on every page ("Delete account and download data" / "حذف الحساب وتنزيل البيانات"), and the header's email opens it.
 - **Verified** on the production build against the live project: footer link, signed-out explanation, sign-in back to the page, the downloaded bundle matching the account, deletion scheduled and still scheduled after a reload, then cancelled. Arabic RTL with no sideways scroll, and no page errors.
 - **For the store listing:** once hosted, the deletion URL is `https://<domain>/ar/account` (or `/en/account`).
+
+**D-043 Profile photos (S1-7) (2026-09-28).**
+
+- **New dependencies:** `expo-image-picker` and `expo-image-manipulator` (SDK 57, installed with `expo install`).
+  - The picker config plugin enables the **photo library only**; camera and microphone permissions are disabled.
+  - The photo is cropped square in the picker. On the device it is resized to 512×512 JPEG at 80% quality with the current `ImageManipulator.manipulate` API (not the deprecated `manipulateAsync`), so it always fits the bucket's 512 KB JPEG/WebP limit.
+- **Upload:** to `avatars/<user>/<timestamp>.jpg`, the user's own folder, as the existing storage RLS allows. Then `update_profile({avatar_path})`. If that fails, the uploaded file is removed again. Older photos in the folder are removed after a successful change or removal.
+- **Who can see it** is unchanged: the storage policy follows the profile's visibility (`can_view_avatar`), so a youth's photo stays within their guardian's choice (spec §7). Account deletion removes the folder (D-040).
+- **Where:** a "Your photo / صورتك" section in Settings (production only), with the current photo or initials and Choose/Change/Remove. The optional photo step at the end of onboarding (docs/DESIGN.md) is left to Codex's onboarding pass.
+- **Verified** on the production app (Expo web, live project): choose, then the photo is shown from the avatars bucket; change; remove, after which the profile has no photo and the folder is empty. No page errors. Native crop and permission prompts still need a device check.

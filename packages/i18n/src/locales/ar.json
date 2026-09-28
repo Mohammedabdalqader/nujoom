@@ -1156,7 +1156,14 @@
     "keep": "لا، خلّيه",
     "deleteScheduled": "حسابك رح ينحذف بتاريخ {{date}}.",
     "cancelDelete": "إلغاء الحذف",
-    "deleteCancelled": "ألغينا حذف حسابك."
+    "deleteCancelled": "ألغينا حذف حسابك.",
+    "photo": "صورتك",
+    "photoHint": "بتظهر على كرتك وملفك حسب إعدادات الخصوصية.",
+    "choosePhoto": "اختار صورة",
+    "changePhoto": "غيّر الصورة",
+    "removePhoto": "شيل الصورة",
+    "photoSaved": "انحفظت الصورة.",
+    "photoRemoved": "انشالت الصورة."
   },
   "web": {
     "comingSoon": "قريباً على أندرويد وآيفون.",

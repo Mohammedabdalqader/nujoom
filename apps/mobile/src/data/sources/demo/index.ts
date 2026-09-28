@@ -70,6 +70,8 @@ export const demoSource: DataSource & { marker: string } = {
   setSettings: (patch) => update({ settings: { ...demoAccount.settings, ...patch } }),
   setVisibility: (visibility) => update({ visibility }),
   acceptCurrentConsents: () => copy(demoAccount),
+  setAvatar: demoOnly,
+  removeAvatar: demoOnly,
   // Nothing to download or delete on the device-only demo.
   dataRights: {
     list: () => copy([]),

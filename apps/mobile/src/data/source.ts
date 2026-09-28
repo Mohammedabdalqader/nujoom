@@ -162,6 +162,9 @@ export type DataSource = {
   acceptCurrentConsents(): Promise<Account>;
   guardian: GuardianApi;
   dataRights: DataRightsApi;
+  /** Replaces the profile photo with an already cropped, resized image (S1-7). */
+  setAvatar(image: { uri: string; mimeType: 'image/jpeg' | 'image/webp' }): Promise<void>;
+  removeAvatar(): Promise<void>;
   me(): Promise<Me>;
   friends(): Promise<Friend[]>;
   friendRequests(): Promise<FriendRequest[]>;

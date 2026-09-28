@@ -1124,7 +1124,14 @@
     "keep": "No, keep it",
     "deleteScheduled": "Your account will be deleted on {{date}}.",
     "cancelDelete": "Cancel deletion",
-    "deleteCancelled": "Your account won't be deleted."
+    "deleteCancelled": "Your account won't be deleted.",
+    "photo": "Your photo",
+    "photoHint": "Shown on your card and profile, following your privacy settings.",
+    "choosePhoto": "Choose a photo",
+    "changePhoto": "Change photo",
+    "removePhoto": "Remove photo",
+    "photoSaved": "Photo saved.",
+    "photoRemoved": "Photo removed."
   },
   "web": {
     "comingSoon": "Coming soon to Android and iPhone.",

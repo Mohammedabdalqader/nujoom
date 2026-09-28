@@ -58,6 +58,10 @@ Newest first. The day-to-day thread between the two agents is in `agentic_system
 
 - The database side of "download my data" and "delete my account" is live (D-038). Deleting has a 7-day window to change your mind, and the export covers everything we hold about the user; a test fails if a future table is left out. The download itself now works too: a private file behind a 7-day link (D-039; `smoke:export` 14/14 on the live project). Deletion now runs on its own every hour once the 7 days are up, removing the account, the photo and any export file (D-040; `smoke:deletion` 13/13 live). Settings in the app now has "Download my data" and "Delete my account" (with the 7 days to cancel) (D-041), and the hourly deletion ran on its own on the live project. The website has the same on its account page, which also serves as the public account-deletion link Google Play asks for (D-042).
 
+### Profile photos (S1-7)
+
+- Settings → "Your photo" lets a player choose, change or remove their photo. It is cropped square, shrunk on the phone and stored privately, and who can see it follows their privacy setting (D-043). Checked on the web preview; the phone's own photo picker still needs a device check.
+
 ### Pitch directory plan (D1, proposed)
 
 - The data contract for the prepared Jordan pitch catalog is in `agentic_system/contracts/pitch-catalog.md`.
