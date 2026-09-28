@@ -108,19 +108,22 @@ export function PitchesScreen() {
         <View className="bg-surface-container-low rounded-xl p-5 items-center gap-3 border border-border/60">
           <Icon name="stadium" size={40} className="text-surface-bright" />
           <Text className="text-[14px] text-on-surface-variant text-center">
-            {t('pitches.empty')}
+            {/* No bookable pitches at all is honest news, not a filter problem (docs/DESIGN.md). */}
+            {pitches.length === 0 ? t('pitches.noneBookable') : t('pitches.empty')}
           </Text>
-          <Pressable
-            onPress={() => {
-              setArea('all');
-              setFormat('all');
-            }}
-            className="px-4 py-2 rounded-lg bg-surface-container-high active:bg-surface-container-highest"
-          >
-            <Text font="rubik" className="text-[13px] text-primary font-bold">
-              {t('pitches.emptyCta')}
-            </Text>
-          </Pressable>
+          {pitches.length === 0 ? null : (
+            <Pressable
+              onPress={() => {
+                setArea('all');
+                setFormat('all');
+              }}
+              className="px-4 py-2 rounded-lg bg-surface-container-high active:bg-surface-container-highest"
+            >
+              <Text font="rubik" className="text-[13px] text-primary font-bold">
+                {t('pitches.emptyCta')}
+              </Text>
+            </Pressable>
+          )}
         </View>
       )}
 

@@ -21,6 +21,8 @@ export function Field({ label, error, ltr, style, ...rest }: FieldProps) {
         {label}
       </Text>
       <TextInput
+        // The visible label names the input for screen readers too.
+        accessibilityLabel={label}
         {...rest}
         onFocus={(e) => {
           setFocused(true);

@@ -12,6 +12,7 @@ import Svg, {
 
 import { useTheme } from '@/design/theme';
 import { areaPath, monotonePath, niceTicks, roundedTopBar } from '@/ui/charts/paths';
+import { Text as UiText } from '@/ui/Text';
 
 export type Series = { key: string; values: number[]; color: string };
 
@@ -22,6 +23,8 @@ type ProgressChartProps = {
   height?: number;
   /** Rendered over the chart for the tapped point. */
   renderTooltip?: (index: number) => React.ReactNode;
+  /** Shown instead of empty axes when there is no data yet (a new player). */
+  emptyLabel?: string;
 };
 
 const PAD = { top: 10, right: 10, bottom: 22, left: 34 };
@@ -36,12 +39,25 @@ export function ProgressChart({
   series,
   height = 224,
   renderTooltip,
+  emptyLabel,
 }: ProgressChartProps) {
   const { color } = useTheme();
   const [width, setWidth] = useState(0);
   const [active, setActive] = useState<number | null>(null);
 
   const all = series.flatMap((s) => s.values);
+  if (labels.length === 0 || all.length === 0) {
+    return (
+      <View
+        style={{ height }}
+        className="items-center justify-center rounded-xl border border-dashed border-border px-6"
+      >
+        <UiText className="text-[14px] leading-[22px] text-on-surface-variant text-center">
+          {emptyLabel ?? ''}
+        </UiText>
+      </View>
+    );
+  }
   const rawMin = kind === 'bars' ? 0 : Math.min(...all);
   const rawMax = Math.max(...all, 1);
   const ticks = niceTicks(

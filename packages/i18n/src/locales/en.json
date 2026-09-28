@@ -204,7 +204,8 @@
     "perkFree": "No booking fees",
     "perkFreeSub": "Pay at the pitch",
     "perkRecord": "Record your clips",
-    "perkRecordSub": "From your phone"
+    "perkRecordSub": "From your phone",
+    "noneBookable": "No bookable pitches here yet"
   },
   "booking": {
     "title": "Confirm your booking",
@@ -466,7 +467,8 @@
       "insightUp": "<b>Great upward form:</b> your scoring rate is up {{value}}% over the last 3 months.",
       "insightDown": "<b>Watch your form:</b> your scoring rate is down {{value}}% over the last 3 months.",
       "insightFlat": "<b>Rock steady:</b> your scoring rate held over the last 3 months.",
-      "insightNone": "<b>Just getting started:</b> play more and your performance insights show up here."
+      "insightNone": "<b>Just getting started:</b> play more and your performance insights show up here.",
+      "empty": "Your progress shows here after your first counted match."
     },
     "wallet": {
       "title": "Digital wallet and stars",

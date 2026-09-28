@@ -206,6 +206,7 @@ export function ProgressSection({ months, xp }: { months: MonthProgress[]; xp: n
 
         <ProgressChart
           key={view}
+          emptyLabel={t('profile.charts.empty')}
           kind={view === 'goals' ? 'bars' : 'area'}
           labels={labels}
           series={
