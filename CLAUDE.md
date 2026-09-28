@@ -29,28 +29,28 @@ Design reference: `docs/DESIGN.md` (final, owner decision D-002). Decisions: `do
 
 ## Layout
 
-| Path | What |
-|---|---|
-| `apps/mobile` | Expo app: `app/` routes, `src/features/<feature>` (components, hooks, api), `src/ui` primitives, `src/design` tokens/icons/sounds, `src/preview` typed preview data |
-| `packages/shared` | pure domain logic, zod schemas, generated DB types |
-| `packages/i18n` | `src/locales/{ar,en}.json` |
-| `packages/config` | ESLint (with the RTL rule) and TS config |
-| `supabase` | `migrations/`, `tests/database/` (pgTAP), `functions/`, `config.toml` |
-| `tools/db-test` | runs migrations + pgTAP on embedded Postgres (no Docker) |
-| `tools/icons`, `tools/sounds` | regenerate the icon fonts and sound files |
+| Path                          | What                                                                                                                                                                |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `apps/mobile`                 | Expo app: `app/` routes, `src/features/<feature>` (components, hooks, api), `src/ui` primitives, `src/design` tokens/icons/sounds, `src/preview` typed preview data |
+| `packages/shared`             | pure domain logic, zod schemas, generated DB types                                                                                                                  |
+| `packages/i18n`               | `src/locales/{ar,en}.json`                                                                                                                                          |
+| `packages/config`             | ESLint (with the RTL rule) and TS config                                                                                                                            |
+| `supabase`                    | `migrations/`, `tests/database/` (pgTAP), `functions/`, `config.toml`                                                                                               |
+| `tools/db-test`               | runs migrations + pgTAP on embedded Postgres (no Docker)                                                                                                            |
+| `tools/icons`, `tools/sounds` | regenerate the icon fonts and sound files                                                                                                                           |
 
 ## Commands
 
-| Task | Command |
-|---|---|
-| Install | `pnpm install` |
-| Mobile dev (Expo) | `pnpm --filter @nujoom/mobile dev` (web preview: press `w`) |
-| Everything CI runs for JS | `pnpm check` (format + lint + typecheck + unit tests) |
-| Unit tests | `pnpm test` (one package: `pnpm --filter @nujoom/shared test`) |
-| SQL tests (no Docker) | `pnpm db:test` |
-| Push migrations | `pnpm db:push` (project `lowqyfbmzeixnadamezx`) |
-| DB types after a migration | `pnpm db:types` → `packages/shared/src/db.types.ts` |
-| Regenerate icons / sounds | `pnpm --filter @nujoom/tools-icons build` · `pnpm --filter @nujoom/tools-sounds build` |
+| Task                       | Command                                                                                |
+| -------------------------- | -------------------------------------------------------------------------------------- |
+| Install                    | `pnpm install`                                                                         |
+| Mobile dev (Expo)          | `pnpm --filter @nujoom/mobile dev` (web preview: press `w`)                            |
+| Everything CI runs for JS  | `pnpm check` (format + lint + typecheck + unit tests)                                  |
+| Unit tests                 | `pnpm test` (one package: `pnpm --filter @nujoom/shared test`)                         |
+| SQL tests (no Docker)      | `pnpm db:test`                                                                         |
+| Push migrations            | `pnpm db:push` (project `lowqyfbmzeixnadamezx`)                                        |
+| DB types after a migration | `pnpm db:types` → `packages/shared/src/db.types.ts`                                    |
+| Regenerate icons / sounds  | `pnpm --filter @nujoom/tools-icons build` · `pnpm --filter @nujoom/tools-sounds build` |
 
 Notes:
 

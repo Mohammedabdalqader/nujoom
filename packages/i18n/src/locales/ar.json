@@ -1,0 +1,14 @@
+{
+  "app": {
+    "name": "نجوم الحارة"
+  },
+  "common": {
+    "beta": "تجريبي",
+    "players_zero": "لا يوجد لاعبون",
+    "players_one": "لاعب واحد",
+    "players_two": "لاعبان",
+    "players_few": "{{count}} لاعبين",
+    "players_many": "{{count}} لاعباً",
+    "players_other": "{{count}} لاعب"
+  }
+}

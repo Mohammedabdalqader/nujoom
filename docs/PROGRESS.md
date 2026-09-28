@@ -16,6 +16,7 @@ The owner made the design prototype the final design and asked for a clean produ
 ### Blocked: needs the owner
 
 The rest of the wipe was blocked by the local permission check (mass delete of cloud data):
+
 - 3 pg_cron jobs
 - 10 auth users
 - the old `public`/`private` schemas and migration history

@@ -1,0 +1,10 @@
+{
+  "app": {
+    "name": "Nujoom al-Hara"
+  },
+  "common": {
+    "beta": "Beta",
+    "players_one": "{{count}} player",
+    "players_other": "{{count}} players"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "@nujoom/tools-db-test",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Runs supabase/migrations and pgTAP tests on embedded Postgres (no Docker). See DECISIONS D-014.",
+  "devDependencies": {
+    "embedded-postgres": "18.4.0-beta.17",
+    "pg": "^8.16.3"
+  }
+}

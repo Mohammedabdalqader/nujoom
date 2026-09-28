@@ -3,6 +3,7 @@
 > Single source of truth for the product. Version 2 (2026-09-28) replaces v1.
 >
 > Changes from v1:
+>
 > - The final visual design and feature set come from the owner's design prototype (§2).
 > - Sign-in moved to email and Google.
 > - New features: friends, match tools, XP, stars, attributes, endorsements, pitch ratings, clip likes, match timeline, notification inbox, light theme, sounds.
@@ -45,15 +46,15 @@ The visual design, tone of voice and sounds come from the owner's design prototy
 
 ## 3. Roles
 
-| Role | Description |
-|---|---|
-| Player (adult, 18+) | Books or joins matches, records, gets highlights, votes, rates, has a profile, card and ranking |
-| Youth player (13–17) | Same as a player, with a linked guardian and strict privacy rules (§7). Minimum age 13 |
-| Guardian | Adult linked to a youth; approves them and controls their visibility (web) |
-| Organizer | The player who created a booking; manages roster, teams, match tools and the match |
-| Pitch owner / staff | Pitch profile, schedule, walk-in and phone bookings, QR poster (web dashboard) |
-| Admin | Moderation, reports, pitch levels, config, feature flags (web) |
-| Scout / academy | LATER |
+| Role                 | Description                                                                                     |
+| -------------------- | ----------------------------------------------------------------------------------------------- |
+| Player (adult, 18+)  | Books or joins matches, records, gets highlights, votes, rates, has a profile, card and ranking |
+| Youth player (13–17) | Same as a player, with a linked guardian and strict privacy rules (§7). Minimum age 13          |
+| Guardian             | Adult linked to a youth; approves them and controls their visibility (web)                      |
+| Organizer            | The player who created a booking; manages roster, teams, match tools and the match              |
+| Pitch owner / staff  | Pitch profile, schedule, walk-in and phone bookings, QR poster (web dashboard)                  |
+| Admin                | Moderation, reports, pitch levels, config, feature flags (web)                                  |
+| Scout / academy      | LATER                                                                                           |
 
 ## 4. Core loop
 
@@ -315,6 +316,7 @@ The visual design, tone of voice and sounds come from the owner's design prototy
 ### 6.13 Analytics
 
 An `events` table (PostHog later) records:
+
 - `booking_created`, `player_joined`, `checkin_completed`
 - `recording_started`, `recording_stopped`, `clip_triggered`, `clip_ready`, `clip_viewed`, `clip_shared`, `clip_liked`
 - `tag_added`, `tag_confirmed`, `vote_cast`, `attributes_rated`, `endorsement_given`
@@ -368,19 +370,19 @@ An `events` table (PostHog later) records:
 
 Detailed in the migrations. Every table has RLS and explicit grants.
 
-| Area | Tables |
-|---|---|
-| Identity | `profiles`, `profile_private` (DOB), `guardians`, `consents`, `user_settings`, `blocks`, `app_admins` |
-| Places | `countries`, `cities`, `neighborhoods`, `pitches`, `pitch_media`, `pitch_staff`, `pitch_favorites`, `pitch_ratings` |
-| Social | `friendships`, `presence` |
-| Booking | `bookings` (tstzrange, exclusion constraint), `booking_players`, `booking_invites`, `missing_one_requests` |
-| Tools | `booking_gear_items`, `booking_costs`, `booking_payments` |
-| Match | `matches`, `checkins`, `match_events`, `recording_devices`, `segments`, `clips`, `clip_tags`, `clip_likes`, `clip_views` |
-| Post-match | `votes`, `attribute_ratings`, `endorsements` |
-| Ratings | `ratings`, `rating_history`, `player_attributes`, `leaderboard_entries`, `neighborhood_standings` |
-| Rewards | `xp_ledger`, `stars_ledger` |
-| Notifications | `notifications`, `push_devices`, `notification_settings` |
-| Platform | `jobs`, `config`, `feature_flags`, `events`, `reports`, `audit_log` |
+| Area          | Tables                                                                                                                   |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Identity      | `profiles`, `profile_private` (DOB), `guardians`, `consents`, `user_settings`, `blocks`, `app_admins`                    |
+| Places        | `countries`, `cities`, `neighborhoods`, `pitches`, `pitch_media`, `pitch_staff`, `pitch_favorites`, `pitch_ratings`      |
+| Social        | `friendships`, `presence`                                                                                                |
+| Booking       | `bookings` (tstzrange, exclusion constraint), `booking_players`, `booking_invites`, `missing_one_requests`               |
+| Tools         | `booking_gear_items`, `booking_costs`, `booking_payments`                                                                |
+| Match         | `matches`, `checkins`, `match_events`, `recording_devices`, `segments`, `clips`, `clip_tags`, `clip_likes`, `clip_views` |
+| Post-match    | `votes`, `attribute_ratings`, `endorsements`                                                                             |
+| Ratings       | `ratings`, `rating_history`, `player_attributes`, `leaderboard_entries`, `neighborhood_standings`                        |
+| Rewards       | `xp_ledger`, `stars_ledger`                                                                                              |
+| Notifications | `notifications`, `push_devices`, `notification_settings`                                                                 |
+| Platform      | `jobs`, `config`, `feature_flags`, `events`, `reports`, `audit_log`                                                      |
 
 ## 10. Milestones
 
