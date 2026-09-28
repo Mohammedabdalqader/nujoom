@@ -1,10 +1,16 @@
 /**
- * Player card codes ("NJM-8702"), printed on the FIFA card and used to add friends. Players type
- * them on Arabic keyboards too, so Arabic-Indic digits, lower case, spaces and a missing prefix
- * or dash are all accepted.
+ * Player card codes (D-025): `NJM-XXXX-XXXX`, 8 random Crockford base32 characters, assigned by
+ * the database (`private.new_card_code`). Players type them on Arabic keyboards and read them off
+ * a phone screen, so input tolerates Arabic-Indic digits, lower case, spaces, missing dashes, a
+ * missing prefix and the usual look-alikes (O→0, I/L→1).
  */
 
 export const CARD_CODE_PREFIX = 'NJM';
+
+/** Crockford base32: digits and letters without I, L, O, U. Mirrors the SQL alphabet. */
+export const CARD_CODE_ALPHABET = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+
+const CARD_CODE = /^NJM-[0-9A-HJKMNP-TV-Z]{4}-[0-9A-HJKMNP-TV-Z]{4}$/;
 
 const ARABIC_INDIC = /[٠-٩۰-۹]/g;
 
@@ -16,13 +22,20 @@ function westernDigits(value: string): string {
   });
 }
 
-/** The canonical code ("NJM-4421"), or null when the input cannot be one. */
+/** True for a canonical code as the database stores it. */
+export function isCardCode(value: string): boolean {
+  return CARD_CODE.test(value);
+}
+
+/** The canonical code (`NJM-7K3Q-M9XR`), or null when the input cannot be one. */
 export function normalizeCardCode(input: string): string | null {
-  const compact = westernDigits(input)
+  let body = westernDigits(input)
     .toUpperCase()
-    .replace(/[\s\-_]/g, '');
-  const body = compact.startsWith(CARD_CODE_PREFIX)
-    ? compact.slice(CARD_CODE_PREFIX.length)
-    : compact;
-  return /^[0-9A-Z]{4,8}$/.test(body) && /\d/.test(body) ? `${CARD_CODE_PREFIX}-${body}` : null;
+    .replace(/[\s\-_.]/g, '');
+  if (body.startsWith(CARD_CODE_PREFIX) && body.length === CARD_CODE_PREFIX.length + 8) {
+    body = body.slice(CARD_CODE_PREFIX.length);
+  }
+  body = body.replace(/O/g, '0').replace(/[IL]/g, '1');
+  if (body.length !== 8 || [...body].some((c) => !CARD_CODE_ALPHABET.includes(c))) return null;
+  return `${CARD_CODE_PREFIX}-${body.slice(0, 4)}-${body.slice(4)}`;
 }

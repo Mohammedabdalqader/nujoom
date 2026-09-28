@@ -855,5 +855,46 @@
     "details": "Details",
     "empty": "No teams near you are one short right now.",
     "gone": "This request has ended or the squad is full."
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "network": "You're offline. Check your connection and try again.",
+    "rateLimited": "Too many attempts. Wait a moment and try again.",
+    "auth": {
+      "signedOut": "Your session ended. Please sign in again.",
+      "codeInvalid": "That code is wrong or has expired. Request a new one.",
+      "emailInvalid": "Check the email address and try again.",
+      "emailUnavailable": "We can't send a code to this address right now. Try again later.",
+      "tooManyCodes": "You've requested several codes. Wait a minute before asking for another.",
+      "unavailable": "This sign-in method isn't available right now."
+    },
+    "onboarding": {
+      "notOnboarded": "Finish setting up your profile first.",
+      "alreadyOnboarded": "Your profile is already set up.",
+      "belowMinAge": "You need to be 13 or older to use the app.",
+      "dob": "Check the date of birth."
+    },
+    "profile": {
+      "name": "Names are 2 to 40 characters.",
+      "handle": "Usernames are 3–20 lower-case letters, digits, dots or underscores.",
+      "handleTaken": "That username is taken. Try another.",
+      "city": "Choose your city.",
+      "neighborhood": "Choose your neighbourhood.",
+      "position": "Choose your position.",
+      "shirtNumber": "Shirt numbers are 1 to 99.",
+      "avatar": "We couldn't save that photo. Try another one.",
+      "invalid": "Something in the form isn't valid. Check the fields and try again.",
+      "guardianControls": "Your guardian decides who can see your profile.",
+      "youthPresence": "Online status isn't shown for players under 18."
+    },
+    "consent": {
+      "required": "Accept the terms and privacy policy to continue.",
+      "outdated": "The terms were updated. Please read and accept the new version.",
+      "invalid": "We couldn't save your choice. Try again.",
+      "streaming": "Live streaming isn't available yet."
+    },
+    "guardian": {
+      "tooMany": "You've already added the maximum number of guardians."
+    }
   }
 }
