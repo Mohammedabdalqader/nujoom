@@ -161,3 +161,18 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
 - It is the Expo SDK's own player (SDK 57, config plugin added), works in Expo Go and dev builds, and plays the worker's 720p faststart MP4s from signed URLs.
 - `Clip.videoUrl` is null while a clip is still processing; the player then shows the thumbnail and a "still processing" state instead of fake playback.
 - `SelectSheet.value` became optional so one-off choices (a report reason) show no preselection.
+
+**D-025 Identity writes go only through RPCs; card codes are long and random (2026-09-28, Codex review C-009).**
+
+- Clients read `profiles` through RLS with column-level grants and never write identity tables. `complete_onboarding`, `update_profile`, `set_visibility`, `set_settings`, `record_consent` and `me` are the only paths, all `security definer` with pinned `search_path`.
+- Card codes are `NJM-XXXX-XXXX`: 8 random Crockford base32 characters (about 10^12 codes), assigned by a trigger and never changed. Spec §6.2 says `NJM-####`, but four digits are easy to enumerate and would collide as the network grows. The code is not readable from the table; its owner gets it from `me()`, and lookups (slice 3) are exact-match, rate-limited and visibility-checked. The 4-digit form survives only as a demo value.
+- Database rate limits use `private.hit_rate_limit(key, window, max)` over an unlogged counter table.
+
+**D-026 Recording is a separate consent that gates recorded matches, not the account (2026-09-28; pending owner and legal confirmation).**
+
+- Codex flagged that a sign-up checkbox shouldn't count as freely given permission to film every later match, especially for youth. Spec §6.1 lists recording among the required consents; this is a stricter reading, so it's adopted now and flagged for the owner.
+- **Terms and privacy** gate the account: a newer version sends the user to a re-consent step (`me().stage = 'consent'`).
+- **Recording** is asked separately, with a real "no". A yes is stored with its version and a no is stored as `granted = false`. Declining never blocks the account; it closes recorded matches (`can_join_recorded = false`) until the player says yes in Settings.
+- **Youth** need their own yes **and** a yes from a confirmed guardian; either no closes recorded matches.
+- **Streaming** is a separate type, default-denied, never collected or inferred before M9. Only the "no live" opt-out can be recorded now.
+- A newer recording version closes recorded matches until the player re-confirms. Slices 2 and 4 check this at join, check-in and capture.

@@ -36,7 +36,7 @@ select is(
         from pg_proc p join pg_namespace n on n.oid = p.pronamespace
         where n.nspname = 'private' and has_function_privilege('authenticated', p.oid, 'execute')
         order by 1),
-  array['age_group_for', 'age_on', 'amman_today', 'is_admin'],
+  array['age_group_for', 'age_on', 'amman_today', 'can_view_avatar', 'can_view_profile', 'is_admin', 'is_guardian_of'],
   'signed-in clients can execute only the allow-listed private helpers'
 );
 
