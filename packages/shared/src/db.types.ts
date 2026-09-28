@@ -1546,8 +1546,10 @@ export type Database = {
       }
       me: { Args: never; Returns: Json }
       my_catalog_reports: { Args: never; Returns: Json }
+      my_claims: { Args: never; Returns: Json }
       my_data_requests: { Args: never; Returns: Json }
       my_guardians: { Args: never; Returns: Json }
+      my_venues: { Args: never; Returns: Json }
       name_guardian: { Args: { p_email: string }; Returns: Json }
       owner_confirm_field: {
         Args: { p_facts?: Json; p_operations?: Json; p_pitch: string }

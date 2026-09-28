@@ -553,3 +553,11 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
 - **Rules:** the person must have signed in once, so the account exists. Every grant and revoke is written to `audit_log` (`admin.granted` / `admin.revoked`).
 - **Verified live:** grant, list, revoke and an unknown email on a tester account; both audit entries were written, and no admins remain.
 - **Windows fix:** the tool sets `process.exitCode` instead of calling `process.exit()`, which crashes Node on Windows while network handles are still closing.
+
+**D-058 The venue owner's read side (2026-09-29).**
+
+- **`my_venues()`:** only the venues the signed-in person is staff of. For each: role, listing and operator state, and each field's badge, facts and whether it's bookable. It also shows operations (price, price note, slot length, schedule on/off, paused since, last confirmed) and their photos with status.
+- **`my_claims()`:** only the person's own claims and outcomes.
+- **Admin-only material never appears:** contacts, outreach notes, reviewer history, other claimants and player reports.
+- **Evidence:** pgTAP `140-owner-reads.sql` has 8 assertions (360 total), live on the project. It covers signed-out refused, own venue only, no admin notes, and a pending claimant managing nothing yet.
+- **Next:** the owner pages on the website: find and claim a listed venue, confirm field facts and prices, switch the schedule on or off, and upload photos.
