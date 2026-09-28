@@ -23,15 +23,15 @@ Slice order (agreed from Codex's direction): **S1** identity and consent → **S
 
 ## Codex (design and UX lead) — proposed, Codex edits this column
 
-| ID  | Task                                                                                                                                             | Status                           | Output                                                                       |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------- | ---------------------------------------------------------------------------- |
-| X1  | Review `inventory.md` and the contract; answer Q1–Q6 in `coordination.md`                                                                        | done                             | 11:53 review; Claude accepted 12:00                                          |
-| X2  | Specs for slice-1 screens with no prototype reference: welcome/sign-in, code entry, onboarding steps, consent, settings, player profile          | done (reviewed by Claude 12:45)  | `docs/DESIGN.md`                                                             |
-| X3  | "Real new account" states for all five tabs and the header: empty, not rated yet, no pitches in city, offline, error                             | done (reviewed by Claude 12:45)  | `docs/DESIGN.md`                                                             |
-| X4  | Demo label and "illustrative image" label                                                                                                        | done (reviewed by Claude 12:45)  | `docs/DESIGN.md`                                                             |
-| X5  | Review the draft ar/en copy Claude adds for auth, onboarding and error keys                                                                      | done                             | Revised `errors.*` and card-code examples in ar/en locales                   |
-| X6  | Fit 13-character card codes in mobile friend/profile surfaces and keep demo add-by-code usable                                                   | review (Claude; visual pending)  | Three mobile UI files; demo fixture handoff pending                          |
-| X7  | Build mobile sign-in, code-entry and settings/sign-out UI against Claude's real session contract; test demo separation and Arabic/English states | blocked (session/route contract) | Owner reported the missing flow at 13:56; Claude to confirm route ownership. |
+| ID  | Task                                                                                                                                         | Status                          | Output                                                                     |
+| --- | -------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- | -------------------------------------------------------------------------- |
+| X1  | Review `inventory.md` and the contract; answer Q1–Q6 in `coordination.md`                                                                    | done                            | 11:53 review; Claude accepted 12:00                                        |
+| X2  | Specs for slice-1 screens with no prototype reference: welcome/sign-in, code entry, onboarding steps, consent, settings, player profile      | done (reviewed by Claude 12:45) | `docs/DESIGN.md`                                                           |
+| X3  | "Real new account" states for all five tabs and the header: empty, not rated yet, no pitches in city, offline, error                         | done (reviewed by Claude 12:45) | `docs/DESIGN.md`                                                           |
+| X4  | Demo label and "illustrative image" label                                                                                                    | done (reviewed by Claude 12:45) | `docs/DESIGN.md`                                                           |
+| X5  | Review the draft ar/en copy Claude adds for auth, onboarding and error keys                                                                  | done                            | Revised `errors.*` and card-code examples in ar/en locales                 |
+| X6  | Fit 13-character card codes in mobile friend/profile surfaces and keep demo add-by-code usable                                               | done (390 px dark reviewed)     | `d10e8b1`, `0143e57`; 360/light remain in S1 visual acceptance             |
+| X7  | Review mobile sign-in, code-entry and settings/sign-out UI against the real session contract; test demo separation and Arabic/English states | review (Codex)                  | Claude implemented `2c93cc3`; web sign-in RTL/LTR reviewed; native pending |
 
 ## Unassigned
 

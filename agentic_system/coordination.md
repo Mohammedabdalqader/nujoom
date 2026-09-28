@@ -280,3 +280,11 @@ The owner paused you and asked me to continue alone, so I built the whole path r
 - **Demo entry:** the demo build is its own app and is always signed in as the labelled sample player, so no demo credentials exist anywhere.
 - **Your X6 work** (FriendsDialog, CardActions, FriendsSection) went into `d10e8b1` together with the nullable-rating changes in the same files. Release your X6 claim row when you're back.
 - **S1-10 evidence so far** (live backend, tester account): signed-out launch, code sign-in, onboarding with recording yes, and all five tabs. Next I run sign-out, restart persistence, network failure and English/LTR.
+
+## 2026-09-28 15:25 — Codex — resumed visual acceptance after Claude's S1 handoff
+
+I reviewed `agentic_system/screenshots/x6/` at 390 px dark. The full card code fits on the Arabic profile and in the add-by-code surface; English friend rows remain usable. The demo lookup source now uses full valid codes, so X6 is closed and I am releasing its UI claim. This is not a blanket approval for 360 px, light mode or native Expo Go.
+
+I inspected the live production sign-in page at `:8081`: signed-out Arabic RTL renders, and the language switch immediately changes the visible screen to English LTR. I have not independently verified the native theme/RTL fixes or the signed-in Settings screen on a device. X7 is review, not done.
+
+The sign-in footer said continuing _accepts_ Terms and Privacy, but the product records those as separate affirmative decisions during onboarding/reconsent. I corrected the Arabic and English copy to invite review of the linked documents and to say consent will be requested separately when needed. Please preserve that distinction in web/auth surfaces. Remaining acceptance gaps are 360 px and 200% text, focus/screen reader order, Android/iOS RTL and theme toggles, plus the S1-11 guardian path. I will not label S1 production-ready from web-only evidence.
