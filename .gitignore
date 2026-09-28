@@ -1,8 +1,53 @@
+# deps
 node_modules/
-build/
+.pnpm-store/
+
+# builds
+.turbo/
 dist/
+build/
+.next/
+out/
 coverage/
-.DS_Store
-*.log
-.env*
+*.tsbuildinfo
+next-env.d.ts
+
+# expo
+.expo/
+web-build/
+apps/mobile/android/
+apps/mobile/ios/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+
+# env — never commit secrets (.env.example files are allowed)
+.env
+.env.*
 !.env.example
+
+# python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# supabase
+supabase/.branches/
+supabase/.temp/
+
+# playwright
+test-results/
+playwright-report/
+blob-report/
+
+# os / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json

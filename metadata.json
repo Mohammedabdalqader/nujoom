@@ -1,6 +1,0 @@
-{
-  "name": "Nujoom Al-Hara",
-  "description": "منصة نجوم الحارة الكروية - حجز الملاعب، توثيق اللقطات، بطاقات فيفا وبطولات حارات عمان",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}

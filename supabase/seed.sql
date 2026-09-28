@@ -1,0 +1,1 @@
+-- Local test users are created by tools/db-test and pgTAP fixtures; no seed data yet.

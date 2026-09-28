@@ -1,0 +1,7 @@
+pnpm-lock.yaml
+**/.expo
+**/dist
+**/coverage
+packages/shared/src/db.types.ts
+supabase/
+apps/mobile/expo-env.d.ts

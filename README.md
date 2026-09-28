@@ -1,20 +1,18 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# Nujoom al-Hara — نجوم الحارة
 
-# Run and deploy your AI Studio app
+Street-football app for Jordan: book a pitch, record the match on a phone, get your highlights, vote the MVP, climb the neighbourhood rankings.
 
-This contains everything you need to run your app locally.
+- Product spec: [docs/PRODUCT_SPEC.md](docs/PRODUCT_SPEC.md)
+- Design reference: [docs/DESIGN.md](docs/DESIGN.md)
+- Decisions: [docs/DECISIONS.md](docs/DECISIONS.md) · Progress: [docs/PROGRESS.md](docs/PROGRESS.md)
 
-View your app in AI Studio: https://ai.studio/apps/1b9cb04c-fc28-4673-af92-978ba0af2ccb
+## Quick start
 
-## Run Locally
+```bash
+corepack enable
+pnpm install
+cp .env.example apps/mobile/.env   # fill in the anon key
+pnpm --filter @nujoom/mobile dev   # scan the QR code with Expo Go, or press w for the web preview
+```
 
-**Prerequisites:**  Node.js
-
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+See [CLAUDE.md](CLAUDE.md) for every command.

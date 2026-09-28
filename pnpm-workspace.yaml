@@ -1,0 +1,16 @@
+packages:
+  - apps/*
+  - packages/*
+  - tools/*
+
+# pnpm only runs dependency install scripts that are explicitly allowed.
+allowBuilds:
+  esbuild: true
+  sharp: true
+  unrs-resolver: true
+  embedded-postgres: true
+  '@embedded-postgres/windows-x64': true
+
+overrides:
+  # Keep React Native tooling on the version Expo SDK 57 ships (RN 0.86).
+  '@react-native/metro-config': 0.86.3
