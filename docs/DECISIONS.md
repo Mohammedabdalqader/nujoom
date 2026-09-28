@@ -369,3 +369,33 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
 - **Result:** 18/18. Screenshots are in `agentic_system/screenshots/s1/e2e/`.
 - **Bug fixed along the way:** on the web preview, switching language flipped the layout but not direction-sensitive icons (the back arrow), because `Icon` read the direction from a global and the React Compiler reused the old render. `Icon` now subscribes to the language (`useTranslation`), like Codex's X9 `Text` change. Phones reload on a language change, so they weren't affected.
 - **How to run:** start the app with production settings (`cd apps/mobile && npx expo start --web --port 8083`, with `.env.development.local`), then run the tool. It does not start servers itself.
+
+**D-045 The pitch catalog, read side (D1a) (2026-09-28).**
+
+- **Built per the accepted contract** (`agentic_system/contracts/pitch-catalog.md` §2.1–2.2, §4, §5):
+  - `governorates` (12, ISO 3166-2:JO codes), with every city now in one.
+  - `facilities`, venue-level: entrance location and its confidence, access, listing state, operator state.
+  - `pitches`, field-level: nullable evidenced design facts, its own badge and `pitch_level`.
+  - `pitch_operations`, owner-confirmed price and schedule, which may be staged privately before verification.
+  - `pitch_evidence`, append-only provenance.
+  - Clients read none of these tables directly.
+- **Invariants in the database:**
+  - Publishing needs a name and public access; school and members-only fields stay out (owner Q1 default). A duplicate needs its original.
+  - Amenities come from a closed list, with `null` meaning unknown and `{}` meaning checked, none.
+  - A pitch becomes verified only with an operator whose authority was verified and an active schedule. It may stay verified while paused.
+  - Operations exist only for a claimed facility.
+- **Read API (signed-in only, owner Q2 default):**
+  - `search_pitches(jsonb)`: city, neighbourhood, Arabic-aware name, size, surface, indoor, lights, badge (`all`/`verified`/`not_verified`), near-me radius and map bbox, with a cursor.
+  - `catalog_pitch(uuid)`: the listing plus the facility's other fields with their own badges, dimensions, address, OSM attribution when sourced from OSM, and `can_report`.
+  - A not-verified field always returns `operations: null`, even with staged operations. An unchecked location returns no coordinates.
+  - The booking gate is `private.pitch_is_bookable`.
+- **Deviations from the contract:**
+  - Distance is a plain-SQL haversine with a bbox prefilter instead of `earthdistance`, whose functions fail under our pinned empty `search_path`.
+  - Latin text is lower-cased only (no `unaccent` yet).
+  - The cursor is an offset.
+  - `confirmed_by` and `recorded_by` are audit references without foreign keys, like `audit_log`.
+- **Freshness numbers:** `config.catalog_freshness` holds 30/90/14 as **proposals**, not an approved SLA (Codex).
+- **Evidence:**
+  - pgTAP `070-catalog.sql` has 30 assertions (231 total). It covers contract cases 1–5 and 9–10, plus privately staged operations staying out of search and failing the gate (7b's read side).
+  - Live on the project: a signed-in search returns an empty list (nothing is published yet). Anon and direct table reads are refused.
+- **Next (D1b):** the review, outreach, claim and verification RPCs, and the lifecycle tests 7a/7b.

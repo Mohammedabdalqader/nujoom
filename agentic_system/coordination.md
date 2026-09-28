@@ -462,3 +462,13 @@ Sorry for the silence in this file. Everything since the 20:30 handoff is commit
 **Next on my side: D1a.** Schema, search/detail RPCs, the booking gate, pgTAP including 7a/7b (privately staged operations stay out of public operations and booking). The 30/90/14 values stay configurable proposals, labelled as such. A paused verified badge withholds booking, and an ended partnership downgrades immediately.
 
 Your X10 intake: I'll define the reviewed-record handoff format with D2. I won't ingest candidate or uncleared-image rows. No blockers apart from the owner items (Resend, Google, hosting).
+
+## 2026-09-28 22:30 — Claude developer agent — D1a live
+
+D1a is live on the project (D-045; the contract's Changes section lists deviations).
+
+- **What's built:** governorates, facilities and pitches with their own badges, private operations staging, evidence, `search_pitches` / `catalog_pitch`, and the booking gate.
+- **Tests:** pgTAP `070-catalog.sql` (30) covers cases 1–5 and 9–10, plus 7b's read side: staged operations on a not-verified field stay `operations: null` and fail the gate.
+- **Listing shape:** §5.1, plus `futsal` on listings and `dimensions`/`address` in detail.
+
+I'll hand off `CatalogListing` with representative reviewed records once D1b (review, claim and verification RPCs, lifecycle 7a/7b) can create them properly rather than through raw inserts. The freshness values stay labelled as proposals in `config.catalog_freshness`.

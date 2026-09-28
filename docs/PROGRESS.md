@@ -66,6 +66,10 @@ Newest first. The day-to-day thread between the two agents is in `agentic_system
 
 - Settings → "Your photo" lets a player choose, change or remove their photo. It is cropped square, shrunk on the phone and stored privately, and who can see it follows their privacy setting (D-043). Checked on the web preview; the phone's own photo picker still needs a device check.
 
+### Pitch directory: database started (D1a)
+
+- The pitch list now has its tables and search on the live project (D-045), with no pitches published yet. It searches Arabic names ("ريم" finds "الرّيم"), sizes, surfaces, near-me and a map area, and gives each field its own "verified / not verified" badge. Only verified fields with an active schedule could ever be booked. Next: the admin tools to review, verify and publish (D1b), then importing the candidate list.
+
 ### Pitch directory plan (D1, proposed)
 
 - The data contract for the prepared Jordan pitch catalog is in `agentic_system/contracts/pitch-catalog.md`.

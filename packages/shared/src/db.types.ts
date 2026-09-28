@@ -66,6 +66,7 @@ export type Database = {
         Row: {
           country_code: string
           created_at: string
+          governorate_code: string
           id: number
           is_active: boolean
           name_ar: string
@@ -76,6 +77,7 @@ export type Database = {
         Insert: {
           country_code?: string
           created_at?: string
+          governorate_code: string
           id?: never
           is_active?: boolean
           name_ar: string
@@ -86,6 +88,7 @@ export type Database = {
         Update: {
           country_code?: string
           created_at?: string
+          governorate_code?: string
           id?: never
           is_active?: boolean
           name_ar?: string
@@ -99,6 +102,13 @@ export type Database = {
             columns: ["country_code"]
             isOneToOne: false
             referencedRelation: "countries"
+            referencedColumns: ["code"]
+          },
+          {
+            foreignKeyName: "cities_governorate_code_fkey"
+            columns: ["governorate_code"]
+            isOneToOne: false
+            referencedRelation: "governorates"
             referencedColumns: ["code"]
           },
         ]
@@ -250,6 +260,91 @@ export type Database = {
         }
         Relationships: []
       }
+      facilities: {
+        Row: {
+          access: Database["public"]["Enums"]["facility_access"]
+          address_ar: string | null
+          address_en: string | null
+          city_id: number
+          created_at: string
+          duplicate_of: string | null
+          id: string
+          last_reviewed_at: string | null
+          lat: number | null
+          listing_state: Database["public"]["Enums"]["listing_state"]
+          lng: number | null
+          location_confidence: Database["public"]["Enums"]["location_confidence"]
+          name_ar: string | null
+          name_en: string | null
+          neighborhood_id: number | null
+          operator_state: Database["public"]["Enums"]["operator_state"]
+          search_text: string | null
+          updated_at: string
+        }
+        Insert: {
+          access?: Database["public"]["Enums"]["facility_access"]
+          address_ar?: string | null
+          address_en?: string | null
+          city_id: number
+          created_at?: string
+          duplicate_of?: string | null
+          id?: string
+          last_reviewed_at?: string | null
+          lat?: number | null
+          listing_state?: Database["public"]["Enums"]["listing_state"]
+          lng?: number | null
+          location_confidence?: Database["public"]["Enums"]["location_confidence"]
+          name_ar?: string | null
+          name_en?: string | null
+          neighborhood_id?: number | null
+          operator_state?: Database["public"]["Enums"]["operator_state"]
+          search_text?: string | null
+          updated_at?: string
+        }
+        Update: {
+          access?: Database["public"]["Enums"]["facility_access"]
+          address_ar?: string | null
+          address_en?: string | null
+          city_id?: number
+          created_at?: string
+          duplicate_of?: string | null
+          id?: string
+          last_reviewed_at?: string | null
+          lat?: number | null
+          listing_state?: Database["public"]["Enums"]["listing_state"]
+          lng?: number | null
+          location_confidence?: Database["public"]["Enums"]["location_confidence"]
+          name_ar?: string | null
+          name_en?: string | null
+          neighborhood_id?: number | null
+          operator_state?: Database["public"]["Enums"]["operator_state"]
+          search_text?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "facilities_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "facilities_duplicate_of_fkey"
+            columns: ["duplicate_of"]
+            isOneToOne: false
+            referencedRelation: "facilities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "facilities_neighborhood_id_city_id_fkey"
+            columns: ["neighborhood_id", "city_id"]
+            isOneToOne: false
+            referencedRelation: "neighborhoods"
+            referencedColumns: ["id", "city_id"]
+          },
+        ]
+      }
       feature_flags: {
         Row: {
           description: string | null
@@ -271,6 +366,27 @@ export type Database = {
           key?: string
           updated_at?: string
           updated_by?: string | null
+        }
+        Relationships: []
+      }
+      governorates: {
+        Row: {
+          code: string
+          name_ar: string
+          name_en: string
+          sort_order: number
+        }
+        Insert: {
+          code: string
+          name_ar: string
+          name_en: string
+          sort_order?: number
+        }
+        Update: {
+          code?: string
+          name_ar?: string
+          name_en?: string
+          sort_order?: number
         }
         Relationships: []
       }
@@ -435,6 +551,181 @@ export type Database = {
           },
         ]
       }
+      pitch_evidence: {
+        Row: {
+          attribute: string
+          facility_id: string | null
+          id: number
+          observed_at: string | null
+          pitch_id: string | null
+          recorded_at: string
+          recorded_by: string | null
+          source_kind: Database["public"]["Enums"]["evidence_source"]
+          source_record_id: string | null
+          submission_id: string | null
+          value: Json
+        }
+        Insert: {
+          attribute: string
+          facility_id?: string | null
+          id?: never
+          observed_at?: string | null
+          pitch_id?: string | null
+          recorded_at?: string
+          recorded_by?: string | null
+          source_kind: Database["public"]["Enums"]["evidence_source"]
+          source_record_id?: string | null
+          submission_id?: string | null
+          value: Json
+        }
+        Update: {
+          attribute?: string
+          facility_id?: string | null
+          id?: never
+          observed_at?: string | null
+          pitch_id?: string | null
+          recorded_at?: string
+          recorded_by?: string | null
+          source_kind?: Database["public"]["Enums"]["evidence_source"]
+          source_record_id?: string | null
+          submission_id?: string | null
+          value?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pitch_evidence_facility_id_fkey"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "facilities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pitch_evidence_pitch_id_fkey"
+            columns: ["pitch_id"]
+            isOneToOne: false
+            referencedRelation: "pitches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pitch_operations: {
+        Row: {
+          confirmed_at: string
+          confirmed_by: string | null
+          opening_hours: Json
+          pitch_id: string
+          price_note_ar: string | null
+          price_note_en: string | null
+          price_per_hour: number
+          schedule_active: boolean
+          slot_minutes: number
+          updated_at: string
+        }
+        Insert: {
+          confirmed_at?: string
+          confirmed_by?: string | null
+          opening_hours?: Json
+          pitch_id: string
+          price_note_ar?: string | null
+          price_note_en?: string | null
+          price_per_hour: number
+          schedule_active?: boolean
+          slot_minutes: number
+          updated_at?: string
+        }
+        Update: {
+          confirmed_at?: string
+          confirmed_by?: string | null
+          opening_hours?: Json
+          pitch_id?: string
+          price_note_ar?: string | null
+          price_note_en?: string | null
+          price_per_hour?: number
+          schedule_active?: boolean
+          slot_minutes?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pitch_operations_pitch_id_fkey"
+            columns: ["pitch_id"]
+            isOneToOne: true
+            referencedRelation: "pitches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pitches: {
+        Row: {
+          amenities: string[] | null
+          created_at: string
+          facility_id: string
+          futsal: boolean | null
+          id: string
+          indoor: boolean | null
+          label_ar: string | null
+          label_en: string | null
+          length_m: number | null
+          lights: boolean | null
+          listing_state: Database["public"]["Enums"]["listing_state"]
+          participation: Database["public"]["Enums"]["pitch_participation"]
+          pitch_level: Database["public"]["Enums"]["pitch_level"]
+          players_per_side: number | null
+          surface: Database["public"]["Enums"]["pitch_surface"] | null
+          updated_at: string
+          verified_at: string | null
+          width_m: number | null
+        }
+        Insert: {
+          amenities?: string[] | null
+          created_at?: string
+          facility_id: string
+          futsal?: boolean | null
+          id?: string
+          indoor?: boolean | null
+          label_ar?: string | null
+          label_en?: string | null
+          length_m?: number | null
+          lights?: boolean | null
+          listing_state?: Database["public"]["Enums"]["listing_state"]
+          participation?: Database["public"]["Enums"]["pitch_participation"]
+          pitch_level?: Database["public"]["Enums"]["pitch_level"]
+          players_per_side?: number | null
+          surface?: Database["public"]["Enums"]["pitch_surface"] | null
+          updated_at?: string
+          verified_at?: string | null
+          width_m?: number | null
+        }
+        Update: {
+          amenities?: string[] | null
+          created_at?: string
+          facility_id?: string
+          futsal?: boolean | null
+          id?: string
+          indoor?: boolean | null
+          label_ar?: string | null
+          label_en?: string | null
+          length_m?: number | null
+          lights?: boolean | null
+          listing_state?: Database["public"]["Enums"]["listing_state"]
+          participation?: Database["public"]["Enums"]["pitch_participation"]
+          pitch_level?: Database["public"]["Enums"]["pitch_level"]
+          players_per_side?: number | null
+          surface?: Database["public"]["Enums"]["pitch_surface"] | null
+          updated_at?: string
+          verified_at?: string | null
+          width_m?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pitches_facility_id_fkey"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "facilities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profile_private: {
         Row: {
           created_at: string
@@ -584,6 +875,8 @@ export type Database = {
         Returns: Json
       }
       cancel_account_deletion: { Args: never; Returns: Json }
+      catalog_pitch: { Args: { p_pitch_id: string }; Returns: Json }
+      check_data_rights_secret: { Args: { p_secret: string }; Returns: boolean }
       complete_onboarding: {
         Args: {
           p_city_id: number
@@ -600,7 +893,19 @@ export type Database = {
         Returns: Json
       }
       decline_guardian_invite: { Args: { p_token: string }; Returns: undefined }
+      due_account_deletions: {
+        Args: { p_limit?: number }
+        Returns: {
+          request_id: string
+          user_id: string
+        }[]
+      }
+      expire_data_exports: { Args: { p_limit?: number }; Returns: string[] }
       export_user_data: { Args: { p_user: string }; Returns: Json }
+      finish_account_deletion: {
+        Args: { p_request: string }
+        Returns: undefined
+      }
       guardian_invite_preview: { Args: { p_token: string }; Returns: Json }
       issue_guardian_invite: {
         Args: { p_link_id: string; p_youth: string }
@@ -628,6 +933,7 @@ export type Database = {
       my_guardians: { Args: never; Returns: Json }
       name_guardian: { Args: { p_email: string }; Returns: Json }
       player_profile: { Args: { p_user: string }; Returns: Json }
+      prepare_account_deletion: { Args: { p_request: string }; Returns: string }
       record_consent: {
         Args: {
           p_granted: boolean
@@ -638,6 +944,7 @@ export type Database = {
       }
       request_account_deletion: { Args: never; Returns: Json }
       request_data_export: { Args: never; Returns: Json }
+      search_pitches: { Args: { p?: Json }; Returns: Json }
       set_settings: { Args: { p_patch: Json }; Returns: Json }
       set_visibility: {
         Args: {
@@ -658,8 +965,49 @@ export type Database = {
         | "cancelled"
         | "failed"
       dominant_foot: "left" | "right" | "both"
+      evidence_source:
+        | "osm"
+        | "operator"
+        | "field_team"
+        | "community"
+        | "reviewer"
+      facility_access:
+        | "public_rental"
+        | "public_free"
+        | "members_only"
+        | "school_only"
+        | "closed"
+        | "unknown"
       guardian_status: "pending" | "confirmed" | "revoked"
       job_status: "queued" | "running" | "succeeded" | "dead"
+      listing_state:
+        | "candidate"
+        | "published"
+        | "hidden"
+        | "duplicate"
+        | "closed"
+        | "rejected"
+      location_confidence:
+        | "unchecked"
+        | "approximate"
+        | "map_checked"
+        | "site_checked"
+      operator_state:
+        | "none"
+        | "contacted"
+        | "responded"
+        | "claimed"
+        | "authority_verified"
+        | "declined"
+        | "opted_out"
+      pitch_level: "listed" | "dock" | "verified"
+      pitch_participation: "not_verified" | "verified"
+      pitch_surface:
+        | "artificial_turf"
+        | "natural_grass"
+        | "hard_court"
+        | "sand"
+        | "other"
       player_position: "GK" | "DEF" | "MID" | "FWD"
       profile_visibility: "public" | "city" | "private"
     }
@@ -800,8 +1148,55 @@ export const Constants = {
         "failed",
       ],
       dominant_foot: ["left", "right", "both"],
+      evidence_source: [
+        "osm",
+        "operator",
+        "field_team",
+        "community",
+        "reviewer",
+      ],
+      facility_access: [
+        "public_rental",
+        "public_free",
+        "members_only",
+        "school_only",
+        "closed",
+        "unknown",
+      ],
       guardian_status: ["pending", "confirmed", "revoked"],
       job_status: ["queued", "running", "succeeded", "dead"],
+      listing_state: [
+        "candidate",
+        "published",
+        "hidden",
+        "duplicate",
+        "closed",
+        "rejected",
+      ],
+      location_confidence: [
+        "unchecked",
+        "approximate",
+        "map_checked",
+        "site_checked",
+      ],
+      operator_state: [
+        "none",
+        "contacted",
+        "responded",
+        "claimed",
+        "authority_verified",
+        "declined",
+        "opted_out",
+      ],
+      pitch_level: ["listed", "dock", "verified"],
+      pitch_participation: ["not_verified", "verified"],
+      pitch_surface: [
+        "artificial_turf",
+        "natural_grass",
+        "hard_court",
+        "sand",
+        "other",
+      ],
       player_position: ["GK", "DEF", "MID", "FWD"],
       profile_visibility: ["public", "city", "private"],
     },

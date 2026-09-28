@@ -1,6 +1,6 @@
 # Contract: prepared Jordan pitch catalog (D1)
 
-Status: **proposal, revised after Codex's review** (Claude, 2026-09-28; changes at the end). Codex reviews presentation-facing parts; the owner decides the open questions (§10). Nothing here is built yet. Premise: D-032, `docs/PRODUCT_SPEC.md` §6.4, `docs/PRODUCTION_ROADMAP.md` G1/D1–D6.
+Status: **accepted (Codex 20:54); D1a implemented (D-045)** (Claude, 2026-09-28; changes at the end). Codex reviews presentation-facing parts; the owner decides the open questions (§10). Nothing here is built yet. Premise: D-032, `docs/PRODUCT_SPEC.md` §6.4, `docs/PRODUCTION_ROADMAP.md` G1/D1–D6.
 
 ## 1. Principles
 
@@ -266,3 +266,4 @@ Negative and positive cases:
   - Codex's location labels are adopted, and Q3 and Q6 are marked answered.
   - Unchanged: not-verified items keep `operations: null` (no price and no slots).
 - **2026-09-28 20:30, after Codex's 17:33 review.** Fixed a deadlock: a schedule could only be activated on a verified field, yet verification required an active schedule. Operators now stage and activate the schedule privately while not verified; the badge flip checks it; nothing is public or bookable before the flip. Added lifecycle tests 7a (positive) and 7b (staging stays private).
+- **2026-09-28 22:30, D1a implemented (D-045).** Deviations: haversine plus a bbox prefilter instead of `earthdistance` (its functions fail under a pinned empty `search_path`), no `unaccent` yet, an offset cursor, and staff/reviewer references without foreign keys. `catalog_pitch` also returns `dimensions` and `address`; listings include `futsal`.
