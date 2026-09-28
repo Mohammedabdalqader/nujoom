@@ -6,6 +6,9 @@ import { PHOTOS } from '@/data/preview-photos';
 import { dateInAmman } from '@nujoom/shared';
 
 import type {
+  Kitty,
+  GearList,
+  Squad,
   FriendRequest,
   FriendSuggestion,
   AppNotification,
@@ -174,6 +177,100 @@ export const previewFriendRequests: FriendRequest[] = [
     createdAt: minutes(-45),
   },
 ];
+
+export const previewSquad: Squad = {
+  bookingId: 'bk-1',
+  pitchName: { ar: 'ملعب جبل الحسين', en: 'Jabal al-Hussein Pitch' },
+  players: [
+    {
+      id: 'me',
+      name: 'أحمد المالكي',
+      avatarUrl: PHOTOS.ahmadMalki,
+      position: 'FWD',
+      form: 8.6,
+      isMe: true,
+    },
+    { id: 'fr-1', name: 'عمر الدوسري', avatarUrl: PHOTOS.omarDosari, position: 'MID', form: 8.5 },
+    { id: 'fr-2', name: 'طارق الزعبي', avatarUrl: null, position: 'DEF', form: 8.2 },
+    { id: 'fr-3', name: 'سيف العبدلي', avatarUrl: PHOTOS.saifAbdali, position: 'FWD', form: 8.4 },
+    {
+      id: 'fr-4',
+      name: 'حمزة الكيلاني',
+      avatarUrl: PHOTOS.hamzaKeilani,
+      position: 'GK',
+      form: 8.1,
+    },
+    { id: 'fr-5', name: 'معتز الشريف', avatarUrl: PHOTOS.motazShareef, position: 'DEF', form: 8.3 },
+    { id: 'sq-7', name: 'يوسف أبو هاشم', avatarUrl: PHOTOS.rosterA, position: 'DEF', form: 8.0 },
+    {
+      id: 'sq-8',
+      name: 'نور العورتاني',
+      avatarUrl: PHOTOS.noorAwartani,
+      position: 'GK',
+      form: 7.9,
+    },
+    { id: 'sq-9', name: 'ليث أبو رمان', avatarUrl: PHOTOS.rosterB, position: 'MID', form: 7.8 },
+    { id: 'sq-10', name: 'عمر الشويكي', avatarUrl: PHOTOS.rosterC, position: 'DEF', form: 7.7 },
+  ],
+};
+
+const meRef = { id: 'me', name: 'أحمد المالكي', avatarUrl: PHOTOS.ahmadMalki };
+
+export const previewGear: GearList = {
+  bookingId: 'bk-1',
+  pitchName: { ar: 'ملعب جبل الحسين', en: 'Jabal al-Hussein Pitch' },
+  startsAt: minutes(134),
+  size: 5,
+  items: [
+    { id: 'g-1', kind: 'ball', name: null, assignee: meRef, ready: true },
+    {
+      id: 'g-2',
+      kind: 'bibs',
+      name: null,
+      assignee: { id: 'fr-1', name: 'عمر الدوسري', avatarUrl: PHOTOS.omarDosari },
+      ready: true,
+    },
+    { id: 'g-3', kind: 'water', name: null, assignee: null, ready: false },
+    {
+      id: 'g-4',
+      kind: 'referee',
+      name: null,
+      assignee: { id: 'fr-2', name: 'طارق الزعبي', avatarUrl: null },
+      ready: true,
+    },
+    { id: 'g-5', kind: 'firstaid', name: null, assignee: null, ready: false },
+    {
+      id: 'g-6',
+      kind: 'booking',
+      name: null,
+      assignee: { id: 'fr-5', name: 'معتز الشريف', avatarUrl: PHOTOS.motazShareef },
+      ready: true,
+    },
+  ],
+};
+
+export const previewKitty: Kitty = {
+  bookingId: 'bk-1',
+  pitchName: { ar: 'ملعب جبل الحسين', en: 'Jabal al-Hussein Pitch' },
+  pitchCost: 35,
+  extrasCost: 5,
+  players: [
+    { id: 'me', name: 'أحمد المالكي', isMe: true, paid: 'cash' },
+    { id: 'fr-1', name: 'عمر الدوسري', paid: 'cliq' },
+    { id: 'fr-2', name: 'طارق الزعبي', paid: 'cash' },
+    { id: 'fr-3', name: 'سيف العبدلي', paid: 'cliq' },
+    { id: 'fr-4', name: 'حمزة الكيلاني', paid: null },
+    { id: 'fr-5', name: 'معتز الشريف', paid: 'cash' },
+    { id: 'sq-7', name: 'يوسف أبو هاشم', paid: null },
+    { id: 'sq-8', name: 'نور العورتاني', paid: null },
+    { id: 'sq-9', name: 'ليث أبو رمان', paid: 'cliq' },
+    { id: 'sq-10', name: 'عمر الشويكي', paid: null },
+    { id: 'kt-11', name: 'زيد الرفاعي', paid: 'cash' },
+    { id: 'kt-12', name: 'خالد المجالي', paid: null },
+    { id: 'kt-13', name: 'وسام قاسم', paid: 'cliq' },
+    { id: 'kt-14', name: 'فيصل حداد', paid: null },
+  ],
+};
 
 export const previewNotifications: AppNotification[] = [
   {

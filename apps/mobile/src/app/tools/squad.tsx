@@ -1,10 +1,1 @@
-import { Dialog } from '@/ui/Dialog';
-import { Text } from '@/ui/Text';
-
-export default function Placeholder() {
-  return (
-    <Dialog>
-      <Text className="text-on-surface">tools/squad</Text>
-    </Dialog>
-  );
-}
+export { SquadDialog as default } from '@/features/tools/SquadDialog';

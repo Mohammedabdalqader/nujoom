@@ -1,10 +1,1 @@
-import { Dialog } from '@/ui/Dialog';
-import { Text } from '@/ui/Text';
-
-export default function Placeholder() {
-  return (
-    <Dialog>
-      <Text className="text-on-surface">tools/cost</Text>
-    </Dialog>
-  );
-}
+export { KittyDialog as default } from '@/features/tools/KittyDialog';

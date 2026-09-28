@@ -9,7 +9,7 @@ import type { Me, Pitch } from '@/data/types';
 import { sfx } from '@/design/sound';
 import { daySlots } from '@/features/pitches/logic';
 import { useLocale } from '@/lib/locale';
-import { Dialog } from '@/ui/Dialog';
+import { Dialog, DialogLoading } from '@/ui/Dialog';
 import { Field } from '@/ui/Field';
 import { Icon } from '@/ui/Icon';
 import { SelectField } from '@/ui/SelectField';
@@ -35,7 +35,7 @@ export function BookingDialog({
   const me = useMe().data;
   const pitch = usePitches().data?.find((p) => p.id === pitchId);
   // The form's initial values come from the pitch and profile, so wait for both.
-  if (!pitch || !me) return <Dialog>{null}</Dialog>;
+  if (!pitch || !me) return <DialogLoading />;
   return <BookingForm pitch={pitch} me={me} date={date ?? dateInAmman(new Date())} slot={slot} />;
 }
 

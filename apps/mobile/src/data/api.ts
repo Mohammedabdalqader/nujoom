@@ -13,6 +13,9 @@ import {
   previewMatchDay,
   previewLeaderboard,
   previewProfileExtras,
+  previewSquad,
+  previewGear,
+  previewKitty,
 } from '@/data/preview';
 import type {
   AppNotification,
@@ -27,6 +30,9 @@ import type {
   Me,
   Pitch,
   ProfileExtras,
+  Squad,
+  GearList,
+  Kitty,
 } from '@/data/types';
 
 /**
@@ -45,6 +51,9 @@ export const keys = {
   areas: ['areas'] as const,
   matchDay: ['match-day'] as const,
   profileExtras: ['profile', 'extras'] as const,
+  squad: ['squad'] as const,
+  gear: ['gear'] as const,
+  kitty: ['kitty'] as const,
   leaderboard: (scope: string, age: string, period: string) =>
     ['leaderboard', scope, age, period] as const,
 };
@@ -110,6 +119,18 @@ export const useProfileExtras = () =>
  * Card-code lookup for "add a player". R3 turns this into an RPC that only finds players the
  * caller may see: public or city-visible, same age band (D-023).
  */
+/** The next match's squad for the match tools (R2: the booking's players with their form). */
+export const useSquad = () =>
+  useQuery<Squad>({ queryKey: keys.squad, queryFn: preview(previewSquad) });
+
+/** The next match's shared gear checklist (R3: one list per booking, edited by its players). */
+export const useGear = () =>
+  useQuery<GearList>({ queryKey: keys.gear, queryFn: preview(previewGear) });
+
+/** The next match's kitty (R3: the booking's price and each player's payment mark). */
+export const useKitty = () =>
+  useQuery<Kitty>({ queryKey: keys.kitty, queryFn: preview(previewKitty) });
+
 export async function findPlayerByCardCode(code: string): Promise<FriendSuggestion | null> {
   const known = [...previewFriendSuggestions, ...previewFriendRequests.map((r) => r.from)];
   return known.find((p) => p.cardCode === code) ?? null;

@@ -1,7 +1,16 @@
 import { useRouter } from 'expo-router';
 import type { ReactNode } from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, View } from 'react-native';
+import {
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  View,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import { useTheme } from '@/design/theme';
 
 const WIDTHS = { sm: 'max-w-sm', md: 'max-w-md', lg: 'max-w-lg' } as const;
 
@@ -51,5 +60,17 @@ export function Dialog({
         )}
       </View>
     </KeyboardAvoidingView>
+  );
+}
+
+/** The dialog while its data loads (the route opens before the query resolves). */
+export function DialogLoading() {
+  const { color } = useTheme();
+  return (
+    <Dialog>
+      <View className="py-10 items-center">
+        <ActivityIndicator color={color('primary')} />
+      </View>
+    </Dialog>
   );
 }

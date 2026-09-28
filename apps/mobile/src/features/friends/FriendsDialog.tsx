@@ -284,7 +284,7 @@ function AddByCode({
           autoCorrect={false}
           returnKeyType="send"
           accessibilityLabel={t('friends.codePlaceholder')}
-          className={`flex-1 bg-surface-container-lowest border rounded-lg px-2.5 py-1.5 text-[12px] text-on-surface ${
+          className={`flex-1 min-w-0 bg-surface-container-lowest border rounded-lg px-2.5 py-1.5 text-[12px] text-on-surface ${
             error ? 'border-error' : 'border-surface-container-high focus:border-primary'
           }`}
           // Codes stay left-to-right inside Arabic forms, like the Field primitive's `ltr`.
@@ -345,7 +345,7 @@ function SearchBar({ value, onChange }: { value: string; onChange: (v: string) =
         placeholderTextColor={color('on-surface-variant')}
         accessibilityLabel={t('friends.search')}
         returnKeyType="search"
-        className="flex-1 py-2 text-[12px] text-on-surface"
+        className="flex-1 min-w-0 py-2 text-[12px] text-on-surface"
         style={{ fontFamily: 'PlusJakartaSans_400Regular' }}
       />
     </View>

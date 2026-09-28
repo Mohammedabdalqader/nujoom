@@ -95,6 +95,59 @@ export type FriendRequest = {
   createdAt: string;
 };
 
+/** A player in the match tools (squad splitter): profile players have a form, walk-ins do not. */
+export type SquadPlayer = PlayerRef & {
+  position: Position | null;
+  form: number | null;
+  isMe?: boolean;
+};
+
+/** The squad of your next match, which the tools start from (empty without a booking). */
+export type Squad = {
+  bookingId: string | null;
+  pitchName: Bilingual | null;
+  players: SquadPlayer[];
+};
+
+export type GearKind = 'ball' | 'bibs' | 'water' | 'referee' | 'firstaid' | 'booking' | 'custom';
+
+/** One line of the match gear checklist; only custom items carry a (player-typed) name. */
+export type GearItem = {
+  id: string;
+  kind: GearKind;
+  name: string | null;
+  assignee: PlayerRef | null;
+  ready: boolean;
+};
+
+export type GearList = {
+  bookingId: string | null;
+  pitchName: Bilingual | null;
+  startsAt: string | null;
+  /** Players per side (5, 6 or 7), for the bibs line. */
+  size: number;
+  items: GearItem[];
+};
+
+export type KittyPlayer = {
+  id: string;
+  name: string;
+  isMe?: boolean;
+  /** How they paid their share, or null while unpaid. Stars never pay (D-006.1). */
+  paid: 'cash' | 'cliq' | null;
+};
+
+/** The pitch kitty ("القطية") for your next match: what it costs and who has paid. */
+export type Kitty = {
+  bookingId: string | null;
+  pitchName: Bilingual | null;
+  /** Pitch rent for the booking, in JOD. */
+  pitchCost: number;
+  /** Water and extras, in JOD. */
+  extrasCost: number;
+  players: KittyPlayer[];
+};
+
 export type Team = {
   side: TeamSide;
   name: string;
