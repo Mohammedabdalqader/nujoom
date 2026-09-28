@@ -11,6 +11,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useTheme } from '@/design/theme';
+import { DemoMarker } from '@/ui/DemoMarker';
 
 const WIDTHS = { sm: 'max-w-sm', md: 'max-w-md', lg: 'max-w-lg' } as const;
 
@@ -49,6 +50,7 @@ export function Dialog({
         style={{ paddingTop: insets.top + 16, paddingBottom: insets.bottom + 16 }}
       >
         <Pressable className="absolute inset-0" onPress={close} accessibilityRole="none" />
+        <DemoMarker className="w-full max-w-lg rounded-md mb-2" />
         {scroll ? (
           <View className={`${card} max-h-full overflow-hidden`}>
             <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="gap-3.5">

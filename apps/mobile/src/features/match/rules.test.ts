@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { previewMatchDay } from '@/data/preview';
+import { previewMatchDay } from '@/data/sources/demo/fixtures';
 import type { MatchDay } from '@/data/types';
 
 import { checkinsRemaining, clipBlocker, minutesLeft, voteBlocker, voteShare } from './rules';

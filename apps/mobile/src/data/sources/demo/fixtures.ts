@@ -2,7 +2,7 @@
  * Typed preview data (D-019): the design prototype's sample content, used while a feature has no
  * backend yet and for design reviews (`EXPO_PUBLIC_PREVIEW=1`). Never shipped as real content.
  */
-import { PHOTOS } from '@/data/preview-photos';
+import { PHOTOS } from './photos';
 import { dateInAmman } from '@nujoom/shared';
 
 import type {
@@ -25,6 +25,9 @@ import type {
   Pitch,
   ProfileExtras,
 } from '@/data/types';
+
+/** Searched for by scripts/check-production-bundle.mjs: it must never appear in a production bundle. */
+export const DEMO_FIXTURE_MARKER = 'nujoom-demo-fixtures:not-for-production';
 
 const now = Date.now();
 const minutes = (n: number) => new Date(now + n * 60_000).toISOString();

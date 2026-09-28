@@ -178,3 +178,21 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
 - A newer recording version closes recorded matches until the player re-confirms.
 - **Unanswered** (the key missing at onboarding) counts as no and stores no row; an explicit no is stored.
 - **Later slices fail closed:** joining a recorded booking (S2), QR check-in (S4) and starting capture on the recording phone (S4) each call `private.can_join_recorded_matches` for the player, and capture is refused if any checked-in participant fails it.
+
+**D-027 Demo and production are separate builds; the variant picks the data source when the app is bundled (2026-09-28, C-005).**
+
+- `EXPO_PUBLIC_APP_VARIANT` is `production` or `demo`. Screens use the hooks in `src/data/api.ts`, which read from `getSource()`. The demo build reads `src/data/sources/demo` (labelled fixtures and the prototype's illustrative images). The production build reads `src/data/sources/supabase`, which returns honest empty values until each slice wires its feature.
+- `selectSource()` (unit-tested) fails hard in production without valid Supabase settings; it never falls back to fixtures. Development bundles without a variant run the demo, so a plain `npx expo start` keeps working. Release bundles never do.
+- The demo module is `require`d only behind a literal `process.env.EXPO_PUBLIC_APP_VARIANT === 'demo' || __DEV__` check. Metro folds it away in release bundles. `pnpm --filter @nujoom/mobile check:bundle` builds a clean production Android bundle and fails if the fixture marker, a prototype image URL or a demo name is inside. It passes: 2,430 modules for production vs. 2,433 for demo. A demo export (the negative control) does contain the marker and 28 image URLs.
+- **Metro caches transformed modules without keying on `EXPO_PUBLIC_*` values.** Switching variant locally needs `npx expo start --clear`; the guard always exports with `--clear`.
+- `app.config.ts`:
+  - The demo build gets its own app id (`app.nujoom.hara.demo`) and a "· تجريبي" name suffix.
+  - EAS builds refuse a missing variant, a production build without backend settings, and a demo build that carries backend credentials.
+  - `eas.json` sets the variant per profile and adds a `demo` profile.
+- `.env.development` is committed with only `EXPO_PUBLIC_APP_VARIANT=demo`, and `.gitignore` has an exception for it. Real-backend development uses a git-ignored `.env.development.local`.
+- A permanent "نسخة تجريبية · بيانات وصور توضيحية" strip (`src/ui/DemoMarker.tsx`) sits on the bottom bar of every tab and above every sheet in the demo build. It's styled as a hazard strip, not a badge; Codex owns its final look.
+
+**D-028 Expo Go needs `expo.extra.supportsRTL` for the Arabic layout (2026-09-28).**
+
+- The owner saw a left-to-right layout on the phone while the web preview was right-to-left. Development builds get RTL support from the `expo-localization` plugin, but Expo Go reads `extra.supportsRTL` from the manifest and otherwise resets the direction on every launch. Our one-reload guard then stops retrying, leaving Arabic text in an LTR layout.
+- `app.json` now sets `extra.supportsRTL: true`. It must be verified on the owner's phone after restarting `npx expo start --clear`. Proper RTL and theme checks belong on a development build (`eas build --profile development`), as in the old project.

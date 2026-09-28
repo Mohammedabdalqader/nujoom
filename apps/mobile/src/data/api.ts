@@ -1,24 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
-import {
-  previewFriendRequests,
-  previewFriendSuggestions,
-  previewFriends,
-  previewHome,
-  previewMe,
-  previewMyClips,
-  previewNotifications,
-  previewAreas,
-  previewPitches,
-  previewMatchDay,
-  previewLeaderboard,
-  previewProfileExtras,
-  previewSquad,
-  previewGear,
-  previewKitty,
-  previewMatchDetails,
-  previewClips,
-} from '@/data/preview';
+import { getSource } from '@/data/source';
 import type {
   AppNotification,
   Area,
@@ -39,8 +21,9 @@ import type {
 } from '@/data/types';
 
 /**
- * The app's queries (D-019). Each resolves from Supabase once its milestone lands; until then from
- * the typed preview data. Screens only ever see these hooks and the view-model types.
+ * The app's queries (D-019, contract §2). Each reads the build's data source: labelled fixtures
+ * in the demo build, Supabase in production (`src/data/source.ts`). Screens only ever see these
+ * hooks and the view-model types.
  */
 export const keys = {
   me: ['me'] as const,
@@ -63,98 +46,94 @@ export const keys = {
     ['leaderboard', scope, age, period] as const,
 };
 
-const preview =
-  <T>(value: T) =>
-  () =>
-    // A deep copy so cache edits never mutate the fixtures (JSON-safe data; Hermes has no structuredClone).
-    Promise.resolve(JSON.parse(JSON.stringify(value)) as T);
-
-export const useMe = () => useQuery<Me>({ queryKey: keys.me, queryFn: preview(previewMe) });
+export const useMe = () => useQuery<Me>({ queryKey: keys.me, queryFn: () => getSource().me() });
 
 export const useFriends = () =>
-  useQuery<Friend[]>({ queryKey: keys.friends, queryFn: preview(previewFriends) });
+  useQuery<Friend[]>({ queryKey: keys.friends, queryFn: () => getSource().friends() });
 
 export const useFriendRequests = () =>
   useQuery<FriendRequest[]>({
     queryKey: keys.friendRequests,
-    queryFn: preview(previewFriendRequests),
+    queryFn: () => getSource().friendRequests(),
   });
 
 export const useFriendSuggestions = () =>
   useQuery<FriendSuggestion[]>({
     queryKey: keys.friendSuggestions,
-    queryFn: preview(previewFriendSuggestions),
+    queryFn: () => getSource().friendSuggestions(),
   });
 
 export const useNotifications = () =>
   useQuery<AppNotification[]>({
     queryKey: keys.notifications,
-    queryFn: preview(previewNotifications),
+    queryFn: () => getSource().notifications(),
   });
 
 export const useHomeFeed = () =>
-  useQuery<HomeFeed>({ queryKey: keys.home, queryFn: preview(previewHome) });
+  useQuery<HomeFeed>({ queryKey: keys.home, queryFn: () => getSource().homeFeed() });
 
 export const useMyClips = () =>
-  useQuery<Clip[]>({ queryKey: keys.myClips, queryFn: preview(previewMyClips) });
+  useQuery<Clip[]>({ queryKey: keys.myClips, queryFn: () => getSource().myClips() });
 
 export const usePitches = () =>
-  useQuery<Pitch[]>({ queryKey: keys.pitches, queryFn: preview(previewPitches) });
+  useQuery<Pitch[]>({ queryKey: keys.pitches, queryFn: () => getSource().pitches() });
 
 export const useAreas = () =>
-  useQuery<Area[]>({ queryKey: keys.areas, queryFn: preview(previewAreas) });
+  useQuery<Area[]>({ queryKey: keys.areas, queryFn: () => getSource().areas() });
 
 /** The player's current match: live, next up today, or voting (null when there is none). */
 export const useMatchDay = () =>
-  useQuery<MatchDay | null>({ queryKey: keys.matchDay, queryFn: preview(previewMatchDay) });
+  useQuery<MatchDay | null>({ queryKey: keys.matchDay, queryFn: () => getSource().matchDay() });
 
 /** Leaderboard for a scope, age group and period (spec §6.10). */
 export const useLeaderboard = (scope: string, age: string, period: string) =>
   useQuery<Leaderboard>({
     queryKey: keys.leaderboard(scope, age, period),
-    queryFn: preview(previewLeaderboard),
+    queryFn: () => getSource().leaderboard(scope, age, period),
   });
 
 /** Progress charts, stars wallet, endorsements and clip count for the Me tab. */
 export const useProfileExtras = () =>
-  useQuery<ProfileExtras>({ queryKey: keys.profileExtras, queryFn: preview(previewProfileExtras) });
+  useQuery<ProfileExtras>({
+    queryKey: keys.profileExtras,
+    queryFn: () => getSource().profileExtras(),
+  });
 
-/** Local cache updates for the preview phase; replaced by mutations with RPCs per milestone. */
-/**
- * Card-code lookup for "add a player". R3 turns this into an RPC that only finds players the
- * caller may see: public or city-visible, same age band (D-023).
- */
 /** The next match's squad for the match tools (R2: the booking's players with their form). */
 export const useSquad = () =>
-  useQuery<Squad>({ queryKey: keys.squad, queryFn: preview(previewSquad) });
+  useQuery<Squad>({ queryKey: keys.squad, queryFn: () => getSource().squad() });
 
 /** The next match's shared gear checklist (R3: one list per booking, edited by its players). */
 export const useGear = () =>
-  useQuery<GearList>({ queryKey: keys.gear, queryFn: preview(previewGear) });
+  useQuery<GearList>({ queryKey: keys.gear, queryFn: () => getSource().gear() });
 
 /** The next match's kitty (R3: the booking's price and each player's payment mark). */
 export const useKitty = () =>
-  useQuery<Kitty>({ queryKey: keys.kitty, queryFn: preview(previewKitty) });
+  useQuery<Kitty>({ queryKey: keys.kitty, queryFn: () => getSource().kitty() });
 
 /** A booking's line-ups; null when it doesn't exist or you're not in it (R2: RLS decides). */
 export const useMatchDetails = (bookingId: string) =>
   useQuery<MatchDetails | null>({
     queryKey: keys.matchDetails(bookingId),
-    queryFn: preview(previewMatchDetails.bookingId === bookingId ? previewMatchDetails : null),
+    queryFn: () => getSource().matchDetails(bookingId),
   });
 
 /** One clip for the player; null when it's gone or you may not see it (R5: RLS + signed URL). */
 export const useClip = (id: string) =>
   useQuery<Clip | null>({
     queryKey: keys.clip(id),
-    queryFn: preview([...previewClips, ...previewMyClips].find((c) => c.id === id) ?? null),
+    queryFn: () => getSource().clip(id),
   });
 
-export async function findPlayerByCardCode(code: string): Promise<FriendSuggestion | null> {
-  const known = [...previewFriendSuggestions, ...previewFriendRequests.map((r) => r.from)];
-  return known.find((p) => p.cardCode === code) ?? null;
+/**
+ * Card-code lookup for "add a player" (contract §4). Slice 3 makes it a rate-limited RPC that only
+ * finds players the caller may see, in the same age band (D-023, D-025).
+ */
+export function findPlayerByCardCode(code: string): Promise<FriendSuggestion | null> {
+  return getSource().findPlayerByCardCode(code);
 }
 
+/** Local cache edits until each feature's mutations land as RPCs. */
 export function useCache() {
   const client = useQueryClient();
   return {

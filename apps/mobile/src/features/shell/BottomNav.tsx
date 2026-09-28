@@ -7,6 +7,7 @@ import { sfx } from '@/design/sound';
 import { Chrome } from '@/features/shell/Chrome';
 import { TABS } from '@/features/shell/tabs';
 import { useLocale } from '@/lib/locale';
+import { DemoMarker } from '@/ui/DemoMarker';
 import { Icon } from '@/ui/Icon';
 import { PingDot } from '@/ui/PingDot';
 import { Text } from '@/ui/Text';
@@ -19,6 +20,7 @@ export function BottomNav({ state, navigation }: BottomTabBarProps) {
 
   return (
     <Chrome className="absolute bottom-0 inset-x-0 z-50 border-t border-border/40 shadow-[0_-4px_24px_rgba(0,0,0,0.5)]">
+      <DemoMarker />
       <View
         className="h-16 flex-row items-center justify-around px-1 w-full max-w-lg self-center"
         // The prototype's pb-safe: at least 16 px under the bar.

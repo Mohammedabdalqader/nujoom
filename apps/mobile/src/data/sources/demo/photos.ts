@@ -1,5 +1,5 @@
 /**
- * Photos from the design prototype, used only by the preview data (D-019). They are hosted by
+ * Photos from the design prototype, used only by the demo build (contract §7). Each is an illustrative image, never a real player or venue. They are hosted by
  * Google AI Studio and may expire; screens fall back to initials badges and plain surfaces.
  */
 export const PHOTOS = {

@@ -896,5 +896,8 @@
     "guardian": {
       "tooMany": "You've already added the maximum number of guardians."
     }
+  },
+  "demo": {
+    "marker": "Demo · sample data and illustrative images"
   }
 }

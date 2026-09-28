@@ -28,6 +28,8 @@ apps/mobile/ios/
 .env
 .env.*
 !.env.example
+# Mobile dev defaults (EXPO_PUBLIC_APP_VARIANT=demo only, no secrets).
+!/apps/mobile/.env.development
 
 # python
 __pycache__/
