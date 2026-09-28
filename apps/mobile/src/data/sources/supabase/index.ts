@@ -18,6 +18,7 @@ import type {
   Account,
   BackendConfig,
   City,
+  DataRequest,
   DataSource,
   GuardianLink,
   Session,
@@ -62,6 +63,25 @@ type GuardianLinkRow = {
   invite_expires_at: string | null;
 };
 
+/** private.data_request_json (supabase/migrations/*_data_requests.sql). */
+type DataRequestRow = {
+  id: string;
+  kind: DataRequest['kind'];
+  status: DataRequest['status'];
+  requested_at: string;
+  scheduled_for: string;
+  expires_at: string | null;
+};
+
+const toDataRequest = (row: DataRequestRow): DataRequest => ({
+  id: row.id,
+  kind: row.kind,
+  status: row.status,
+  requestedAt: row.requested_at,
+  scheduledFor: row.scheduled_for,
+  expiresAt: row.expires_at,
+});
+
 const toGuardianLinks = (rows: GuardianLinkRow[] | null | undefined): GuardianLink[] =>
   (rows ?? []).flatMap((row) =>
     row.status === 'pending' || row.status === 'confirmed'
@@ -103,6 +123,23 @@ export function createSupabaseSource(config: BackendConfig): DataSource {
 
   async function rpc<T>(fn: string, args?: Record<string, unknown>): Promise<T> {
     const { data, error } = await db.rpc(fn, args);
+    if (error) throw error;
+    return data as T;
+  }
+
+  /**
+   * Calls an Edge Function; a failure becomes an Error whose message is the function's code
+   * (`email_failed`, `rate_limited`, …), which errorKey() maps to a translation.
+   */
+  async function invoke<T>(name: string, body: Record<string, unknown>, fallback: string): Promise<T> {
+    const { data, error } = await db.functions.invoke<T>(name, { body });
+    if (error instanceof FunctionsHttpError) {
+      const payload = (await (error.context as Response)
+        .json()
+        .catch(() => null)) as { error?: string } | null;
+      throw new Error(payload?.error ?? fallback);
+    }
+    if (error instanceof FunctionsFetchError) throw new Error('fetch failed');
     if (error) throw error;
     return data as T;
   }
@@ -249,17 +286,11 @@ export function createSupabaseSource(config: BackendConfig): DataSource {
       },
       links: async () => toGuardianLinks(await rpc<GuardianLinkRow[]>('my_guardians')),
       async sendInvite(linkId, locale) {
-        const { data, error } = await db.functions.invoke<{ sent?: boolean }>('guardian-invite', {
-          body: { linkId, locale },
-        });
-        if (error instanceof FunctionsHttpError) {
-          const body = (await (error.context as Response)
-            .json()
-            .catch(() => null)) as { error?: string } | null;
-          throw new Error(body?.error ?? 'email_failed');
-        }
-        if (error instanceof FunctionsFetchError) throw new Error('fetch failed');
-        if (error) throw error;
+        const data = await invoke<{ sent?: boolean }>(
+          'guardian-invite',
+          { linkId, locale },
+          'email_failed',
+        );
         if (data?.sent !== true) throw new Error('email_failed');
       },
       async preview(token) {
@@ -288,6 +319,20 @@ export function createSupabaseSource(config: BackendConfig): DataSource {
       async decline(token) {
         await rpc('decline_guardian_invite', { p_token: token });
       },
+    },
+    dataRights: {
+      list: async () => (await rpc<DataRequestRow[]>('my_data_requests')).map(toDataRequest),
+      async requestExport() {
+        const data = await invoke<{ url?: string; expiresAt?: string }>(
+          'data-export',
+          {},
+          'export_failed',
+        );
+        if (!data?.url || !data.expiresAt) throw new Error('export_failed');
+        return { url: data.url, expiresAt: data.expiresAt };
+      },
+      requestDeletion: async () => toDataRequest(await rpc<DataRequestRow>('request_account_deletion')),
+      cancelDeletion: async () => toDataRequest(await rpc<DataRequestRow>('cancel_account_deletion')),
     },
     async setRecordingConsent(granted) {
       const version = granted ? (await consentVersions()).recording : null;

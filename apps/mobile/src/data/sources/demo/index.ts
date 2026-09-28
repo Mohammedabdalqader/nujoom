@@ -70,6 +70,13 @@ export const demoSource: DataSource & { marker: string } = {
   setSettings: (patch) => update({ settings: { ...demoAccount.settings, ...patch } }),
   setVisibility: (visibility) => update({ visibility }),
   acceptCurrentConsents: () => copy(demoAccount),
+  // Nothing to download or delete on the device-only demo.
+  dataRights: {
+    list: () => copy([]),
+    requestExport: demoOnly,
+    requestDeletion: demoOnly,
+    cancelDeletion: demoOnly,
+  },
   // The demo persona is an adult: there is no guardian flow to show.
   guardian: {
     name: demoOnly,

@@ -46,6 +46,9 @@ const SQL_ERROR_KEYS = {
   contact_mismatch: 'errors.guardian.contactMismatch',
   cannot_guard_self: 'errors.guardian.self',
   guardian_must_be_adult: 'errors.guardian.adult',
+  // Data rights (S1-9)
+  export_failed: 'errors.dataRights.exportFailed',
+  no_pending_deletion: 'errors.dataRights.noPendingDeletion',
 } as const;
 
 /** Supabase Auth error codes (AuthError.code) we explain specifically. */

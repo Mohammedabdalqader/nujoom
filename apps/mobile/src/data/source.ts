@@ -74,6 +74,28 @@ export type GuardianApproval = {
   dob?: string;
 };
 
+/** A "download my data" or "delete my account" request (S1-9, D-038). */
+export type DataRequest = {
+  id: string;
+  kind: 'export' | 'deletion';
+  status: 'pending' | 'ready' | 'completed' | 'cancelled' | 'failed';
+  requestedAt: string;
+  /** Deletion: when the grace period ends. */
+  scheduledFor: string;
+  /** Export: when the download link stops working. */
+  expiresAt: string | null;
+};
+
+export type DataRightsApi = {
+  /** The user's recent requests, newest first. */
+  list(): Promise<DataRequest[]>;
+  /** Builds (or reuses) the data bundle and returns a signed download link (Edge Function). */
+  requestExport(): Promise<{ url: string; expiresAt: string }>;
+  /** Schedules deletion after the grace period (idempotent). */
+  requestDeletion(): Promise<DataRequest>;
+  cancelDeletion(): Promise<DataRequest>;
+};
+
 export type GuardianApi = {
   /** The youth names (or corrects) the guardian's email; returns the pending link's id. */
   name(email: string): Promise<string>;
@@ -139,6 +161,7 @@ export type DataSource = {
   /** Re-accepts the current terms and privacy versions (the `consent` stage). */
   acceptCurrentConsents(): Promise<Account>;
   guardian: GuardianApi;
+  dataRights: DataRightsApi;
   me(): Promise<Me>;
   friends(): Promise<Friend[]>;
   friendRequests(): Promise<FriendRequest[]>;

@@ -321,5 +321,14 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
 - **Evidence:**
   - pgTAP 22 new assertions (201 total).
   - `pnpm --filter @nujoom/tools-tester-code smoke:deletion` passes 13/13 live. The job refuses no secret, a wrong secret and a user session; does nothing inside the grace period; afterwards removes the auth user, profile, avatar and export file; and leaves a completed request that no longer points at the person.
-  - The scheduled path (vault secret through pg_net) is checked with a canary account after the first hourly run.
+  - The scheduled path works: a canary account with a due request was deleted by the first hourly run on its own (16:17:03 UTC), and its request completed without a user.
 - **Another environment:** set `config.data_rights.functions_url` for that project.
+
+**D-041 Data rights in the app's Settings (S1-9, part 4) (2026-09-28).**
+
+- **Where:** a "Your data / بياناتك" section in Settings (production builds only; the demo has nothing to download or delete).
+- **Download my data:** calls `data-export`. The link is opened by the user's own tap ("Open the file"), not automatically, so web popup blockers can't swallow it, and the page shows how long it works.
+- **Delete my account:** an inline confirmation explains the 7 days and that deletion is final afterwards. Once requested, the section shows the server's scheduled date, and it survives reloads. "Cancel deletion" is there until then.
+- **Errors:** `export_failed` and `no_pending_deletion` are mapped in ar/en, and rate limits use the shared message. The Edge Function call handling is now one helper, shared with the guardian invite.
+- **Verified** on the production app (Expo web, live project, adult tester): download link ready, deletion explained, scheduled, still scheduled after a reload, then cancelled. No page errors.
+- **Still needed for the stores:** Google Play requires a **web** page where people can ask for account deletion. That page comes with the web app's account pages (S1-8).

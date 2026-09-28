@@ -913,7 +913,11 @@
       "self": "You can't approve your own account.",
       "adult": "A guardian must be 18 or older."
     },
-    "retry": "Try again"
+    "retry": "Try again",
+    "dataRights": {
+      "exportFailed": "We couldn't prepare your file. Try again later.",
+      "noPendingDeletion": "There is no deletion to cancel."
+    }
   },
   "demo": {
     "marker": "Demo · sample data and illustrative images"
@@ -1107,8 +1111,20 @@
     "signOut": "Sign out",
     "signingOut": "Signing out…",
     "saved": "Saved",
-    "comingSoon": "Downloading your data and deleting your account arrive in the next update.",
-    "guardian": "Guardian"
+    "guardian": "Guardian",
+    "data": "Your data",
+    "dataExplain": "Download a copy of everything we hold about you, or delete your account.",
+    "download": "Download my data",
+    "preparing": "Preparing your file…",
+    "downloadReady": "Your file is ready; the link works until {{date}}.",
+    "openDownload": "Open the file",
+    "delete": "Delete my account",
+    "deleteExplain": "We'll delete your account, profile, photo and consents after 7 days. You can cancel until then; after that it can't be undone.",
+    "deleteConfirm": "Yes, delete my account",
+    "keep": "No, keep it",
+    "deleteScheduled": "Your account will be deleted on {{date}}.",
+    "cancelDelete": "Cancel deletion",
+    "deleteCancelled": "Your account won't be deleted."
   },
   "web": {
     "comingSoon": "Coming soon to Android and iPhone."

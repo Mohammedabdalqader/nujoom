@@ -8,6 +8,7 @@ import { getSource, type Account } from '@/data/source';
 import { setSoundsMuted, soundsMuted } from '@/design/sound';
 import { useTheme } from '@/design/theme';
 import { GuardianInvitePanel } from '@/features/guardian/GuardianInvitePanel';
+import { DataRightsSection } from '@/features/settings/DataRightsSection';
 import { changeLocale } from '@/lib/i18n';
 import { useLocale } from '@/lib/locale';
 import { accountKey, useAccount, useSession, useSignOut } from '@/lib/session';
@@ -207,8 +208,13 @@ export function SettingsScreen() {
             <Text className="text-[15px] text-primary underline">{t('auth.privacy')}</Text>
           </Pressable>
         </View>
-        <Text className="text-[13px] text-on-surface-variant">{t('settings.comingSoon')}</Text>
       </Section>
+
+      {a && !IS_DEMO ? (
+        <Section title={t('settings.data')} icon="download">
+          <DataRightsSection />
+        </Section>
+      ) : null}
 
       {pending ? <ActivityIndicator color={color('primary')} /> : null}
 
