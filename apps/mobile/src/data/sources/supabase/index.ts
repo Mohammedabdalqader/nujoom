@@ -14,6 +14,7 @@ import { FunctionsFetchError, FunctionsHttpError } from '@supabase/supabase-js';
 import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
 
+import { toCatalogDetail, toCatalogListing, toSearchParams } from '@/data/catalog';
 import type {
   Account,
   BackendConfig,
@@ -434,6 +435,16 @@ export function createSupabaseSource(config: BackendConfig): DataSource {
     myClips: () => none([]),
     clip: () => none(null),
     pitches: () => none([]),
+    async searchPitches(filters) {
+      const raw = await rpc<{ items: unknown[]; next_cursor: number | null }>('search_pitches', {
+        p: toSearchParams(filters),
+      });
+      return { items: raw.items.map(toCatalogListing), nextCursor: raw.next_cursor ?? null };
+    },
+    async catalogPitch(pitchId) {
+      const raw = await rpc<unknown>('catalog_pitch', { p_pitch_id: pitchId });
+      return raw ? toCatalogDetail(raw) : null;
+    },
     async areas() {
       // The pitch filter's areas are Amman's neighbourhoods (real reference data).
       const { cities } = await loadPlaces();

@@ -419,3 +419,10 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
   - A pause keeps the badge but withholds booking; an ended partnership downgrades immediately.
   - Negative paths: not-admin, youth, duplicate claim, claim-only rights, other staff, no badge before authority or schedule, append-only history.
 - **Next (part 2):** outreach contacts and attempts, community reports, and rights-cleared photos. Then the scheduled freshness downgrade (4a), and D2, the import from reviewed records.
+
+**D-047 The catalog in the app's data layer (2026-09-28).**
+
+- **Types:** `CatalogListing`, `CatalogDetail`, `CatalogFilters` and `CatalogPage` (`src/data/catalog.ts`) mirror the RPC output with every design fact nullable. They are separate from the prototype's `Pitch` type, which requires a price, size and slots and stays the bookable shape.
+- **Mapper:** `toCatalogListing` fails closed. It never produces operations for a not-verified field, and drops malformed ones. It keeps `null` (unknown) and `[]` (checked, none) apart. Unit-tested.
+- **Data sources:** `DataSource.searchPitches` / `catalogPitch`, with the `useCatalogSearch` / `useCatalogPitch` hooks. The production source calls the D1a RPCs. The demo source uses five fictitious, labelled venues covering each state, and the bundle guard confirms none of them reach production.
+- **Screens are Codex's (G1).** Handed off in `agentic_system/handoffs.md`.

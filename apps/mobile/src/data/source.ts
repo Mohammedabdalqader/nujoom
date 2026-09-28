@@ -9,6 +9,7 @@ import type {
   ProfileVisibility,
 } from '@nujoom/shared';
 
+import type { CatalogDetail, CatalogFilters, CatalogPage } from '@/data/catalog';
 import type {
   AppNotification,
   Area,
@@ -175,6 +176,10 @@ export type DataSource = {
   myClips(): Promise<Clip[]>;
   clip(id: string): Promise<Clip | null>;
   pitches(): Promise<Pitch[]>;
+  /** The prepared catalog (D1a): both badges, unknown facts stay unknown. */
+  searchPitches(filters: CatalogFilters): Promise<CatalogPage>;
+  /** One field's detail; null when it isn't searchable. */
+  catalogPitch(pitchId: string): Promise<CatalogDetail | null>;
   areas(): Promise<Area[]>;
   matchDay(): Promise<MatchDay | null>;
   matchDetails(bookingId: string): Promise<MatchDetails | null>;

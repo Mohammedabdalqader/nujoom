@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { getSource } from '@/data/source';
+import type { CatalogDetail, CatalogFilters, CatalogPage } from '@/data/catalog';
 import type {
   AppNotification,
   Area,
@@ -77,6 +78,20 @@ export const useMyClips = () =>
 
 export const usePitches = () =>
   useQuery<Pitch[]>({ queryKey: keys.pitches, queryFn: () => getSource().pitches() });
+
+/** The prepared pitch catalog (D1a): search both badges with filters; one page per query. */
+export const useCatalogSearch = (filters: CatalogFilters) =>
+  useQuery<CatalogPage>({
+    queryKey: ['catalog', filters],
+    queryFn: () => getSource().searchPitches(filters),
+  });
+
+export const useCatalogPitch = (pitchId: string | undefined) =>
+  useQuery<CatalogDetail | null>({
+    queryKey: ['catalog-pitch', pitchId],
+    queryFn: () => getSource().catalogPitch(pitchId!),
+    enabled: !!pitchId,
+  });
 
 export const useAreas = () =>
   useQuery<Area[]>({ queryKey: keys.areas, queryFn: () => getSource().areas() });

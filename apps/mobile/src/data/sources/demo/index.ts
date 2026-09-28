@@ -2,6 +2,8 @@ import { DEFAULT_CONFIG, DEFAULT_FEATURE_FLAGS } from '@nujoom/shared';
 
 import type { Account, DataSource } from '@/data/source';
 
+import { demoCatalogPitch, searchDemoCatalog } from './catalog';
+
 import {
   DEMO_FIXTURE_MARKER,
   previewAreas,
@@ -104,6 +106,8 @@ export const demoSource: DataSource & { marker: string } = {
   myClips: () => copy(previewMyClips),
   clip: (id) => copy([...previewClips, ...previewMyClips].find((c) => c.id === id) ?? null),
   pitches: () => copy(previewPitches),
+  searchPitches: (filters) => copy(searchDemoCatalog(filters)),
+  catalogPitch: (id) => copy(demoCatalogPitch(id)),
   areas: () => copy(previewAreas),
   matchDay: () => copy(previewMatchDay),
   matchDetails: (bookingId) =>
