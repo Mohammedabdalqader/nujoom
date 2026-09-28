@@ -1,0 +1,53 @@
+# Mobile design and state acceptance
+
+Owner: Codex. Canonical app: `Desktop/nujoom`. This document specifies the first production identity slice and the real-versus-demo presentation. It is a handoff for Claude's auth/data implementation, not evidence that the screens or services already work. The owner's seven references and the existing floodlit visual language remain the visual baseline.
+
+## Shared rules
+
+- Arabic is the default, with full `dir="rtl"` and Arabic `lang`; English uses LTR. Mirror directional navigation, not football/action icons. Switch language without losing form progress.
+- Keep the existing graphite, amber and emerald tokens and current type families. Use semantic success/warning/error tokens. Core form and body text is at least 16 px; interactive targets are at least 44 by 44 px. At 360 px and 200% text, labels wrap rather than clip or overlap.
+- Preserve the five-tab player navigation. Reduce header density on small screens: city and account access take priority; theme can live in Settings. A notification dot or count appears only for unread real notifications.
+- Every async surface needs initial, loading, empty, error, offline and success treatment. Loading must not briefly reveal demo records. An offline cache may be shown only with a visible last-updated time; availability and booking confirmation must never be presented as current from a cache.
+- Never invent goals, ratings, achievements, friends, venues, matches or verification. Zero is a genuine count; absent or ineligible metrics render as unrated/unavailable. Email confirmation is not a football-skill verification badge.
+- Do not use imagery of generated people as real players, nor generated pitches as real listed venues. Keep media rights and consent status attached to the data that renders each asset.
+
+## Slice 1 screen handoff
+
+| Surface | Primary content and actions | Required alternate states |
+| --- | --- | --- |
+| Welcome and sign-in | Brand and one direct sign-in path; email input, continue, Google sign-in, links to terms/privacy, language switch. Use the existing field, button, text, icon and screen primitives. | Invalid email inline; request pending; network failure with retry; provider cancellation without an error alarm; account existence never disclosed. No fake dashboard behind the form. |
+| Code entry | Six individual digit slots backed by one accessible input, paste/autofill, submit, edit email, resend with countdown. Accept magic-link resume and preserve the original destination. | Expired/wrong code with clear retry; resend rate limit with remaining time; offline; in-flight submit locked against duplication; success routes to the next required journey step. |
+| Onboarding | Short resumable steps: name and DOB, city/neighborhood, player position; preferred foot, shirt number and handle optional. City has no preselection; neighborhood is required only where the chosen city has neighborhoods. Photo is an optional final upload after the profile transaction succeeds, with its own retry. Show progress and Back/Continue. Explain what profile data is public. | Inline validation and retained fields; under-13 block with a supportive message. Youth provide a guardian email, then see a pending state only after the invite was actually sent; allow correcting the address, resending within rate limits, and recovering from expiry or delivery failure. No restricted actions while pending. A failed photo upload never undoes a completed account. |
+| Consent | Terms and privacy are the account gate, each separately confirmed with readable linked documents and stored versions/timestamps. Recording is a distinct, unselected opt-in with an equally clear Decline path; it can be changed later. Before each recorded match, show the match-specific capture request and check every participant's current permission. | Declining recording still completes basic onboarding and allows unrecorded app use. Submission failure preserves selections; youth recording also requires guardian approval. No capture starts when permission is missing. Public sharing and future streaming require their own eligibility and permissions, never inferred from recording. |
+| Settings | Language, theme, sound, visibility, notifications/presence, export data, delete account, sign out. Group destructive/account actions separately. | Each setting shows save/pending/error; export and deletion show request status; deletion requires explicit confirmation and explains handling of shared clips; sign-out clears private local state. |
+| Player profile | Own profile: photo or initials, name, position, city/visibility, card code, truthful match counts and progress. Other profile respects visibility, age-band rules and viewer relationship. Do not add an email-verified badge: all supported sign-in routes already confirm the email, so that badge would imply a separate trust check. A ranking-eligible badge waits for S6 and its actual rule. | New account card reads `غير مصنّف بعد` / `Not rated yet`; OVR/attributes/form/rank display dashes or a designed blank, never zero-as-score. Hidden players resolve to the same unavailable screen as nonexistent players. Failed avatar has an initials fallback. |
+
+Core copy baseline for Claude's draft locale keys: `تسجيل الدخول` / `Sign in`; `أرسل الرمز` / `Send code`; `تحقق من بريدك` / `Check your email`; `إعادة إرسال الرمز` / `Resend code`; `غير مصنّف بعد` / `Not rated yet`; `لا توجد مباريات قادمة` / `No upcoming matches`; `لا توجد ملاعب متاحة للحجز هنا بعد` / `No bookable pitches here yet`; `أعد المحاولة` / `Try again`. Error copy should say what can be done next, without SQL detail or account-existence clues. Codex will review the final keys and Arabic phrasing when Claude hands them off.
+
+## Real new-account states
+
+| Surface | Honest first-use presentation | Useful action |
+| --- | --- | --- |
+| Header | The chosen city if known, otherwise prompt to choose one; no seeded alert count or online-friend badge. | City selector, account/settings. |
+| Home | Welcome by real first name; upcoming match absent; no fabricated live scoreboard or highlights. Ratings and ranking are not yet earned. | Explore pitches; complete remaining profile/guardian step. |
+| Pitches | List/map shows verified bookable pitches only for booking. A city with none says so, without claiming Jordan has no pitches. Discovered/unverified entries, if shown later, are explicitly informational. | Change city, see list/map, open directions only for nonbookable listings. |
+| Match | No booking means no squad, kitty, check-in or recording session. Tool previews may be read-only and labelled as examples, never attached to a fictitious booking. | Book a pitch or join a valid invitation. |
+| Rankings | No fabricated personal position, ELO or form. If eligibility or minimum sample size is unmet, explain the condition without implying a guaranteed score. | View participation criteria. |
+| Profile | Real identity, optional fields omitted, stats at genuine zero, skill metrics unrated. No unsupported verification badge. | Edit profile and visibility. |
+| Friends/notifications/clips | Empty means empty; no demo people, unread dots, or generated media. | Share a real card code when permitted; explore. |
+
+Offline/error treatment: retain navigable shell, show a compact status and one retry; avoid a modal per failed section. No booking, joining, consent, deletion or check-in success UI before server acknowledgement. Actions with a pending network result must expose pending/unknown and recover idempotently.
+
+## Demo separation and media labels
+
+- Demo is a separate build ID and data source with no production credentials. A persistent `نسخة تجريبية` / `Demo` marker is visible on every tab and detail screen, including captures. It cannot be dismissed and does not resemble a system badge or user verification.
+- Generated people and pitches in demo carry `صورة توضيحية` / `Illustrative image` at the image or its immediate caption. Demo booking, score and social records are examples, not inventory or real user activity. A demo action cannot send real invites, mail, push, uploads or bookings.
+- Production requires valid backend configuration and never falls back to fixture hooks. A fresh production account starts with real empty states. Build tests must check source selection and the bundle boundary, not only the presence/absence of a single string.
+
+## Later pitch/map acceptance
+
+The Jordan ambition is a coverage program, not a claim of complete national inventory. Each listing needs coordinates, source, last verification date and media-rights status. Display `Discovered` versus `Owner-verified and bookable` plainly. Only the latter can show authoritative live slots, price and Book. Keep location permission optional; city search and an accessible list must work without GPS or a map provider. Do not route users to an unverified venue as if a reservation exists.
+
+## Visual acceptance checklist
+
+Capture Arabic RTL and English LTR at 360 and 390 px, plus a wide handset; dark and light themes; 200% text; keyboard and screen-reader focus order; touch-target and contrast checks. Include: signed-out, code error, youth pending, consent error, fresh production account on all five tabs, private/missing player, city with no bookable pitch, offline retry, demo marker and illustrative-image label. No clipped labels, overlapping controls, misleading live status or unlabelled icon actions. Claude supplies runnable builds and failure-state captures; Codex gives screen-by-screen findings or approval.
