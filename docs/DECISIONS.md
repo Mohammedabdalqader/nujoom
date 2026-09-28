@@ -201,3 +201,17 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
 
 - Switching back to dark used to pass an empty variable set and rely on `global.css` defaults. On native, the NativeWind 5 release candidate may keep the previous light values in that case, which matches the owner's "dark/light doesn't work correctly" on the phone.
 - `ThemeProvider` now passes the complete dark or light set every time. Web is verified in both themes; the phone still needs the owner's check after `npx expo start --clear`.
+
+**D-030 Session storage: the OS keystore through expo-secure-store, chunked (2026-09-28; refines D-025).**
+
+- The plan was AES in the kv store with the key in the keystore. That needed a crypto dependency. Storing the session directly in `expo-secure-store` (Keychain on iOS, Keystore-backed on Android) gives the same encryption at rest with no extra library.
+- Android can fail on values over about 2 KB, and a session with Google identity data is larger. Values are split into 1,800-character chunks (`<key>.n` for the count, `<key>.0…` for the parts). A torn write reads as signed out, never as a corrupt session.
+- The web preview uses `localStorage`, as Supabase's web client does. The old plain-SQLite session export was removed.
+
+**D-031 The journey router and sign-in (2026-09-28).**
+
+- `expo-router`'s `Stack.Protected` gates route groups by `me().stage`: signed out → `(auth)`; not onboarded → `onboarding`; terms or privacy outdated → `reconsent`; a youth without a guardian → `guardian-setup`; otherwise the tabs. Legal pages are always reachable.
+- Loading shows the logo and an account error shows a retry, so the app never shows a black screen. A production build without backend settings shows a configuration error instead of fixtures.
+- Sign-in is by email code; "I already have a code" skips sending, for tester codes. Google appears only when `EXPO_PUBLIC_GOOGLE_SIGN_IN=1`, after the owner sets it up (`docs/SETUP_AUTH.md`). No screen says whether an account exists.
+- Onboarding keeps its draft in memory only (it holds a date of birth) and submits once, through `complete_onboarding`. Server-side profile errors send the user back to step 1 with the message.
+- Evidence: a tester-code sign-in → onboarding → all five tabs run on the live project (screenshots in the session scratchpad). It found and fixed three issues: NaN in the empty chart, a misleading pitches empty text, and inputs without accessible names.

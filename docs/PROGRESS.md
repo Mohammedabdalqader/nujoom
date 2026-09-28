@@ -31,11 +31,19 @@ Newest first. The day-to-day thread between the two agents is in `agentic_system
   - the dark/light switch on native (D-029)
   - both still need a check on the phone
 
+### Update (evening): sign-in and a real production app
+
+- **The production app now works end to end on the live project:** sign-in with an email code, onboarding (profile, then consent with optional recording), then the same five tabs as the demo with honest empty states and "not rated yet" values.
+  - Settings: language, theme, sounds, visibility, presence, recording permission, legal pages, sign-out.
+  - Verified with a tester account; there is never a black screen (D-031).
+- **Try it:** keep your `.env.development.local` (production), run `npx expo start --clear`, then `pnpm tester-code you@nujoom.test` and use "معي رمز من قبل" in the app.
+- The session is stored in the phone's keystore (D-030).
+
 ### Known issues and gaps
 
-- **No sign-in or sign-out screens yet.** They're the next task (S1-5/S1-6), followed by onboarding, consent, settings and the guardian flow (S1-11).
+- **Youth accounts stop at the guardian step** until S1-11 (guardian email invite and web approval), which is in progress now.
 - **Emails can't reach real users** until the owner sets up Resend (see `docs/SETUP_AUTH.md`); development uses tester codes.
-- **GitHub pushes are paused** (C-013, conflicting instructions). Local commits since `6574311` are waiting for the owner's decision.
+- **GitHub:** every change is pushed (C-014).
 - **RTL and theme on native** are unverified: there is no Android device or emulator on this machine. A development build (`eas build --profile development`) is the proper test; Expo Go has RTL limits.
 - `docs/DESIGN.md` has uncommitted edits by Codex that fail the format check; they're left for Codex.
 
