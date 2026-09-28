@@ -570,3 +570,17 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
   - Records acceptance of the current terms and privacy versions, and audits the creation.
   - Refuses minors (`not_adult`), missing acceptance (`consent_required`) and bad names. It never overwrites an existing profile.
 - **Evidence:** pgTAP `150-owner-profile.sql` has 9 assertions (369 total), live on the project.
+
+**D-060 The venue owner's page on the website (2026-09-29).**
+
+- **Where:** `/[locale]/venue`, linked from the site footer ("For venue owners"). Signed-out visitors go to sign-in and come back.
+- **What an owner can do:**
+  - search the published venues by name and claim one ("This is my venue"); a venue with an open claim shows "Claim under review" instead of the button
+  - without an adult profile (a web-only owner), the claim first asks for name, date of birth and acceptance of the terms and privacy policy (D-059), then claims
+  - see their claims and outcomes (`my_claims`)
+  - for each field they manage (`my_venues`): the badge, whether it's bookable, and a form for price per hour, booking length (60 or 90 minutes) and an Arabic and English price note (`owner_confirm_field`)
+  - switch the schedule on or pause it (`owner_set_schedule_active`), offered only once a price exists
+- **Honest copy:** the page says the price and length reach players only once the field is verified. Claiming or switching the schedule on never verifies anything; the badge stays admin-only (D-048).
+- **How it works:** server-rendered pages and server actions that work without client JavaScript. Actions re-check their inputs, and the database checks staff membership again, so a forged field id is refused (`forbidden`).
+- **Error messages:** new shared keys for `not_adult`, `claim_exists`, `already_staff` and `no_operations`, plus neutral `not_found` and `forbidden` messages for every screen.
+- **Not yet:** owner photo upload from the website, opening hours and field facts. The app upload path and the RPCs already exist (D-054).

@@ -58,6 +58,9 @@ export function SiteShell({
           <Link href={`/${locale}/account`} className="hover:text-primary">
             {t('web.accountLink')}
           </Link>
+          <Link href={`/${locale}/venue`} className="hover:text-primary">
+            {t('web.owner.footerLink')}
+          </Link>
         </nav>
       </footer>
     </div>

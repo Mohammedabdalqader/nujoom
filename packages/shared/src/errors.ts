@@ -10,6 +10,8 @@
 const SQL_ERROR_KEYS = {
   not_authenticated: 'errors.auth.signedOut',
   rate_limited: 'errors.rateLimited',
+  not_found: 'errors.notFound',
+  forbidden: 'errors.forbidden',
   // Onboarding and profile
   not_onboarded: 'errors.onboarding.notOnboarded',
   already_onboarded: 'errors.onboarding.alreadyOnboarded',
@@ -49,6 +51,11 @@ const SQL_ERROR_KEYS = {
   // Data rights (S1-9)
   export_failed: 'errors.dataRights.exportFailed',
   no_pending_deletion: 'errors.dataRights.noPendingDeletion',
+  // Venue owners (D-060)
+  not_adult: 'errors.venue.notAdult',
+  claim_exists: 'errors.venue.claimExists',
+  already_staff: 'errors.venue.alreadyStaff',
+  no_operations: 'errors.venue.noOperations',
 } as const;
 
 /** Supabase Auth error codes (AuthError.code) we explain specifically. */

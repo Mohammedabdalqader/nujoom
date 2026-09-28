@@ -917,7 +917,15 @@
     "dataRights": {
       "exportFailed": "We couldn't prepare your file. Try again later.",
       "noPendingDeletion": "There is no deletion to cancel."
-    }
+    },
+    "venue": {
+      "notAdult": "You must be 18 or older to run a venue.",
+      "claimExists": "Your claim on this venue is still under review.",
+      "alreadyStaff": "This venue is already on your account.",
+      "noOperations": "Save the price and booking length first, then switch the schedule on."
+    },
+    "notFound": "We couldn't find it. It may have been removed.",
+    "forbidden": "You don't have access to this."
   },
   "demo": {
     "marker": "Demo · sample data and illustrative images"
@@ -1262,6 +1270,58 @@
         "wrong_contact": "Wrong contact",
         "opted_out": "Opted out"
       }
+    },
+    "owner": {
+      "title": "My venues",
+      "intro": "If you run a football venue, ask to add it to your account. Once we've confirmed your authority, you can set prices and switch on booking.",
+      "findTitle": "Claim your venue",
+      "findHint": "Find your venue among the published ones.",
+      "search": "Venue name",
+      "searchButton": "Search",
+      "noResults": "No venue found with that name.",
+      "claim": "This is my venue",
+      "claimsTitle": "My claims",
+      "claimStatus": {
+        "submitted": "Under review",
+        "evidence_requested": "Evidence needed",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "withdrawn": "Withdrawn"
+      },
+      "venuesTitle": "Venues I manage",
+      "noVenues": "No venues on your account yet.",
+      "operator": {
+        "claimed": "We've got your claim. We'll contact you to confirm your authority before verifying.",
+        "authority_verified": "Your authority is confirmed. Set your prices and switch the schedule on, then we'll verify the field.",
+        "other": "This venue's status is under review."
+      },
+      "badge": {
+        "verified": "Verified by Nujoom",
+        "not_verified": "Not verified by Nujoom"
+      },
+      "bookable": "Open for booking",
+      "notBookable": "Not bookable right now",
+      "price": "Price per hour (JOD)",
+      "slot": "Booking length",
+      "minutes": "{{n}} minutes",
+      "dob": "Date of birth",
+      "claimSent": "We've got your claim. We'll review it and get in touch.",
+      "claimPending": "Claim under review",
+      "footerLink": "For venue owners",
+      "opsHint": "Players see the price and length only once the field is verified.",
+      "save": "Save",
+      "scheduleOn": "Switch the schedule on",
+      "scheduleOff": "Pause the schedule",
+      "scheduleIsOn": "Schedule on",
+      "scheduleIsOff": "Schedule paused",
+      "profileTitle": "Your details",
+      "profileHint": "To claim a venue you must be 18 or older. We keep only your name and date of birth.",
+      "name": "Your name",
+      "accept": "I've read and accept the Terms of Use and the Privacy Policy",
+      "createAndClaim": "Save and claim the venue",
+      "done": "Done.",
+      "priceNoteAr": "Price note (Arabic)",
+      "priceNoteEn": "Price note (English)"
     }
   }
 }
