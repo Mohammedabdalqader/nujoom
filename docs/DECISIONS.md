@@ -142,3 +142,9 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
 - Without PluralRules, i18next would also silently drop Arabic's six plural forms.
 - `src/lib/intl-polyfills.ts` loads the formatjs polyfills (getCanonicalLocales, Locale, PluralRules, RelativeTimeFormat) with ar/en data before anything formats text. Each installs only when the engine lacks the API, so browsers keep their built-ins.
 - Verified by removing those APIs in the browser: the app renders, "قبل …" relative times and "3 مطلوبين" plurals work. `structuredClone` is avoided for the same reason.
+
+**D-022 Youth leaderboards show "under 18" and "under 16", as the design does.**
+
+- With a minimum age of 13, the U14 group holds only 13-year-olds, too few for a board of its own. So the "تحت 16" (under 16) board covers the U14 and U16 groups, ages 13–15.
+- The age groups still exist separately in the data (spec §6.10) for rating and eligibility.
+- Adults never appear on youth boards and youth never on the adult board (§7).

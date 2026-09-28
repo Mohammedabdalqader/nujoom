@@ -9,6 +9,7 @@ import {
   previewAreas,
   previewPitches,
   previewMatchDay,
+  previewLeaderboard,
 } from '@/data/preview';
 import type {
   AppNotification,
@@ -16,6 +17,7 @@ import type {
   Clip,
   Friend,
   HomeFeed,
+  Leaderboard,
   MatchDay,
   Me,
   Pitch,
@@ -34,6 +36,8 @@ export const keys = {
   pitches: ['pitches'] as const,
   areas: ['areas'] as const,
   matchDay: ['match-day'] as const,
+  leaderboard: (scope: string, age: string, period: string) =>
+    ['leaderboard', scope, age, period] as const,
 };
 
 const preview =
@@ -68,6 +72,13 @@ export const useAreas = () =>
 /** The player's current match: live, next up today, or voting (null when there is none). */
 export const useMatchDay = () =>
   useQuery<MatchDay | null>({ queryKey: keys.matchDay, queryFn: preview(previewMatchDay) });
+
+/** Leaderboard for a scope, age group and period (spec §6.10). */
+export const useLeaderboard = (scope: string, age: string, period: string) =>
+  useQuery<Leaderboard>({
+    queryKey: keys.leaderboard(scope, age, period),
+    queryFn: preview(previewLeaderboard),
+  });
 
 /** Local cache updates for the preview phase; replaced by mutations with RPCs per milestone. */
 export function useCache() {

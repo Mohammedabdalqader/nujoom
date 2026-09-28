@@ -32,6 +32,7 @@ export type Attributes = {
 export type Me = PlayerRef & {
   firstName: string;
   city: Bilingual;
+  country: Bilingual;
   neighborhood: Bilingual | null;
   position: Position;
   /** FIFA-style tag shown on the card: ST, CM, CB, GK … */
@@ -267,4 +268,51 @@ export type MatchDay = {
   /** Vote shares, only once voting has closed (spec §6.10). */
   results: { playerId: string; percent: number }[] | null;
   costPerPlayer: number | null;
+};
+
+export type RankScope = 'hara' | 'city' | 'country';
+export type RankPeriod = 'week' | 'month' | 'season';
+
+export type NeighborhoodStanding = {
+  rank: number;
+  name: Bilingual;
+  crestUrl: string | null;
+  points: number;
+  weeklyChange: number;
+};
+
+export type LeaderboardRow = {
+  rank: number;
+  trend: 'up' | 'down' | 'same';
+  player: PlayerRef;
+  neighborhood: Bilingual;
+  position: Position;
+  matches: number;
+  keyStat: { kind: 'goals' | 'assists' | 'saves_pct' | 'clean_sheets'; value: number };
+  elo: number;
+  confidence: number;
+};
+
+export type PlayerOfWeek = {
+  player: PlayerRef;
+  positionTag: string;
+  neighborhood: Bilingual;
+  ovr: number;
+  attributes: Attributes;
+};
+
+export type MyRank = {
+  rank: number | null;
+  scopeName: Bilingual;
+  weeklyChange: number;
+  elo: number;
+  /** Counted matches still needed before the player is ranked (spec §6.10). */
+  matchesToQualify: number;
+};
+
+export type Leaderboard = {
+  standings: NeighborhoodStanding[];
+  playerOfWeek: PlayerOfWeek | null;
+  rows: LeaderboardRow[];
+  me: MyRank | null;
 };
