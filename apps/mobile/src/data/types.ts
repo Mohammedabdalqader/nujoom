@@ -1,3 +1,5 @@
+import type { BusyRange, OpeningHours } from '@nujoom/shared';
+
 /**
  * View models the screens render. The data layer (src/data/api.ts) produces them from Supabase,
  * or from src/data/preview.ts while a feature has no backend yet (D-019). User-generated text
@@ -167,3 +169,36 @@ export type AppNotification = {
   href: string;
   tab: 'home' | 'pitches' | 'match' | 'rankings' | 'profile';
 };
+
+export type PitchLevel = 'listed' | 'dock' | 'verified';
+export type Surface = 'artificial' | 'certified' | 'concrete';
+export type Amenity = 'parking' | 'lights' | 'water' | 'showers' | 'cafe';
+
+export type Pitch = {
+  id: string;
+  name: Bilingual;
+  area: Bilingual;
+  areaSlug: string;
+  city: Bilingual;
+  photoUrl: string | null;
+  pricePerHour: number;
+  /** "شامل الإضاءة والمياه": what the hourly price includes, set by the owner. */
+  priceNote: Bilingual | null;
+  rating: number | null;
+  ratingCount: number;
+  size: 5 | 6 | 7;
+  indoor: boolean;
+  surface: Surface;
+  level: PitchLevel;
+  amenities: Amenity[];
+  slotMinutes: 60 | 90;
+  openingHours: OpeningHours;
+  /** Booked and blocked ranges (from pitch_busy_ranges). */
+  busy: BusyRange[];
+  location: { lat: number; lng: number } | null;
+  favorite: boolean;
+  /** An open "missing one" request at this pitch, if any. */
+  openSpot: { id: string; spots: number } | null;
+};
+
+export type Area = { slug: string; name: Bilingual };

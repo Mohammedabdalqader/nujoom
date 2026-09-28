@@ -3,7 +3,9 @@
  * backend yet and for design reviews (`EXPO_PUBLIC_PREVIEW=1`). Never shipped as real content.
  */
 import { PHOTOS } from '@/data/preview-photos';
-import type { AppNotification, Clip, Friend, HomeFeed, Me } from '@/data/types';
+import { dateInAmman } from '@nujoom/shared';
+
+import type { AppNotification, Area, Clip, Friend, HomeFeed, Me, Pitch } from '@/data/types';
 
 const now = Date.now();
 const minutes = (n: number) => new Date(now + n * 60_000).toISOString();
@@ -307,3 +309,122 @@ export const previewHome: HomeFeed = {
     },
   ],
 };
+
+/** Evening hours in Amman every day, 16:00 to midnight (most hara pitches open after work). */
+const EVENINGS = Object.fromEntries(
+  ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'].map((d) => [d, [['16:00', '24:00']]]),
+) as Pitch['openingHours'];
+
+/** A busy range today in Amman, e.g. busyToday('19:00', 90). */
+function busyToday(hhmm: string, minutesLong: number) {
+  const start = new Date(`${dateInAmman(new Date(now))}T${hhmm}:00+03:00`);
+  return {
+    starts_at: start.toISOString(),
+    ends_at: new Date(start.getTime() + minutesLong * 60_000).toISOString(),
+  };
+}
+
+export const previewAreas: Area[] = [
+  { slug: 'jabal-al-hussein', name: hara.hussein },
+  { slug: 'al-kursi', name: { ar: 'الكرسي ودابوق', en: 'Al-Kursi & Dabouq' } },
+  { slug: 'jubeiha', name: { ar: 'الجبيهة وصويلح', en: 'Jubeiha & Sweileh' } },
+  { slug: 'nuzha', name: { ar: 'النزهة والهاشمي', en: 'Nuzha & Hashmi' } },
+  { slug: 'marka', name: hara.marka },
+];
+
+export const previewPitches: Pitch[] = [
+  {
+    id: 'pitch-hussein',
+    name: { ar: 'ملعب جبل الحسين الأسطوري', en: 'Jabal al-Hussein Legendary Pitch' },
+    area: { ar: 'جبل الحسين • عمان', en: 'Jabal al-Hussein • Amman' },
+    areaSlug: 'jabal-al-hussein',
+    city: { ar: 'عمان', en: 'Amman' },
+    photoUrl: PHOTOS.pitchHussein,
+    pricePerHour: 18,
+    priceNote: { ar: 'شامل الإضاءة والمياه', en: 'Lights and water included' },
+    rating: 4.8,
+    ratingCount: 140,
+    size: 6,
+    indoor: false,
+    surface: 'certified',
+    level: 'dock',
+    amenities: ['lights', 'water'],
+    slotMinutes: 90,
+    openingHours: EVENINGS,
+    busy: [busyToday('19:00', 90)],
+    location: { lat: 31.9635, lng: 35.9177 },
+    favorite: false,
+    openSpot: null,
+  },
+  {
+    id: 'pitch-kursi',
+    name: { ar: 'ملعب الكرسي الملكي', en: 'Al-Kursi Royal Pitch' },
+    area: { ar: 'الكرسي / دابوق', en: 'Al-Kursi / Dabouq' },
+    areaSlug: 'al-kursi',
+    city: { ar: 'عمان', en: 'Amman' },
+    photoUrl: PHOTOS.pitchKursi,
+    pricePerHour: 22,
+    priceNote: null,
+    rating: 4.9,
+    ratingCount: 89,
+    size: 7,
+    indoor: false,
+    surface: 'certified',
+    level: 'listed',
+    amenities: ['parking', 'lights'],
+    slotMinutes: 90,
+    openingHours: Object.fromEntries(
+      Object.keys(EVENINGS).map((d) => [d, [['17:00', '23:00']]]),
+    ) as Pitch['openingHours'],
+    busy: [],
+    location: { lat: 31.9922, lng: 35.8214 },
+    favorite: true,
+    openSpot: null,
+  },
+  {
+    id: 'pitch-nuzha',
+    name: { ar: 'ملعب حديقة النزهة الشعبي', en: 'Nuzha Park Community Pitch' },
+    area: { ar: 'النزهة والهاشمي الشمالي', en: 'Nuzha & Hashmi al-Shamali' },
+    areaSlug: 'nuzha',
+    city: { ar: 'عمان', en: 'Amman' },
+    photoUrl: PHOTOS.pitchNuzha,
+    pricePerHour: 15,
+    priceNote: null,
+    rating: 4.6,
+    ratingCount: 210,
+    size: 5,
+    indoor: false,
+    surface: 'artificial',
+    level: 'listed',
+    amenities: ['lights'],
+    slotMinutes: 90,
+    openingHours: EVENINGS,
+    busy: [busyToday('16:00', 90), busyToday('17:30', 90), busyToday('19:00', 180)],
+    location: { lat: 31.9748, lng: 35.9372 },
+    favorite: false,
+    openSpot: { id: 'mo-2', spots: 2 },
+  },
+  {
+    id: 'pitch-marka',
+    name: { ar: 'قفص ماركا الليلي', en: 'Marka Night Cage' },
+    area: { ar: 'ماركا • عمان', en: 'Marka • Amman' },
+    areaSlug: 'marka',
+    city: { ar: 'عمان', en: 'Amman' },
+    photoUrl: null,
+    pricePerHour: 12,
+    priceNote: null,
+    rating: null,
+    ratingCount: 0,
+    size: 5,
+    indoor: true,
+    surface: 'concrete',
+    level: 'listed',
+    amenities: ['lights', 'cafe'],
+    slotMinutes: 60,
+    openingHours: EVENINGS,
+    busy: [],
+    location: { lat: 31.9723, lng: 35.9983 },
+    favorite: false,
+    openSpot: null,
+  },
+];

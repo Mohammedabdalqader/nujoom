@@ -6,8 +6,10 @@ import {
   previewMe,
   previewMyClips,
   previewNotifications,
+  previewAreas,
+  previewPitches,
 } from '@/data/preview';
-import type { AppNotification, Clip, Friend, HomeFeed, Me } from '@/data/types';
+import type { AppNotification, Area, Clip, Friend, HomeFeed, Me, Pitch } from '@/data/types';
 
 /**
  * The app's queries (D-019). Each resolves from Supabase once its milestone lands; until then from
@@ -19,6 +21,8 @@ export const keys = {
   notifications: ['notifications'] as const,
   home: ['home'] as const,
   myClips: ['clips', 'mine'] as const,
+  pitches: ['pitches'] as const,
+  areas: ['areas'] as const,
 };
 
 const preview =
@@ -43,6 +47,12 @@ export const useHomeFeed = () =>
 
 export const useMyClips = () =>
   useQuery<Clip[]>({ queryKey: keys.myClips, queryFn: preview(previewMyClips) });
+
+export const usePitches = () =>
+  useQuery<Pitch[]>({ queryKey: keys.pitches, queryFn: preview(previewPitches) });
+
+export const useAreas = () =>
+  useQuery<Area[]>({ queryKey: keys.areas, queryFn: preview(previewAreas) });
 
 /** Local cache updates for the preview phase; replaced by mutations with RPCs per milestone. */
 export function useCache() {
