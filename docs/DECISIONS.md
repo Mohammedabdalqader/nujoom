@@ -426,3 +426,19 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
 - **Mapper:** `toCatalogListing` fails closed. It never produces operations for a not-verified field, and drops malformed ones. It keeps `null` (unknown) and `[]` (checked, none) apart. Unit-tested.
 - **Data sources:** `DataSource.searchPitches` / `catalogPitch`, with the `useCatalogSearch` / `useCatalogPitch` hooks. The production source calls the D1a RPCs. The demo source uses five fictitious, labelled venues covering each state, and the bundle guard confirms none of them reach production.
 - **Screens are Codex's (G1).** Handed off in `agentic_system/handoffs.md`.
+
+**D-048 Player reports and operator outreach (D1b part 2a) (2026-09-28).**
+
+- **Player reports:** `submit_catalog_report(kind, pitch, facility, payload)` for a missing pitch, closed, wrong details, wrong location or duplicate.
+  - Payloads are structured and validated per kind. The only free text is a missing pitch's name (2–80 characters, moderated). Coordinates must be in Jordan, values must parse as the real columns, and any bad value is `invalid_report`.
+  - Only published places can be reported. There are 5 a day; invalid attempts don't count.
+  - The reporter sees their own reports (`my_catalog_reports`); admins see the queue and decide (`admin_catalog_reports`, `admin_decide_report`, audited). Accepted changes still go through `admin_review_listing`.
+  - On account deletion reports are anonymised, not deleted, and the data export lists them.
+- **Operator outreach (admins only):** `admin_add_contact` (E.164 phone or email) and `admin_log_outreach`. The latter records an append-only attempt with an internal note and a follow-up date, and moves the operator state:
+  - `none` → `contacted`
+  - interested or agreed → `responded`
+  - declined → `declined`
+  - `claimed` and `authority_verified` are never undone by outreach, and contacting never changes a badge.
+  - **An opt-out** deletes the operator's contacts and immediately downgrades their verified fields, recording each as `operator_opted_out` (owner Q4 default: the public field stays listed as not verified).
+- **Evidence:** pgTAP `090-catalog-reports-outreach.sql` has 29 assertions (294 total), live on the project.
+- **Next (part 2b):** rights-cleared photos in a private bucket, then the scheduled freshness downgrade (contract 4a).

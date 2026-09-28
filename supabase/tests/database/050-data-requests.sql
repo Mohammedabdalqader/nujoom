@@ -123,7 +123,7 @@ select is_empty(
        and c.conrelid::regclass::text not in (
          -- exported by public.export_user_data
          'profiles', 'profile_private', 'user_settings', 'consents', 'guardians', 'events',
-         'data_requests', 'pitch_staff', 'facility_claims',
+         'data_requests', 'pitch_staff', 'facility_claims', 'community_submissions',
          -- excluded: admin role and the admin who last edited a setting (not personal data)
          'app_admins', 'config', 'feature_flags') $$,
   'every table with a user reference is covered by the export (extend export_user_data)'

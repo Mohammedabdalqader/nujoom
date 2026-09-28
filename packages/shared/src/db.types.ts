@@ -113,6 +113,70 @@ export type Database = {
           },
         ]
       }
+      community_submissions: {
+        Row: {
+          created_at: string
+          facility_id: string | null
+          id: string
+          kind: Database["public"]["Enums"]["report_kind"]
+          payload: Json
+          pitch_id: string | null
+          reason: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: Database["public"]["Enums"]["report_status"]
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          facility_id?: string | null
+          id?: string
+          kind: Database["public"]["Enums"]["report_kind"]
+          payload?: Json
+          pitch_id?: string | null
+          reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["report_status"]
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          facility_id?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["report_kind"]
+          payload?: Json
+          pitch_id?: string | null
+          reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["report_status"]
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_submissions_facility_id_fkey"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "facilities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_submissions_pitch_id_fkey"
+            columns: ["pitch_id"]
+            isOneToOne: false
+            referencedRelation: "pitches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_submissions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       config: {
         Row: {
           description: string | null
@@ -396,6 +460,44 @@ export type Database = {
           },
         ]
       }
+      facility_contacts: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          email: string | null
+          facility_id: string
+          id: string
+          name: string | null
+          phone: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          facility_id: string
+          id?: string
+          name?: string | null
+          phone?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          facility_id?: string
+          id?: string
+          name?: string | null
+          phone?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "facility_contacts_facility_id_fkey"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "facilities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       feature_flags: {
         Row: {
           description: string | null
@@ -649,6 +751,47 @@ export type Database = {
             columns: ["city_id"]
             isOneToOne: false
             referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      outreach_attempts: {
+        Row: {
+          channel: Database["public"]["Enums"]["outreach_channel"]
+          created_at: string
+          facility_id: string
+          follow_up_on: string | null
+          id: number
+          note: string | null
+          outcome: Database["public"]["Enums"]["outreach_outcome"]
+          staff: string | null
+        }
+        Insert: {
+          channel: Database["public"]["Enums"]["outreach_channel"]
+          created_at?: string
+          facility_id: string
+          follow_up_on?: string | null
+          id?: never
+          note?: string | null
+          outcome: Database["public"]["Enums"]["outreach_outcome"]
+          staff?: string | null
+        }
+        Update: {
+          channel?: Database["public"]["Enums"]["outreach_channel"]
+          created_at?: string
+          facility_id?: string
+          follow_up_on?: string | null
+          id?: never
+          note?: string | null
+          outcome?: Database["public"]["Enums"]["outreach_outcome"]
+          staff?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "outreach_attempts_facility_id_fkey"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "facilities"
             referencedColumns: ["id"]
           },
         ]
@@ -1053,6 +1196,22 @@ export type Database = {
         }
         Returns: Json
       }
+      admin_add_contact: {
+        Args: {
+          p_email: string
+          p_facility: string
+          p_name: string
+          p_phone: string
+        }
+        Returns: string
+      }
+      admin_catalog_reports: {
+        Args: {
+          p_limit?: number
+          p_status?: Database["public"]["Enums"]["report_status"]
+        }
+        Returns: Json
+      }
       admin_create_listing: {
         Args: {
           p_facility: Json
@@ -1064,6 +1223,24 @@ export type Database = {
       admin_decide_claim: {
         Args: { p_claim: string; p_decision: string; p_reason?: string }
         Returns: Json
+      }
+      admin_decide_report: {
+        Args: {
+          p_decision: Database["public"]["Enums"]["report_status"]
+          p_reason?: string
+          p_report: string
+        }
+        Returns: Json
+      }
+      admin_log_outreach: {
+        Args: {
+          p_channel: Database["public"]["Enums"]["outreach_channel"]
+          p_facility: string
+          p_follow_up?: string
+          p_note?: string
+          p_outcome: Database["public"]["Enums"]["outreach_outcome"]
+        }
+        Returns: Database["public"]["Enums"]["operator_state"]
       }
       admin_review_listing: {
         Args: {
@@ -1147,6 +1324,7 @@ export type Database = {
         Returns: undefined
       }
       me: { Args: never; Returns: Json }
+      my_catalog_reports: { Args: never; Returns: Json }
       my_data_requests: { Args: never; Returns: Json }
       my_guardians: { Args: never; Returns: Json }
       name_guardian: { Args: { p_email: string }; Returns: Json }
@@ -1175,6 +1353,15 @@ export type Database = {
       set_visibility: {
         Args: {
           p_visibility: Database["public"]["Enums"]["profile_visibility"]
+        }
+        Returns: Json
+      }
+      submit_catalog_report: {
+        Args: {
+          p_facility?: string
+          p_kind: Database["public"]["Enums"]["report_kind"]
+          p_payload?: Json
+          p_pitch?: string
         }
         Returns: Json
       }
@@ -1232,6 +1419,14 @@ export type Database = {
         | "authority_verified"
         | "declined"
         | "opted_out"
+      outreach_channel: "phone" | "visit" | "whatsapp" | "email"
+      outreach_outcome:
+        | "no_answer"
+        | "interested"
+        | "declined"
+        | "opted_out"
+        | "wrong_contact"
+        | "agreed"
       pitch_level: "listed" | "dock" | "verified"
       pitch_participation: "not_verified" | "verified"
       pitch_surface:
@@ -1242,6 +1437,13 @@ export type Database = {
         | "other"
       player_position: "GK" | "DEF" | "MID" | "FWD"
       profile_visibility: "public" | "city" | "private"
+      report_kind:
+        | "missing_pitch"
+        | "closed"
+        | "wrong_details"
+        | "wrong_location"
+        | "duplicate"
+      report_status: "pending" | "accepted" | "rejected"
       staff_role: "owner" | "staff"
     }
     CompositeTypes: {
@@ -1428,6 +1630,15 @@ export const Constants = {
         "declined",
         "opted_out",
       ],
+      outreach_channel: ["phone", "visit", "whatsapp", "email"],
+      outreach_outcome: [
+        "no_answer",
+        "interested",
+        "declined",
+        "opted_out",
+        "wrong_contact",
+        "agreed",
+      ],
       pitch_level: ["listed", "dock", "verified"],
       pitch_participation: ["not_verified", "verified"],
       pitch_surface: [
@@ -1439,6 +1650,14 @@ export const Constants = {
       ],
       player_position: ["GK", "DEF", "MID", "FWD"],
       profile_visibility: ["public", "city", "private"],
+      report_kind: [
+        "missing_pitch",
+        "closed",
+        "wrong_details",
+        "wrong_location",
+        "duplicate",
+      ],
+      report_status: ["pending", "accepted", "rejected"],
       staff_role: ["owner", "staff"],
     },
   },
