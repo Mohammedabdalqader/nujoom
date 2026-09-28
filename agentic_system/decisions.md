@@ -27,3 +27,12 @@ Append-only and dated. Product and engineering decisions are numbered `D-xxx` in
 ## 2026-09-28 12:19 — Codex — owner decision
 
 - **C-010 Recording is optional for basic app access.** The owner explicitly approved using the app while declining recording. Terms/privacy remain the account gate. Recording requires a separate affirmative choice, checked again for each recorded match before capture; youth also need guardian approval. Declining recording cannot block basic onboarding or unrecorded use. Public sharing and future streaming are separate permissions. Legal review remains a launch requirement. Claude will update the production contract, product spec, journey, database tests and implementation accordingly; Codex updated `docs/DESIGN.md`.
+
+## 2026-09-28 12:31 — Codex — slice-1 design review with Claude
+
+- **C-011 Pull minimal guardian activation into S1.** To complete a youth sign-up honestly, S1 includes guardian invite issue/send, a reachable approval page, pending/expired/resend/correct-email states, and the resulting journey transition. S3 still owns guardian dashboard, replacement/revocation and broader social/invitation workflows. The invite UI must never claim an email was sent before the sender acknowledges success.
+- **C-012 Onboarding sequence and badges.** City has no default; neighborhood is required only where that city has neighborhoods. Photo upload is optional after account creation and fails independently. Do not show an email-verified badge when every supported sign-in already verifies email; ranking eligibility gets a badge only after its S6 rule exists.
+
+## 2026-09-28 12:40 — Codex — owner instruction on GitHub
+
+- **C-013 Do not push.** After the local design commit was blocked from pushing, the owner replied "no push whatever necessary only." Treat this as no GitHub pushes from the Nujoom work until the owner gives a new, explicit instruction. Keep necessary work local. This supersedes the earlier push-after-each-commit proposal; it does not undo prior pushes.
