@@ -9,7 +9,14 @@ import type {
   ProfileVisibility,
 } from '@nujoom/shared';
 
-import type { BookingDetails, BookingReceipt, BookingRequest, DaySlots } from '@/data/booking';
+import type {
+  BookingDetails,
+  BookingReceipt,
+  BookingRequest,
+  DaySlots,
+  InviteLink,
+  InvitePreview,
+} from '@/data/booking';
 import type { CatalogDetail, CatalogFilters, CatalogPage, CityCounts } from '@/data/catalog';
 import type {
   AppNotification,
@@ -125,6 +132,18 @@ export type BookingApi = {
   /** null when it doesn't exist or isn't theirs to see. */
   details(bookingId: string): Promise<BookingDetails | null>;
   cancel(bookingId: string): Promise<BookingReceipt>;
+  /** The organizer's join link (made on first ask, then the same one). */
+  invite(bookingId: string): Promise<InviteLink>;
+  /** Kills the current link and returns a new one. */
+  resetInvite(bookingId: string): Promise<InviteLink>;
+  /** What the join screen shows; throws `invite_invalid` for an unknown or reset link. */
+  preview(token: string): Promise<InvitePreview>;
+  /** Joins through a link (joining twice is a success). */
+  join(token: string): Promise<BookingReceipt>;
+  /** A player leaves before kick-off (the organizer cancels instead). */
+  leave(bookingId: string): Promise<BookingReceipt>;
+  /** The organizer removes a player; returns the updated details. */
+  removePlayer(bookingId: string, playerRef: string): Promise<BookingDetails>;
 };
 
 export type City = {

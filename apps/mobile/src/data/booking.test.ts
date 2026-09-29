@@ -1,12 +1,16 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  inviteUrl,
   isRetryable,
   newRequestId,
   nextBooking,
   teamInitials,
+  tokenFromLink,
   toBookingDetails,
   toDaySlots,
+  toInviteLink,
+  toInvitePreview,
   toMatchDetails,
   toReceipt,
   toUpcomingMatch,
@@ -57,8 +61,11 @@ describe('booking mapping', () => {
       ...receipt,
       players: [{ name: 'Ana', team: null, bib: null, is_organizer: true }],
     });
-    expect(d.players).toEqual([{ name: 'Ana', team: null, bib: null, isOrganizer: true }]);
+    expect(d.players).toEqual([
+      { name: 'Ana', team: null, bib: null, isOrganizer: true, isMe: false, playerRef: null },
+    ]);
     expect(d.contactPhone).toBeNull();
+    expect(d).toMatchObject({ capacity: null, openSpots: null });
   });
 
   it('reads a day of slots, treating anything unexpected as not bookable', () => {
@@ -215,5 +222,75 @@ describe('the next match on Home', () => {
       names,
     );
     expect(d).toMatchObject({ cancelled: true, organizer: false });
+  });
+});
+
+describe('invites and joining (D-083)', () => {
+  const token = 'Ab3_-'.repeat(8) + 'xyz';
+
+  it('reads the organizer handle, "me" and room left from details', () => {
+    const d = toBookingDetails({
+      ...receipt,
+      capacity: 12,
+      open_spots: 10,
+      players: [
+        { name: 'Ana', team: null, bib: null, is_organizer: true, is_me: true, player_ref: 'r1' },
+        { name: 'Bob', team: 'a', bib: 4, is_organizer: false, is_me: false, player_ref: 'r2' },
+      ],
+    });
+    expect(d.players.map((p) => [p.name, p.isMe, p.playerRef])).toEqual([
+      ['Ana', true, 'r1'],
+      ['Bob', false, 'r2'],
+    ]);
+    expect(d).toMatchObject({ capacity: 12, openSpots: 10 });
+  });
+
+  it('reads a link and a preview', () => {
+    expect(toInviteLink({ token, created_at: '2026-09-29T10:00:00Z' })).toEqual({
+      token,
+      createdAt: '2026-09-29T10:00:00Z',
+    });
+    const open = toInvitePreview({
+      ...receipt,
+      capacity: 12,
+      open_spots: 11,
+      invited_by: 'Ana',
+      can_join: true,
+      reason: null,
+    });
+    expect(open).toMatchObject({ canJoin: true, reason: null, invitedBy: 'Ana', openSpots: 11 });
+    expect(open.total).toBe(20);
+    const removed = toInvitePreview({ ...receipt, can_join: false, reason: 'removed' });
+    expect(removed).toMatchObject({ canJoin: false, reason: 'removed', invitedBy: null });
+  });
+
+  it('never lets an unknown answer look joinable', () => {
+    expect(toInvitePreview({ ...receipt, can_join: true, reason: 'something_new' })).toMatchObject({
+      canJoin: false,
+      reason: 'full',
+    });
+    expect(toInvitePreview({ ...receipt, can_join: false, reason: 'something_new' })).toMatchObject(
+      {
+        canJoin: false,
+      },
+    );
+  });
+
+  it('builds a share link only from a real site address', () => {
+    expect(inviteUrl('https://nujoom.example/', token)).toBe(`https://nujoom.example/j/${token}`);
+    expect(inviteUrl('http://localhost:3000', token)).toBe(`http://localhost:3000/j/${token}`);
+    expect(inviteUrl(null, token)).toBeNull();
+    expect(inviteUrl('', token)).toBeNull();
+    expect(inviteUrl('http://nujoom.example', token)).toBeNull();
+    expect(inviteUrl('https://nujoom.example', 'short')).toBeNull();
+  });
+
+  it('finds the token in a link, a path or on its own', () => {
+    expect(tokenFromLink(`https://nujoom.example/j/${token}`)).toBe(token);
+    expect(tokenFromLink(`https://nujoom.example/ar/j/${token}?utm=wa`)).toBe(token);
+    expect(tokenFromLink(`/j/${token}`)).toBe(token);
+    expect(tokenFromLink(` ${token} `)).toBe(token);
+    expect(tokenFromLink('https://nujoom.example/j/short')).toBeNull();
+    expect(tokenFromLink(`https://nujoom.example/x/${token}`)).toBeNull();
   });
 });

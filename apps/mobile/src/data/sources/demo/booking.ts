@@ -1,6 +1,6 @@
 import { generateSlots, slotState } from '@nujoom/shared';
 
-import type { BookingReceipt } from '@/data/booking';
+import type { BookingDetails, BookingReceipt, InvitePreview } from '@/data/booking';
 import type { BookingApi } from '@/data/source';
 import type { Pitch } from '@/data/types';
 
@@ -11,6 +11,34 @@ import { previewMe, previewPitches } from './fixtures';
  * server for the sample venues, kept in memory for the session. Never used by production builds.
  */
 const booked: (BookingReceipt & { contactPhone: string | null })[] = [];
+
+/** Demo join links: one per demo booking, 43 URL-safe characters like the server's. */
+const demoToken = (bookingId: string, round = 0) =>
+  `demo${round}${bookingId.replace(/[^A-Za-z0-9]/g, '')}`.padEnd(43, 'x').slice(0, 43);
+const linkRound = new Map<string, number>();
+const byToken = (token: string) =>
+  booked.find((b) => demoToken(b.id, linkRound.get(b.id) ?? 0) === token);
+
+const demoDetails = (b: (typeof booked)[number]): BookingDetails => {
+  const { contactPhone, ...receipt } = b;
+  const capacity = b.playersPerSide === null ? null : b.playersPerSide * 2 + 2;
+  return {
+    ...receipt,
+    contactPhone,
+    players: [
+      {
+        name: previewMe.name,
+        team: null,
+        bib: null,
+        isOrganizer: true,
+        isMe: true,
+        playerRef: 'demo-me',
+      },
+    ],
+    capacity,
+    openSpots: capacity === null ? null : capacity - 1,
+  };
+};
 
 const demoPitch = (id: string): Pitch => {
   const pitch = previewPitches.find((p) => p.id === id);
@@ -85,9 +113,7 @@ export const demoBooking: BookingApi = {
   },
   async details(bookingId) {
     const b = booked.find((x) => x.id === bookingId);
-    return b
-      ? { ...b, players: [{ name: previewMe.name, team: null, bib: null, isOrganizer: true }] }
-      : null;
+    return b ? demoDetails(b) : null;
   },
   async cancel(bookingId) {
     const b = booked.find((x) => x.id === bookingId);
@@ -99,5 +125,46 @@ export const demoBooking: BookingApi = {
     }
     const { contactPhone: _phone, ...receipt } = b;
     return receipt;
+  },
+  // The demo player organizes every demo booking, so its link always says "already in".
+  async invite(bookingId) {
+    const b = booked.find((x) => x.id === bookingId);
+    if (!b) throw new Error('not_found');
+    if (b.status !== 'confirmed') throw new Error('booking_cancelled');
+    return { token: demoToken(b.id, linkRound.get(b.id) ?? 0), createdAt: b.startsAt };
+  },
+  async resetInvite(bookingId) {
+    const b = booked.find((x) => x.id === bookingId);
+    if (!b) throw new Error('not_found');
+    const round = (linkRound.get(b.id) ?? 0) + 1;
+    linkRound.set(b.id, round);
+    return { token: demoToken(b.id, round), createdAt: new Date().toISOString() };
+  },
+  async preview(token): Promise<InvitePreview> {
+    const b = byToken(token);
+    if (!b) throw new Error('invite_invalid');
+    const { contactPhone: _phone, ...receipt } = b;
+    const details = demoDetails(b);
+    return {
+      ...receipt,
+      capacity: details.capacity,
+      openSpots: details.openSpots,
+      invitedBy: previewMe.name,
+      canJoin: false,
+      reason: b.status === 'confirmed' ? 'already_joined' : 'cancelled',
+    };
+  },
+  async join(token) {
+    const b = byToken(token);
+    if (!b) throw new Error('invite_invalid');
+    if (b.status !== 'confirmed') throw new Error('booking_cancelled');
+    const { contactPhone: _phone, ...receipt } = b;
+    return receipt;
+  },
+  async leave() {
+    throw new Error('organizer_cannot_leave');
+  },
+  async removePlayer() {
+    throw new Error('organizer_cannot_leave');
   },
 };

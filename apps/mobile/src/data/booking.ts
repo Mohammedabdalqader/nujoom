@@ -51,11 +51,17 @@ export type BookingPlayer = {
   team: 'a' | 'b' | null;
   bib: number | null;
   isOrganizer: boolean;
+  isMe: boolean;
+  /** The organizer's handle for removing this player (invites contract §4); null for everyone else. */
+  playerRef: string | null;
 };
 export type BookingDetails = BookingReceipt & {
   players: BookingPlayer[];
   /** Only for the organizer and the venue's staff. */
   contactPhone: string | null;
+  /** size × 2 + 2; null when the field's size is unknown. */
+  capacity: number | null;
+  openSpots: number | null;
 };
 
 export type BookingRequest = {
@@ -128,9 +134,82 @@ export function toBookingDetails(raw: unknown): BookingDetails {
       team: p.team === 'a' || p.team === 'b' ? p.team : null,
       bib: num(p.bib),
       isOrganizer: p.is_organizer === true,
+      isMe: p.is_me === true,
+      playerRef: str(p.player_ref),
     })),
     contactPhone: str(r.contact_phone),
+    capacity: num(r.capacity),
+    openSpots: num(r.open_spots),
   };
+}
+
+// ---------------------------------------------------------------------------------------------
+// Invites and joining (contract agentic_system/contracts/invites.md, D-083)
+// ---------------------------------------------------------------------------------------------
+
+/** Why someone can't join through a link right now (the server decides, in this order). */
+export const JOIN_REASONS = [
+  'already_joined',
+  'not_onboarded',
+  'cancelled',
+  'started',
+  'removed',
+  'youth_only',
+  'recording_consent_required',
+  'guardian_required',
+  'full',
+] as const;
+export type JoinReason = (typeof JOIN_REASONS)[number];
+
+export type InviteLink = { token: string; createdAt: string };
+
+/** The join screen: the receipt without people, room left, who invited (adults only). */
+export type InvitePreview = BookingReceipt & {
+  capacity: number | null;
+  openSpots: number | null;
+  invitedBy: string | null;
+  canJoin: boolean;
+  reason: JoinReason | null;
+};
+
+export function toInviteLink(raw: unknown): InviteLink {
+  const r = raw as Raw;
+  return { token: String(r.token), createdAt: String(r.created_at) };
+}
+
+export function toInvitePreview(raw: unknown): InvitePreview {
+  const r = raw as Raw;
+  const reason = JOIN_REASONS.find((x) => x === r.reason) ?? null;
+  // An unknown reason from a newer server still blocks joining; the server has the last word.
+  const canJoin = r.can_join === true && (r.reason === null || r.reason === undefined);
+  return {
+    ...toReceipt(raw),
+    capacity: num(r.capacity),
+    openSpots: num(r.open_spots),
+    invitedBy: str(r.invited_by),
+    canJoin,
+    reason: canJoin ? null : (reason ?? 'full'),
+  };
+}
+
+const TOKEN = /^[A-Za-z0-9_-]{43}$/;
+
+/** The join link to share, or null while the app has no public site address (D-082). */
+export function inviteUrl(siteUrl: string | null | undefined, token: string): string | null {
+  const base = siteUrl?.trim().replace(/\/+$/, '');
+  // https only, except a local web build during development.
+  if (!base || !/^(https:\/\/|http:\/\/localhost(:\d+)?$)/.test(base) || !TOKEN.test(token)) {
+    return null;
+  }
+  return `${base}/j/${token}`;
+}
+
+/** The token in a join link or path (`https://…/j/<token>`, `/j/<token>`, or the bare token). */
+export function tokenFromLink(link: string): string | null {
+  const trimmed = link.trim();
+  if (TOKEN.test(trimmed)) return trimmed;
+  const match = /(?:^|\/)j\/([A-Za-z0-9_-]{43})(?:[/?#]|$)/.exec(trimmed);
+  return match ? match[1]! : null;
 }
 
 /**

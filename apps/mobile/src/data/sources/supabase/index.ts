@@ -18,6 +18,8 @@ import {
   nextBooking,
   toBookingDetails,
   toDaySlots,
+  toInviteLink,
+  toInvitePreview,
   toMatchDetails,
   toReceipt,
   toUpcomingMatch,
@@ -419,6 +421,19 @@ export function createSupabaseSource(config: BackendConfig): DataSource {
       details: bookingDetails,
       cancel: async (bookingId) =>
         toReceipt(await rpc('cancel_booking', { p_booking: bookingId, p_reason: 'organizer' })),
+      invite: async (bookingId) =>
+        toInviteLink(await rpc('booking_invite', { p_booking: bookingId })),
+      resetInvite: async (bookingId) =>
+        toInviteLink(await rpc('reset_booking_invite', { p_booking: bookingId })),
+      preview: async (token) => toInvitePreview(await rpc('booking_preview', { p_token: token })),
+      // Safe to retry: joining twice is a success on the server.
+      join: async (token) =>
+        toReceipt(await withRetry(() => rpc('join_booking', { p_token: token }))),
+      leave: async (bookingId) => toReceipt(await rpc('leave_booking', { p_booking: bookingId })),
+      removePlayer: async (bookingId, playerRef) =>
+        toBookingDetails(
+          await rpc('remove_player', { p_booking: bookingId, p_player_ref: playerRef }),
+        ),
     },
     dataRights: {
       list: async () => (await rpc<DataRequestRow[]>('my_data_requests')).map(toDataRequest),

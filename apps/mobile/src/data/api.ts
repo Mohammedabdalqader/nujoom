@@ -1,6 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import type { BookingDetails, BookingReceipt, BookingRequest, DaySlots } from '@/data/booking';
+import type {
+  BookingDetails,
+  BookingReceipt,
+  BookingRequest,
+  DaySlots,
+  InviteLink,
+  InvitePreview,
+} from '@/data/booking';
 import { getSource } from '@/data/source';
 import type { CatalogDetail, CatalogFilters, CatalogPage, CityCounts } from '@/data/catalog';
 import type {
@@ -49,6 +56,8 @@ export const keys = {
   daySlots: (pitchId: string, date: string) => ['day-slots', pitchId, date] as const,
   myBookings: ['bookings', 'mine'] as const,
   booking: (id: string) => ['bookings', id] as const,
+  invite: (bookingId: string) => ['bookings', bookingId, 'invite'] as const,
+  invitePreview: (token: string) => ['invite-preview', token] as const,
 };
 
 export const useMe = () => useQuery<Me>({ queryKey: keys.me, queryFn: () => getSource().me() });
@@ -227,6 +236,75 @@ export function useCancelBooking() {
       void client.invalidateQueries({ queryKey: keys.myBookings });
       void client.invalidateQueries({ queryKey: keys.home });
       void client.invalidateQueries({ queryKey: keys.matchDetails(receipt.id) });
+    },
+  });
+}
+
+// ---------------------------------------------------------------------------------------------
+// Invites and joining (contracts/invites.md, D-083/D-084)
+// ---------------------------------------------------------------------------------------------
+
+/** Everything that shows who's in a booking or whether it's the player's. */
+function refreshBooking(client: ReturnType<typeof useQueryClient>, bookingId: string) {
+  void client.invalidateQueries({ queryKey: keys.booking(bookingId) });
+  void client.invalidateQueries({ queryKey: keys.matchDetails(bookingId) });
+  void client.invalidateQueries({ queryKey: keys.myBookings });
+  void client.invalidateQueries({ queryKey: keys.home });
+}
+
+/** The organizer's join link; only fetched when asked for (`enabled`). */
+export const useInviteLink = (bookingId: string, enabled: boolean) =>
+  useQuery<InviteLink>({
+    queryKey: keys.invite(bookingId),
+    queryFn: () => getSource().booking.invite(bookingId),
+    enabled,
+  });
+
+export function useResetInvite() {
+  const client = useQueryClient();
+  return useMutation<InviteLink, Error, string>({
+    mutationFn: (bookingId) => getSource().booking.resetInvite(bookingId),
+    onSuccess: (link, bookingId) => client.setQueryData(keys.invite(bookingId), link),
+  });
+}
+
+/** The join screen's preview: always fresh (room left changes), and a bad link isn't retried. */
+export const useInvitePreview = (token: string | null) =>
+  useQuery<InvitePreview>({
+    queryKey: keys.invitePreview(token ?? ''),
+    queryFn: () => getSource().booking.preview(token!),
+    enabled: token !== null,
+    staleTime: 0,
+    retry: false,
+  });
+
+export function useJoinBooking() {
+  const client = useQueryClient();
+  return useMutation<BookingReceipt, Error, string>({
+    mutationFn: (token) => getSource().booking.join(token),
+    onSettled: (receipt, _error, token) => {
+      void client.invalidateQueries({ queryKey: keys.invitePreview(token) });
+      if (receipt) refreshBooking(client, receipt.id);
+    },
+  });
+}
+
+export function useLeaveBooking() {
+  const client = useQueryClient();
+  return useMutation<BookingReceipt, Error, string>({
+    mutationFn: (bookingId) => getSource().booking.leave(bookingId),
+    onSuccess: (receipt) => refreshBooking(client, receipt.id),
+  });
+}
+
+export function useRemovePlayer() {
+  const client = useQueryClient();
+  return useMutation<BookingDetails, Error, { bookingId: string; playerRef: string }>({
+    mutationFn: ({ bookingId, playerRef }) =>
+      getSource().booking.removePlayer(bookingId, playerRef),
+    onSuccess: (details) => {
+      client.setQueryData(keys.booking(details.id), details);
+      refreshBooking(client, details.id);
     },
   });
 }

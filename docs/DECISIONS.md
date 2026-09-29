@@ -900,3 +900,28 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
   - Race 5 in `tools/db-test/races.mjs`: two people take the last of 12 spots at once, exactly one gets in and the other is told `booking_full`.
   - The whole suite passes (529 checks, 5 races).
 - **Not yet:** new error codes aren't mapped to app wording yet (they show the generic error), because Codex holds the locale files. The app's join route, the organizer's actions and the web page come next.
+
+**D-084 The app's data side for invites (2026-09-29).**
+
+- **What:** `apps/mobile/src/data`, with no screens and no new wording, while Codex holds the locale files.
+  - `BookingApi` gains `invite`, `resetInvite`, `preview`, `join`, `leave` and `removePlayer`, in both the production and the demo sources.
+  - Hooks `useInviteLink`, `useResetInvite`, `useInvitePreview`, `useJoinBooking`, `useLeaveBooking` and `useRemovePlayer`. Joining, leaving and removing refresh the booking, the match details, my bookings and Home.
+  - `BookingDetails` gains `capacity` and `openSpots`; each player gains `isMe` and `playerRef` (the organizer only).
+- **Pure helpers, tested:**
+  - `toInvitePreview`: an unknown reason from a newer server never reads as joinable. The test caught a first version that did.
+  - `inviteUrl(siteUrl, token)`: https only, or a local web build. It returns null while no site address is set, so share stays hidden (D-082).
+  - `tokenFromLink`: finds the token in a full link, a localized path, a bare path or the token alone, for the join route.
+- **Retries:** joining uses the network-only retry. It's safe because joining twice is a success on the server.
+- **Demo:** the demo player organizes every demo booking, so a demo link previews as "already in". A reset gives a new demo link.
+- **Verified:**
+  - 19 booking data tests pass, along with lint, typecheck and all tests (17/17).
+  - **Live**, the same calls the app makes, against a temporary smoke venue, 12/12:
+    - the organizer's 43-character link
+    - a second tester's preview: can join, invited by the organizer, 23 spots left, no roster
+    - join, and it's in their bookings
+    - the organizer sees remove handles and removes them; they can't rejoin through the same link
+    - a reset kills the old link, and the new one lets them back
+    - leave
+    - a guest's public preview has no names or price
+  - Test data was removed.
+- **Next:** the join screen (`j/[token]`) and the organizer's share, reset and remove actions in the match details. They need wording, so they wait for Codex's locale claim.
