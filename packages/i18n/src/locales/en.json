@@ -931,7 +931,23 @@
       "staffLinkLimit": "You have 5 open links for this venue. Cancel one first."
     },
     "notFound": "We couldn't find it. It may have been removed.",
-    "forbidden": "You don't have access to this."
+    "forbidden": "You don't have access to this.",
+    "booking": {
+      "pitchUnavailable": "This field isn't taking bookings right now.",
+      "invalidSlot": "That time isn't one of this field's slots. Pick one from the list.",
+      "slotInPast": "That time has passed. Pick an upcoming slot.",
+      "beyondHorizon": "You can book up to 14 days ahead.",
+      "slotTaken": "Someone just booked that slot. Pick another one.",
+      "tooMany": "You already have 3 upcoming bookings. Wait for one to finish or cancel one.",
+      "recordingConsent": "This is a recorded match and you haven't agreed to recording. Book an unrecorded match, or change it in Settings.",
+      "guardianRequired": "Recorded matches need your guardian’s approval first. You can book an unrecorded match.",
+      "started": "The match has started, so it can't be cancelled now.",
+      "notOrganizer": "Only the organizer can cancel this booking.",
+      "invalidPhone": "That phone number doesn't look right. Use the international format, e.g. +9627XXXXXXXX.",
+      "invalidTeamName": "Team names must be 30 characters or fewer.",
+      "invalidWindow": "Couldn't load the times. Try again.",
+      "sizeUnknown": "The field size must be known before it can be verified."
+    }
   },
   "demo": {
     "marker": "Demo · sample data and illustrative images"

@@ -62,6 +62,165 @@ export type Database = {
         }
         Relationships: []
       }
+      booking_players: {
+        Row: {
+          bib: number | null
+          booking_id: string
+          joined_at: string
+          removed_at: string | null
+          removed_by: string | null
+          team: string | null
+          user_id: string
+        }
+        Insert: {
+          bib?: number | null
+          booking_id: string
+          joined_at?: string
+          removed_at?: string | null
+          removed_by?: string | null
+          team?: string | null
+          user_id: string
+        }
+        Update: {
+          bib?: number | null
+          booking_id?: string
+          joined_at?: string
+          removed_at?: string | null
+          removed_by?: string | null
+          team?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_players_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "booking_players_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      booking_private: {
+        Row: {
+          booking_id: string
+          contact_phone: string | null
+          walk_in_name: string | null
+        }
+        Insert: {
+          booking_id: string
+          contact_phone?: string | null
+          walk_in_name?: string | null
+        }
+        Update: {
+          booking_id?: string
+          contact_phone?: string | null
+          walk_in_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_private_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: true
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bookings: {
+        Row: {
+          cancel_reason:
+            | Database["public"]["Enums"]["booking_cancel_reason"]
+            | null
+          cancelled_at: string | null
+          cancelled_by: string | null
+          client_request_id: string | null
+          created_at: string
+          created_by: string | null
+          during: unknown
+          id: string
+          kind: Database["public"]["Enums"]["booking_kind"]
+          organizer_id: string | null
+          pitch_id: string
+          price_per_hour: number | null
+          recorded: boolean
+          slot_minutes: number | null
+          status: Database["public"]["Enums"]["booking_status"]
+          team_a_name: string | null
+          team_b_name: string | null
+        }
+        Insert: {
+          cancel_reason?:
+            | Database["public"]["Enums"]["booking_cancel_reason"]
+            | null
+          cancelled_at?: string | null
+          cancelled_by?: string | null
+          client_request_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          during: unknown
+          id?: string
+          kind: Database["public"]["Enums"]["booking_kind"]
+          organizer_id?: string | null
+          pitch_id: string
+          price_per_hour?: number | null
+          recorded?: boolean
+          slot_minutes?: number | null
+          status?: Database["public"]["Enums"]["booking_status"]
+          team_a_name?: string | null
+          team_b_name?: string | null
+        }
+        Update: {
+          cancel_reason?:
+            | Database["public"]["Enums"]["booking_cancel_reason"]
+            | null
+          cancelled_at?: string | null
+          cancelled_by?: string | null
+          client_request_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          during?: unknown
+          id?: string
+          kind?: Database["public"]["Enums"]["booking_kind"]
+          organizer_id?: string | null
+          pitch_id?: string
+          price_per_hour?: number | null
+          recorded?: boolean
+          slot_minutes?: number | null
+          status?: Database["public"]["Enums"]["booking_status"]
+          team_a_name?: string | null
+          team_b_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_organizer_id_fkey"
+            columns: ["organizer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_pitch_id_fkey"
+            columns: ["pitch_id"]
+            isOneToOne: false
+            referencedRelation: "pitches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cities: {
         Row: {
           country_code: string
@@ -1533,7 +1692,15 @@ export type Database = {
         Args: { p_evidence?: Json; p_facility: string }
         Returns: undefined
       }
+      booking_details: { Args: { p_booking: string }; Returns: Json }
       cancel_account_deletion: { Args: never; Returns: Json }
+      cancel_booking: {
+        Args: {
+          p_booking: string
+          p_reason?: Database["public"]["Enums"]["booking_cancel_reason"]
+        }
+        Returns: Json
+      }
       catalog_pitch: { Args: { p_pitch_id: string }; Returns: Json }
       check_data_rights_secret: { Args: { p_secret: string }; Returns: boolean }
       claim_facility: {
@@ -1552,6 +1719,18 @@ export type Database = {
           p_position: Database["public"]["Enums"]["player_position"]
           p_shirt_number?: number
           p_visibility?: Database["public"]["Enums"]["profile_visibility"]
+        }
+        Returns: Json
+      }
+      create_booking: {
+        Args: {
+          p_client_request_id?: string
+          p_contact_phone?: string
+          p_pitch: string
+          p_recorded?: boolean
+          p_starts_at: string
+          p_team_a?: string
+          p_team_b?: string
         }
         Returns: Json
       }
@@ -1609,6 +1788,7 @@ export type Database = {
         Returns: undefined
       }
       me: { Args: never; Returns: Json }
+      my_bookings: { Args: never; Returns: Json }
       my_catalog_reports: { Args: never; Returns: Json }
       my_claims: { Args: never; Returns: Json }
       my_data_requests: { Args: never; Returns: Json }
@@ -1622,6 +1802,10 @@ export type Database = {
       owner_set_schedule_active: {
         Args: { p_active: boolean; p_pitch: string }
         Returns: undefined
+      }
+      pitch_busy_ranges: {
+        Args: { p_from: string; p_pitch: string; p_to: string }
+        Returns: Json
       }
       player_profile: { Args: { p_user: string }; Returns: Json }
       prepare_account_deletion: { Args: { p_request: string }; Returns: string }
@@ -1663,6 +1847,16 @@ export type Database = {
     }
     Enums: {
       age_group: "U12" | "U14" | "U16" | "U18" | "ADULT"
+      booking_cancel_reason:
+        | "organizer"
+        | "venue_closed"
+        | "weather"
+        | "maintenance"
+        | "staff_other"
+        | "admin"
+        | "account_deleted"
+      booking_kind: "app" | "manual" | "block"
+      booking_status: "confirmed" | "cancelled"
       claim_status:
         | "submitted"
         | "evidence_requested"
@@ -1869,6 +2063,17 @@ export const Constants = {
   public: {
     Enums: {
       age_group: ["U12", "U14", "U16", "U18", "ADULT"],
+      booking_cancel_reason: [
+        "organizer",
+        "venue_closed",
+        "weather",
+        "maintenance",
+        "staff_other",
+        "admin",
+        "account_deleted",
+      ],
+      booking_kind: ["app", "manual", "block"],
+      booking_status: ["confirmed", "cancelled"],
       claim_status: [
         "submitted",
         "evidence_requested",

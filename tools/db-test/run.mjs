@@ -4,7 +4,9 @@
 // applies supabase/migrations and supabase/seed.sql in order, then runs every pgTAP file in
 // supabase/tests/database, each in its own connection. Exits non-zero on any failure.
 //
-// Usage: pnpm db:test [filter]   (filter = substring of test file names to run)
+// Then runs races.mjs: real concurrency checks with separate connections (D-071).
+//
+// Usage: pnpm db:test [filter]   (filter = substring of test file names to run; "race" = races only)
 import EmbeddedPostgres from 'embedded-postgres';
 import fs from 'node:fs';
 import net from 'node:net';
@@ -12,6 +14,8 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import pg from 'pg';
+
+import { runRaces } from './races.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repo = path.resolve(here, '../..');
@@ -110,6 +114,9 @@ try {
     if (bad.length) failures++;
   }
   console.log(`\n${total} assertions`);
+
+  // Real two-session concurrency (booking contract §9): after pgTAP, on committed fixtures.
+  if (!filter || filter === 'race') failures += await runRaces(connect);
 } finally {
   await server.stop().catch(() => {});
   fs.rmSync(dataDir, { recursive: true, force: true });

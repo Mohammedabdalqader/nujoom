@@ -151,8 +151,11 @@ describe('errors', () => {
   it('maps SQL codes exactly', () => {
     expect(errorKey({ message: 'handle_taken', code: '23505' })).toBe('errors.profile.handleTaken');
     expect(errorKey({ message: 'consent_required' })).toBe('errors.consent.required');
-    // A longer code is not mistaken for a shorter one it contains.
-    expect(errorKey({ message: 'recording_consent_required' })).toBe('errors.generic');
+    // A longer code is not mistaken for a shorter one it contains (D-071 gave it its own message).
+    expect(errorKey({ message: 'recording_consent_required' })).toBe(
+      'errors.booking.recordingConsent',
+    );
+    expect(errorKey({ message: 'slot_taken_by_someone' })).toBe('errors.generic');
   });
 
   it('maps Supabase Auth failures without revealing accounts', () => {

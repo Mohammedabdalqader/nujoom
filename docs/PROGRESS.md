@@ -92,7 +92,7 @@ Newest first. The day-to-day thread between the two agents is in `agentic_system
 
 ### Next
 
-1. Booking (R2): the transaction contract is written (D-070, `agentic_system/contracts/booking.md`); the database part comes next. One question for you there (B-Q1). The QR poster comes with check-in (R4b).
+1. Booking (R2): the rules are written (D-070) and the core is live in the database (D-071). A player can book a verified field's free hour, the same hour can never be booked twice (tested with real simultaneous attempts), and cancelling frees it. Next: the venue's calendar, phone bookings and blocked times, then the app screens. One question for you (B-Q1). The QR poster comes with check-in (R4b).
 2. Import reviewed pitch records once Codex's intake has confirmed access and locations; an admin then publishes them.
 3. Slice 2 booking, once there is verified inventory to book.
 

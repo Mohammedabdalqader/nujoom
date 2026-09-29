@@ -695,3 +695,23 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
   - Busy ranges reveal no people. Contact phones go to staff and the organizer only.
 - **Owner question B-Q1:** when a venue loses its badge, are its future bookings cancelled automatically? The default is no: admins follow up with the venue.
 - **Next:** the first migration (tables, slot rules, create, details, cancel and busy ranges), with pgTAP including a real two-connection race.
+
+**D-071 Booking transactions, part 1 (2026-09-29).**
+
+- **Built to the contract (D-070):**
+  - `bookings`, `booking_private` and `booking_players`, with RLS and no direct client access.
+  - One exclusion constraint over confirmed ranges.
+  - `slot_error` mirrors `generateSlots` (bookable field with a known size; the future; within 14 days, or 90 for staff blocks; exact slot length on the grid inside one opening range).
+  - `pitch_busy_ranges` returns ranges only.
+  - `create_booking` checks onboarding, C-010 recording permission and the youth guardian rule for recorded matches, the 3-upcoming limit, the phone and team names, and a rate limit of 20/hour. It snapshots the price, adds the organizer as the first player and records `booking_created`.
+  - `booking_details` (organizer, players, venue staff; contact phone for staff and the organizer only), `my_bookings` and `cancel_booking` (organizer before the start; staff with a reason; idempotent).
+  - Settings live in `config.booking`.
+- **Rules added:**
+  - A field can't become verified without a known size (`size_unknown`).
+  - Deleting an account cancels its future bookings (`account_deleted`), and the organizer link is removed.
+  - The data export lists a person's bookings, and the coverage guard includes the new tables.
+- **Concurrency, tested for real:** `tools/db-test/races.mjs` runs after pgTAP with separate connections. Two players booking the same hour, a retry racing its original, and the 3-booking limit under load all hold, stable over five runs.
+  - The first run found a real bug: two sessions could deadlock on the exclusion index. Bookings on one field now take turns (per-field advisory lock), always after the organizer lock, so the two locks can't deadlock.
+- **Errors:** every new code has an Arabic and English message (`errors.booking.*`).
+- **Evidence:** pgTAP `190-bookings.sql` has 34 assertions (453 total) plus 3 races. A live smoke run went through the real owner/admin path: a verified temporary venue, book, retry, clash, availability without names, privacy, staff view, cancel and rebook, all passing. Everything was removed afterwards, including test analytics events.
+- **Next:** staff side (`venue_schedule`, manual bookings, blocks) and the calendar on the owner page.

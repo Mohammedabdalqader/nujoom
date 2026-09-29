@@ -64,6 +64,21 @@ const SQL_ERROR_KEYS = {
   // Venue staff (D-068)
   invalid_staff_invite: 'errors.venue.invalidStaffInvite',
   staff_link_limit: 'errors.venue.staffLinkLimit',
+  // Booking (D-071)
+  pitch_unavailable: 'errors.booking.pitchUnavailable',
+  invalid_slot: 'errors.booking.invalidSlot',
+  slot_in_past: 'errors.booking.slotInPast',
+  beyond_horizon: 'errors.booking.beyondHorizon',
+  slot_taken: 'errors.booking.slotTaken',
+  too_many_bookings: 'errors.booking.tooMany',
+  recording_consent_required: 'errors.booking.recordingConsent',
+  guardian_required: 'errors.booking.guardianRequired',
+  booking_started: 'errors.booking.started',
+  not_organizer: 'errors.booking.notOrganizer',
+  invalid_phone: 'errors.booking.invalidPhone',
+  invalid_team_name: 'errors.booking.invalidTeamName',
+  invalid_window: 'errors.booking.invalidWindow',
+  size_unknown: 'errors.booking.sizeUnknown',
 } as const;
 
 /** Supabase Auth error codes (AuthError.code) we explain specifically. */

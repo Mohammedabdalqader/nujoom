@@ -22,9 +22,9 @@ insert into public.facilities (id, name_ar, city_id, access, listing_state, oper
 values ('00000000-0000-4000-8000-0000000000f1', 'ملاعب الشمس', pg_temp.city('zarqa'), 'public_rental',
         'published', 'authority_verified');
 insert into public.pitch_staff (facility_id, user_id) values ('00000000-0000-4000-8000-0000000000f1', tests.id('owner'));
-insert into public.pitches (id, facility_id, label_ar, listing_state)
+insert into public.pitches (id, facility_id, label_ar, listing_state, players_per_side)
 select ('00000000-0000-4000-8000-0000000000' || n)::uuid, '00000000-0000-4000-8000-0000000000f1',
-       'ملعب ' || n, 'published'
+       'ملعب ' || n, 'published', 5
 from unnest(array['a1', 'b1', 'c1', 'd1', 'e1', 'f1']) n;
 insert into public.pitch_operations (pitch_id, price_per_hour, slot_minutes, schedule_active, opening_hours)
 select id, 20, 60, true, '{"sun":[["16:00","24:00"]]}'
