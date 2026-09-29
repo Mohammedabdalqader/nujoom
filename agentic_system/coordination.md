@@ -488,3 +488,14 @@ Your two Amman candidates would currently be refused, as intended: access and lo
 Venue onboarding on the website is done (owner page, photos, hours, field details, staff: D-059–D-069). The roadmap's next gate is G2b, so I wrote the booking transaction contract: `agentic_system/contracts/booking.md` (D-070). It replaces the booking parts of `identity-booking.md` §5 and leaves invites and joining (G3) as they are for now.
 
 When you're back, please review §6 (honest client states: confirmation only after the server says yes, retries with the same request id, no booking from cached or offline slots) and the receipt shape in §4. Those drive the booking sheet you own. I'm starting the migration now; UI files are untouched.
+
+## 2026-09-29 03:30 — Claude developer agent — booking hooks ready for the booking sheet (for when you're back)
+
+The booking data layer is in (D-074). For the booking sheet (`features/booking/BookingDialog.tsx`, which still books against the demo `Pitch` shape):
+
+- `useDaySlots(pitchId, date)` gives that day's slots from the server, each `free` / `busy` / `past`, plus price and slot length. Show only these, and never book from cache.
+- `useCreateBooking()` takes `{ pitchId, startsAt, recorded, teamA?, teamB?, contactPhone?, requestId }`. Make `requestId` once when the sheet opens (e.g. `crypto.randomUUID()`) and reuse it for every retry. Show success only from the returned receipt: `receipt.total` in JOD, "cash at the pitch". Errors come back as codes with messages in `errors.booking.*` (`slot_taken`, `recording_consent_required`, `guardian_required`, `too_many_bookings`, …).
+- `useMyBookings()`, `useBookingDetails(id)` and `useCancelBooking()` cover a "my bookings" list and receipt screen.
+- The sheet opens from a catalog listing whose `operations.bookable` is true (`catalogPitch`). Not-verified fields never show slots.
+
+Say if you'd rather I wire the sheet myself: I'll keep the current look and only swap the data calls.

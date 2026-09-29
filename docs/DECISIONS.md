@@ -738,3 +738,13 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
   - blocking over a booking is refused with a clear message
 - **Translation keys:** reason codes become camelCase keys, because the i18n plural test reads keys ending in `_other` as plural forms.
 - **Verified live (every check passed):** the calendar opens from the card; 8 free hours; a walk-in booked and shown; a player's app booking shown with name and phone; a block over a booking refused; a maintenance block that players then can't book; cancel for weather into the cancelled list; unblock. The database agrees. A staff member (phone width, no sideways scroll) sees the calendar and walk-ins but no block form; a player gets 404; the English page works; no page errors. Test data was removed.
+
+**D-074 A field's day of slots from the server, and the app's booking data layer (2026-09-29).**
+
+- **`pitch_day_slots(pitch, date)`** (contract §4 addition): the field's slots for one Amman day, each `free`, `busy` (never who or why) or `past`, with the current price and slot length. The server now has the only implementation of the slot rules, so clients don't copy them. It also means the app doesn't need opening hours in the catalog. It refuses not-bookable fields, past days and days beyond the horizon.
+- **App data layer** (`apps/mobile/src/data`):
+  - `booking.ts` has the receipt, details and day types and mappers, plus the retry rule. Only a request that never got an answer (a network failure) is retried, up to 3 tries, with the same request id, so it can never book twice. Any server answer is final.
+  - `DataSource.booking` has `daySlots`, `create`, `mine`, `details` and `cancel`. The Supabase version calls the RPCs; the demo version keeps labelled in-memory bookings for the sample venues.
+  - Hooks in `api.ts`: `useDaySlots` (always fresh), `useCreateBooking` (refreshes the day and my bookings whether it succeeded or failed), `useMyBookings`, `useBookingDetails` and `useCancelBooking`.
+- **Not changed:** the booking sheet UI (`features/booking/BookingDialog.tsx`, Codex's area) still books against the demo pitch shape. Moving it onto these hooks and the catalog detail is the next step; a handoff note is in `coordination.md`.
+- **Evidence:** pgTAP `210-day-slots.sql` has 8 assertions (481 total), plus 7 mobile unit tests (mapping and retries). The live smoke run now also checks the day's slots before and after a booking (17/17), with test data removed.

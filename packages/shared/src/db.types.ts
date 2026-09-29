@@ -1835,6 +1835,10 @@ export type Database = {
         Args: { p_from: string; p_pitch: string; p_to: string }
         Returns: Json
       }
+      pitch_day_slots: {
+        Args: { p_date: string; p_pitch: string }
+        Returns: Json
+      }
       player_profile: { Args: { p_user: string }; Returns: Json }
       prepare_account_deletion: { Args: { p_request: string }; Returns: string }
       record_consent: {

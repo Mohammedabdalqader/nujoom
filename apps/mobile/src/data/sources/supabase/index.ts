@@ -14,6 +14,7 @@ import { FunctionsFetchError, FunctionsHttpError } from '@supabase/supabase-js';
 import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
 
+import { toBookingDetails, toDaySlots, toReceipt, withRetry } from '@/data/booking';
 import {
   toCatalogDetail,
   toCatalogListing,
@@ -372,6 +373,35 @@ export function createSupabaseSource(config: BackendConfig): DataSource {
       if (!userId) throw new Error('not_authenticated');
       await rpc('update_profile', { p_patch: { avatar_path: null } });
       await removeAvatarFiles(userId, null);
+    },
+    booking: {
+      daySlots: async (pitchId, date) =>
+        toDaySlots(await rpc('pitch_day_slots', { p_pitch: pitchId, p_date: date })),
+      create: async (request) =>
+        toReceipt(
+          await withRetry(() =>
+            rpc('create_booking', {
+              p_pitch: request.pitchId,
+              p_starts_at: request.startsAt,
+              p_recorded: request.recorded,
+              p_team_a: request.teamA ?? null,
+              p_team_b: request.teamB ?? null,
+              p_contact_phone: request.contactPhone ?? null,
+              p_client_request_id: request.requestId,
+            }),
+          ),
+        ),
+      mine: async () => (await rpc<unknown[]>('my_bookings')).map(toReceipt),
+      async details(bookingId) {
+        try {
+          return toBookingDetails(await rpc('booking_details', { p_booking: bookingId }));
+        } catch (error) {
+          if ((error as { message?: string }).message === 'not_found') return null;
+          throw error;
+        }
+      },
+      cancel: async (bookingId) =>
+        toReceipt(await rpc('cancel_booking', { p_booking: bookingId, p_reason: 'organizer' })),
     },
     dataRights: {
       list: async () => (await rpc<DataRequestRow[]>('my_data_requests')).map(toDataRequest),

@@ -2,6 +2,7 @@ import { DEFAULT_CONFIG, DEFAULT_FEATURE_FLAGS } from '@nujoom/shared';
 
 import type { Account, DataSource } from '@/data/source';
 
+import { demoBooking } from './booking';
 import { demoCatalogPitch, searchDemoCatalog } from './catalog';
 
 import {
@@ -81,6 +82,7 @@ export const demoSource: DataSource & { marker: string } = {
     requestDeletion: demoOnly,
     cancelDeletion: demoOnly,
   },
+  booking: demoBooking,
   // The demo persona is an adult: there is no guardian flow to show.
   guardian: {
     name: demoOnly,

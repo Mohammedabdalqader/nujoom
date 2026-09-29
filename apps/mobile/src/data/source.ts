@@ -9,6 +9,7 @@ import type {
   ProfileVisibility,
 } from '@nujoom/shared';
 
+import type { BookingDetails, BookingReceipt, BookingRequest, DaySlots } from '@/data/booking';
 import type { CatalogDetail, CatalogFilters, CatalogPage } from '@/data/catalog';
 import type {
   AppNotification,
@@ -113,6 +114,19 @@ export type GuardianApi = {
   decline(token: string): Promise<void>;
 };
 
+/** Booking (contract agentic_system/contracts/booking.md). The server decides every outcome. */
+export type BookingApi = {
+  /** A verified field's slots for one Amman day (YYYY-MM-DD): free, busy or past. */
+  daySlots(pitchId: string, date: string): Promise<DaySlots>;
+  /** Books a slot; retries a lost request with the same request id (never books twice). */
+  create(request: BookingRequest): Promise<BookingReceipt>;
+  /** Bookings the player organizes or plays in: upcoming and the last 30 days. */
+  mine(): Promise<BookingReceipt[]>;
+  /** null when it doesn't exist or isn't theirs to see. */
+  details(bookingId: string): Promise<BookingDetails | null>;
+  cancel(bookingId: string): Promise<BookingReceipt>;
+};
+
 export type City = {
   id: number;
   name: Bilingual;
@@ -163,6 +177,7 @@ export type DataSource = {
   acceptCurrentConsents(): Promise<Account>;
   guardian: GuardianApi;
   dataRights: DataRightsApi;
+  booking: BookingApi;
   /** Replaces the profile photo with an already cropped, resized image (S1-7). */
   setAvatar(image: { uri: string; mimeType: 'image/jpeg' | 'image/webp' }): Promise<void>;
   removeAvatar(): Promise<void>;
