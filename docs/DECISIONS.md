@@ -769,3 +769,17 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
 - **View-model change (announced to Codex):** `Me.cityId` (null in the demo).
 - **Verified:** on Expo web (production variant, 390 px), a tester in the pitches' city saw both temporary published pitches. The verified one had its badge and "25 JOD / hour"; the other said it's not bookable yet; approximate locations were labelled; both filters worked; no sideways scroll; no page errors. The temporary venues and accounts were removed.
 - **Known gaps:** the prototype's search panel above (date strip, size chips) doesn't filter the directory; the cards don't open a detail page yet; there's still no licensed map provider (owner decision). Those are the next steps.
+
+**D-077 A pitch's page in the app (2026-09-29).**
+
+- **Where:** tapping a directory card opens `pitch/[id]` (a dialog, like the other sheets).
+- **What it shows** (docs/DESIGN.md G1 "Detail"):
+  - Name and badge first, area and address.
+  - Rights-cleared photos with their credit (D-075).
+  - Booking truth: a verified field shows its price per hour, booking length and "bookings unavailable right now" if paused. A not-verified field says it isn't bookable through the app yet and that the details come from our review, not the venue.
+  - Every fact with an honest "not known yet": size, surface, covered, floodlights, futsal, dimensions, and amenities ("none" only when checked and empty).
+  - How sure the location is. Directions, labelled "not a booking", only for map- or site-checked locations.
+  - The venue's other fields with their own badges; tapping one opens it.
+  - Where the details came from and when they were last reviewed, plus the OSM credit.
+- **Not yet:** the day's slots and booking on this page, and "Report a problem" / "Add a missing pitch" (the database side exists, D-048). Those are next.
+- **Verified** on Expo web (production variant, 390 px) against temporary live pitches, 15/15 checks. The verified field showed "25 JOD / hour" and "60 minutes"; the owner-confirmed surface and floodlights showed and unknown facts said so; the approximate location had no directions; sources and review date showed; the not-verified field showed its note and no price; no page errors. Test data was removed.

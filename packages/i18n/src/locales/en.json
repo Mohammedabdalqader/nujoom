@@ -1529,6 +1529,46 @@
     "noneVerified": "No verified pitches in {{city}} yet.",
     "noMatch": "No pitches match this choice.",
     "showAll": "Show all pitches",
-    "error": "Couldn't load pitches. Check your connection."
+    "error": "Couldn't load pitches. Check your connection.",
+    "detail": {
+      "missing": "This pitch isn't in the directory right now.",
+      "notBookableLong": "This field isn't bookable through the app yet. The details here come from our review, not from the venue.",
+      "slotLength": "Booking length: {{n}} minutes",
+      "facts": "Field details",
+      "unknown": "Not known yet",
+      "size": "Size",
+      "surface": "Surface",
+      "cover": "Covered?",
+      "lights": "Floodlights",
+      "futsal": "Futsal",
+      "dimensions": "Dimensions",
+      "metres": "{{l}} × {{w}} m",
+      "amenities": "Amenities",
+      "noAmenities": "None",
+      "yes": "Yes",
+      "no": "No",
+      "location": "Location",
+      "locationChecked": "Confirmed location",
+      "directions": "Directions (not a booking)",
+      "otherFields": "Other fields at this venue",
+      "field": "Field",
+      "sources": "Details from: {{list}}",
+      "reviewed": "Last reviewed: {{date}}"
+    },
+    "amenities": {
+      "changingRooms": "Changing rooms",
+      "parking": "Parking",
+      "water": "Drinking water",
+      "seating": "Spectator seating",
+      "toilets": "Toilets",
+      "cafe": "Café"
+    },
+    "sourceNames": {
+      "osm": "OpenStreetMap",
+      "operator": "the venue",
+      "fieldTeam": "our field team",
+      "community": "player reports",
+      "reviewer": "our review"
+    }
   }
 }

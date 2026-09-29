@@ -1,5 +1,6 @@
 import { Image } from 'expo-image';
-import { View } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Pressable, View } from 'react-native';
 
 import type { CatalogListing, Localized } from '@/data/catalog';
 import { useLocale } from '@/lib/locale';
@@ -10,10 +11,11 @@ import { Text } from '@/ui/Text';
  * One field in the pitch directory (docs/DESIGN.md G1 "Result card", D-076). The field is the
  * unit; the badge is text plus icon (never colour alone); only evidenced facts show, unknown ones
  * are left out; a price only comes from a verified field's confirmed operations. No Book button
- * here: booking opens only from a bookable field.
+ * here: tapping opens the field's page (D-077).
  */
 export function CatalogCard({ item }: { item: CatalogListing }) {
   const { t, locale, jod, pick } = useLocale();
+  const router = useRouter();
   const name = (l: Localized | null) =>
     l ? ((locale === 'ar' ? (l.ar ?? l.en) : (l.en ?? l.ar)) ?? '') : '';
   const verified = item.badge === 'verified';
@@ -51,12 +53,13 @@ export function CatalogCard({ item }: { item: CatalogListing }) {
       : null;
 
   return (
-    <View
-      accessible
+    <Pressable
+      onPress={() => router.push({ pathname: '/pitch/[id]', params: { id: item.pitchId } })}
+      accessibilityRole="button"
       accessibilityLabel={[name(item.facilityName), name(item.label), badge, location, bookingNote]
         .filter(Boolean)
         .join('، ')}
-      className="bg-surface-container rounded-xl border border-border p-3 gap-2"
+      className="bg-surface-container rounded-xl border border-border p-3 gap-2 active:bg-surface-container-high"
     >
       <View className="flex-row gap-3">
         {item.photo?.url ? (
@@ -130,7 +133,7 @@ export function CatalogCard({ item }: { item: CatalogListing }) {
       {item.photo?.attribution ? (
         <Text className="text-[10px] text-on-surface-variant">{item.photo.attribution}</Text>
       ) : null}
-    </View>
+    </Pressable>
   );
 }
 
