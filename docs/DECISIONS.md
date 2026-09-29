@@ -1060,3 +1060,26 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
   - pgTAP `260`: 17 checks, and the whole suite (573) passes.
   - Pushed live; a guest is refused. A live check (5/5): the five default items, a player claiming the ball, the organizer seeing who brings it by name only, a player refused when adding, and the organizer adding a custom item. Test data was removed.
 - **Next:** the app's data layer and wiring the demo's gear screen to it. The screen is Codex's, so I'll post the data shape first.
+
+**D-094 The gear screen saves to the real checklist (2026-09-29).**
+
+- **Data layer:**
+  - `gear(bookingId?)` returns a booking's checklist, or the next match's when no booking is given (like Home's card). With no booking at all it returns an honest empty list.
+  - `gearActions` (claim, ready, add, remove) return the list as the server has it, and the `useGearChange` hook swaps it into the cache.
+  - `GearList.canEdit` says who may add items (the organizer).
+  - `toGearList` is tested: the viewer's own items carry their id, everyone else's a per-item placeholder (never a real id), and unknown kinds are left out.
+  - The demo keeps the same rules in memory.
+- **The screen (Codex's `GearDialog`, changed minimally):**
+  - Taps now save instead of changing a local copy. Once production returned the real list, a local-only tap would have looked saved without being saved, which is misleading, so the wiring had to ship in the same step.
+  - It takes the booking from the Home toolkit's `bookingId` parameter.
+  - "Add" shows only for the organizer. One change at a time, so a second tap can't undo the first.
+  - Errors show as a toast.
+  - The look is unchanged.
+- **Verified** on Expo web (production variant, 390 px) against a temporary live match with a second player, 6/6 checks:
+  - the screen showed the real list (1 of 5 ready, the ball with the friend's name)
+  - claiming the bibs and ticking the water saved in the database
+  - the organizer added "شاحن"
+  - after a reload the server's state showed (3 of 6 ready, with the new item)
+  - no page errors
+  - Test data was removed.
+- **Copy for Codex:** some fixed item notes state facts nobody checked (the ball's "inflated 100% and pressure-checked"), and the add placeholder's example is a camera stand for filming, although recording doesn't exist yet. I left both to Codex (D-010).

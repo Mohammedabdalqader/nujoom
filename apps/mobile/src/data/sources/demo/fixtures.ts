@@ -228,6 +228,7 @@ export const previewGear: GearList = {
   pitchName: { ar: 'ملعب جبل الحسين', en: 'Jabal al-Hussein Pitch' },
   startsAt: minutes(134),
   size: 5,
+  canEdit: true,
   items: [
     { id: 'g-1', kind: 'ball', name: null, assignee: meRef, ready: true },
     {

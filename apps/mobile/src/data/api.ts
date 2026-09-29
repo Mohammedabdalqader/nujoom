@@ -162,9 +162,45 @@ export const useProfileExtras = () =>
 export const useSquad = () =>
   useQuery<Squad>({ queryKey: keys.squad, queryFn: () => getSource().squad() });
 
-/** The next match's shared gear checklist (R3: one list per booking, edited by its players). */
-export const useGear = () =>
-  useQuery<GearList>({ queryKey: keys.gear, queryFn: () => getSource().gear() });
+/**
+ * A booking's shared gear checklist (D-093/D-094), or the next match's without a booking. Every
+ * change returns the list as the server has it, which replaces the cached one (keeping the pitch
+ * name, which changes don't carry).
+ */
+export const useGear = (bookingId?: string | null) =>
+  useQuery<GearList>({
+    queryKey: [...keys.gear, bookingId ?? 'next'],
+    queryFn: () => getSource().gear(bookingId),
+  });
+
+type GearChange =
+  | { action: 'claim'; itemId: string; on: boolean }
+  | { action: 'ready'; itemId: string; on: boolean }
+  | { action: 'add'; bookingId: string; name: string }
+  | { action: 'remove'; itemId: string };
+
+export function useGearChange(bookingId?: string | null) {
+  const client = useQueryClient();
+  const key = [...keys.gear, bookingId ?? 'next'];
+  return useMutation<GearList, Error, GearChange>({
+    mutationFn: (change) => {
+      const api = getSource().gearActions;
+      switch (change.action) {
+        case 'claim':
+          return api.claim(change.itemId, change.on);
+        case 'ready':
+          return api.setReady(change.itemId, change.on);
+        case 'add':
+          return api.add(change.bookingId, change.name);
+        case 'remove':
+          return api.remove(change.itemId);
+      }
+    },
+    onSuccess: (list) =>
+      client.setQueryData<GearList>(key, (old) => ({ ...list, pitchName: old?.pitchName ?? null })),
+    onError: () => void client.invalidateQueries({ queryKey: key }),
+  });
+}
 
 /** The next match's kitty (R3: the booking's price and each player's payment mark). */
 export const useKitty = () =>

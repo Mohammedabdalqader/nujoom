@@ -1,6 +1,7 @@
 import { DEFAULT_CONFIG, DEFAULT_FEATURE_FLAGS } from '@nujoom/shared';
 
 import type { Account, DataSource } from '@/data/source';
+import type { GearList } from '@/data/types';
 
 import { demoBooking } from './booking';
 import {
@@ -34,6 +35,11 @@ import {
 
 /** A deep copy, so cache edits never mutate the fixtures (JSON-safe data; Hermes has no structuredClone). */
 const copy = <T>(value: T): Promise<T> => Promise.resolve(JSON.parse(JSON.stringify(value)) as T);
+
+/** The demo checklist, changed in memory for the session with the server's rules (D-094). */
+const demoGear: { current: GearList } = {
+  current: JSON.parse(JSON.stringify(previewGear)) as GearList,
+};
 
 /**
  * The demo build's data: labelled sample players, venues, matches and illustrative images
@@ -126,7 +132,59 @@ export const demoSource: DataSource & { marker: string } = {
   leaderboard: () => copy(previewLeaderboard),
   profileExtras: () => copy(previewProfileExtras),
   squad: () => copy(previewSquad),
-  gear: () => copy(previewGear),
+  gear: () => copy(demoGear.current),
+  gearActions: {
+    claim: async (itemId, claimIt) => {
+      const item = demoGear.current.items.find((i) => i.id === itemId);
+      if (!item) throw new Error('not_found');
+      if (claimIt && item.assignee && item.assignee.id !== previewMe.id)
+        throw new Error('gear_taken');
+      demoGear.current = {
+        ...demoGear.current,
+        items: claimIt
+          ? demoGear.current.items.map((i) =>
+              i.id === itemId
+                ? {
+                    ...i,
+                    assignee: { id: previewMe.id, name: previewMe.name, avatarUrl: null },
+                    ready: true,
+                  }
+                : i,
+            )
+          : demoGear.current.items.map((i) =>
+              i.id === itemId ? { ...i, assignee: null, ready: false } : i,
+            ),
+      };
+      return copy(demoGear.current);
+    },
+    setReady: async (itemId, ready) => {
+      demoGear.current = {
+        ...demoGear.current,
+        items: demoGear.current.items.map((i) => (i.id === itemId ? { ...i, ready } : i)),
+      };
+      return copy(demoGear.current);
+    },
+    add: async (_bookingId, name) => {
+      if (demoGear.current.items.length >= 15) throw new Error('too_many_gear_items');
+      const label = name.trim().replace(/\s+/g, ' ');
+      if (!label || label.length > 40) throw new Error('invalid_gear_name');
+      demoGear.current = {
+        ...demoGear.current,
+        items: [
+          ...demoGear.current.items,
+          { id: `g-${Date.now()}`, kind: 'custom', name: label, assignee: null, ready: false },
+        ],
+      };
+      return copy(demoGear.current);
+    },
+    remove: async (itemId) => {
+      demoGear.current = {
+        ...demoGear.current,
+        items: demoGear.current.items.filter((i) => i.id !== itemId),
+      };
+      return copy(demoGear.current);
+    },
+  },
   kitty: () => copy(previewKitty),
   config: () => copy(DEFAULT_CONFIG),
   flags: () => copy(DEFAULT_FEATURE_FLAGS),

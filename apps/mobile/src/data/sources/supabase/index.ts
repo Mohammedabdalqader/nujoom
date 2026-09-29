@@ -42,7 +42,8 @@ import type {
   GuardianLink,
   Session,
 } from '@/data/source';
-import type { Me, Position } from '@/data/types';
+import type { Bilingual, Me, Position } from '@/data/types';
+import { EMPTY_GEAR, toGearList } from '@/data/gear';
 import { i18n } from '@/lib/i18n';
 import { createSupabase } from '@/lib/supabase';
 
@@ -231,6 +232,8 @@ export function createSupabaseSource(config: BackendConfig): DataSource {
   }
 
   const none = <T>(value: T) => Promise.resolve(value);
+  /** The signed-in user's id from the stored session (no network call). */
+  const myId = async () => (await db.auth.getSession()).data.session?.user.id ?? null;
   // A booking without team names shows the defaults in the app's language (it reloads on a switch).
   const teamNames = (): TeamNames => ({
     a: i18n.t('tools.squad.blueTeam'),
@@ -580,7 +583,47 @@ export function createSupabaseSource(config: BackendConfig): DataSource {
         clipsCount: 0,
       }),
     squad: () => none({ bookingId: null, pitchName: null, players: [] }),
-    gear: () => none({ bookingId: null, pitchName: null, startsAt: null, size: 5, items: [] }),
+    async gear(bookingId) {
+      // Without a booking, the tools prepare the next match (like Home's card).
+      let id = bookingId ?? null;
+      let pitchName: Bilingual | null = null;
+      if (!id) {
+        const next = nextBooking((await rpc<unknown[]>('my_bookings')).map(toReceipt), Date.now());
+        if (!next) return EMPTY_GEAR;
+        id = next.id;
+        pitchName = toUpcomingMatch(next, teamNames()).pitchName;
+      } else {
+        const details = await bookingDetails(id);
+        if (!details) return EMPTY_GEAR;
+        pitchName = toUpcomingMatch(details, teamNames()).pitchName;
+      }
+      return toGearList(await rpc('booking_gear', { p_booking: id }), {
+        meId: await myId(),
+        pitchName,
+      });
+    },
+    gearActions: {
+      claim: async (itemId, claim) =>
+        toGearList(await rpc('claim_gear_item', { p_item: itemId, p_claim: claim }), {
+          meId: await myId(),
+          pitchName: null,
+        }),
+      setReady: async (itemId, ready) =>
+        toGearList(await rpc('set_gear_ready', { p_item: itemId, p_ready: ready }), {
+          meId: await myId(),
+          pitchName: null,
+        }),
+      add: async (bookingId, name) =>
+        toGearList(await rpc('add_gear_item', { p_booking: bookingId, p_name: name }), {
+          meId: await myId(),
+          pitchName: null,
+        }),
+      remove: async (itemId) =>
+        toGearList(await rpc('remove_gear_item', { p_item: itemId }), {
+          meId: await myId(),
+          pitchName: null,
+        }),
+    },
     kitty: () =>
       none({ bookingId: null, pitchName: null, pitchCost: 0, extrasCost: 0, players: [] }),
 

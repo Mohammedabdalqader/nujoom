@@ -1,7 +1,9 @@
+import { errorKey } from '@nujoom/shared';
+import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, TextInput, View } from 'react-native';
 
-import { useGear, useMe } from '@/data/api';
+import { useGear, useGearChange, useMe } from '@/data/api';
 import type { GearItem, GearList, Me } from '@/data/types';
 import { sfx } from '@/design/sound';
 import { useTheme } from '@/design/theme';
@@ -12,27 +14,37 @@ import { Icon } from '@/ui/Icon';
 import { Text } from '@/ui/Text';
 import { useToast } from '@/ui/Toast';
 
-import { addCustom, claim, GEAR_NAME_MAX, gearProgress, toggleReady } from './gear';
+import { GEAR_NAME_MAX, gearProgress } from './gear';
 import { ToolFrame } from './ToolFrame';
 
 /**
  * "تجهيزات المباراة ومسؤولية الحارة": who brings the ball, bibs and water. Anyone in the match
- * can tick an item or claim it ("أنا بجيبها"). R3 stores the list per booking; item notes are
- * fixed per kind so the list never turns into a chat (spec §7).
+ * can tick an item or claim it ("أنا بجيبها"); the organizer adds items. The list is stored per
+ * booking (D-093/D-094): every tap is saved and the screen shows what the server has. Item notes
+ * are fixed per kind so the list never turns into a chat (spec §7).
  */
 export function GearDialog() {
-  const gear = useGear().data;
+  const { bookingId } = useLocalSearchParams<{ bookingId?: string }>();
+  const gear = useGear(bookingId ?? null).data;
   const me = useMe().data;
   if (!gear || !me) return <DialogLoading />;
-  return <GearTool gear={gear} me={me} />;
+  return <GearTool gear={gear} me={me} bookingId={bookingId ?? null} />;
 }
 
-function GearTool({ gear, me }: { gear: GearList; me: Me }) {
+function GearTool({ gear, me, bookingId }: { gear: GearList; me: Me; bookingId: string | null }) {
   const { t, pick, time } = useLocale();
   const toast = useToast();
-  const [items, setItems] = useState<GearItem[]>(gear.items);
+  const change = useGearChange(bookingId);
+  // One change at a time: a second tap on stale state could undo the first.
+  const save = (c: Parameters<typeof change.mutate>[0], sound: () => void) => {
+    if (change.isPending) return;
+    change.mutate(c, {
+      onSuccess: sound,
+      onError: (error) => toast.show(t(errorKey(error))),
+    });
+  };
 
-  const list = items;
+  const list = gear.items;
   const progress = gearProgress(list);
   const ballReady = list.some((i) => i.kind === 'ball' && i.ready);
 
@@ -117,12 +129,13 @@ function GearTool({ gear, me }: { gear: GearList; me: Me }) {
         </View>
       </View>
 
-      <AddItem
-        onAdd={(name) => {
-          sfx.success();
-          setItems((prev) => addCustom(prev, name, `g-${Date.now()}`));
-        }}
-      />
+      {gear.canEdit && gear.bookingId ? (
+        <AddItem
+          onAdd={(name) =>
+            save({ action: 'add', bookingId: gear.bookingId!, name }, () => sfx.success())
+          }
+        />
+      ) : null}
 
       <View className="gap-2">
         {list.map((item) => (
@@ -133,14 +146,12 @@ function GearTool({ gear, me }: { gear: GearList; me: Me }) {
             name={itemName(item)}
             owner={ownerName(item)}
             noteTime={gear.startsAt ? time(gear.startsAt) : ''}
-            onToggle={() => {
-              sfx.ding();
-              setItems((prev) => toggleReady(prev, item.id));
-            }}
-            onClaim={() => {
-              sfx.success();
-              setItems((prev) => claim(prev, item.id, me));
-            }}
+            onToggle={() =>
+              save({ action: 'ready', itemId: item.id, on: !item.ready }, () => sfx.ding())
+            }
+            onClaim={() =>
+              save({ action: 'claim', itemId: item.id, on: true }, () => sfx.success())
+            }
           />
         ))}
       </View>

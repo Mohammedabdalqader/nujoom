@@ -152,6 +152,14 @@ export type BookingApi = {
   removePlayer(bookingId: string, playerRef: string): Promise<BookingDetails>;
 };
 
+/** Changes to a checklist; each returns the list as it is now (pitch name aside). */
+export type GearActions = {
+  claim(itemId: string, claim: boolean): Promise<GearList>;
+  setReady(itemId: string, ready: boolean): Promise<GearList>;
+  add(bookingId: string, name: string): Promise<GearList>;
+  remove(itemId: string): Promise<GearList>;
+};
+
 export type City = {
   id: number;
   name: Bilingual;
@@ -232,7 +240,9 @@ export type DataSource = {
   leaderboard(scope: string, age: string, period: string): Promise<Leaderboard>;
   profileExtras(): Promise<ProfileExtras>;
   squad(): Promise<Squad>;
-  gear(): Promise<GearList>;
+  /** A booking's gear checklist, or the next match's when no booking is given (D-094). */
+  gear(bookingId?: string | null): Promise<GearList>;
+  gearActions: GearActions;
   kitty(): Promise<Kitty>;
   config(): Promise<AppConfig>;
   flags(): Promise<Partial<Record<FeatureFlag, boolean>>>;

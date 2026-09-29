@@ -132,6 +132,8 @@ export type GearList = {
   startsAt: string | null;
   /** Players per side (5, 6 or 7), for the bibs line. */
   size: number;
+  /** The organizer adds and removes items; players claim and tick them (D-093). */
+  canEdit: boolean;
   items: GearItem[];
 };
 
