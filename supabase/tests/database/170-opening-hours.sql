@@ -1,6 +1,6 @@
 -- Opening hours: validated shape, kept across price saves, required to switch on (D-063).
 begin;
-select plan(15);
+select plan(17);
 
 create function pg_temp.city(p_slug text) returns bigint language sql as $$
   select id from public.cities where slug = p_slug $$;
@@ -67,6 +67,15 @@ select is(public.my_venues() -> 0 -> 'fields' -> 0 -> 'amenities', 'null'::jsonb
 select public.owner_confirm_field('00000000-0000-4000-8000-00000000001a', '{"amenities":["parking","water"]}');
 select is(public.my_venues() -> 0 -> 'fields' -> 0 -> 'amenities', '["parking", "water"]'::jsonb,
   'and as the owner''s list once confirmed');
+select public.owner_confirm_field('00000000-0000-4000-8000-00000000001a',
+  '{"length_m":40,"width_m":20.5,"futsal":true,"label_ar":"الملعب الكبير"}');
+select is(
+  (select jsonb_build_object('l', f -> 'length_m', 'w', f -> 'width_m', 'futsal', f -> 'futsal', 'name', f -> 'label' ->> 'ar')
+   from jsonb_array_elements(public.my_venues() -> 0 -> 'fields') f),
+  '{"l": 40.0, "w": 20.5, "futsal": true, "name": "الملعب الكبير"}'::jsonb,
+  'dimensions, futsal and the field''s name read back (D-067)');
+select throws_ok($$ select public.owner_confirm_field('00000000-0000-4000-8000-00000000001a', '{"length_m":400}') $$,
+  '23514', null, 'impossible dimensions are refused by the table');
 select lives_ok($$ select public.owner_set_schedule_active('00000000-0000-4000-8000-00000000001a', true) $$,
   'with hours the schedule switches on');
 select public.owner_confirm_field('00000000-0000-4000-8000-00000000001a', '{}',

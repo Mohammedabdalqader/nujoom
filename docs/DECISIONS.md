@@ -641,3 +641,13 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
   - "None of these", or unticking a known list, records "checked, none"
   - an unchanged list sends nothing, so no duplicate evidence
 - **Evidence:** pgTAP +2 (390 total), 5 shared unit tests, and the live owner run (parking and water saved as one operator evidence row; still ticked after reload; later saves add nothing). Live on the project.
+
+**D-067 Owners confirm dimensions, futsal and the field's name (2026-09-29).**
+
+- **Form:** the field details on `/[locale]/venue` now also cover futsal (yes/no), length and width in metres, and the field's name in Arabic and English. `my_venues()` returns futsal and the dimensions (migration `…2500`).
+- **Rules** (pure and tested in `@nujoom/shared`):
+  - `parseDimension` accepts what people type on phones in Jordan (Arabic digits, a decimal comma or `٫`), rounds to 0.1 m and enforces the table's limits (length 10–130 m, width 5–100 m).
+  - `parseFieldLabel` trims and collapses spaces and caps names at 60 characters.
+  - An empty box leaves the stored value alone, and only changed values are sent (operator evidence, D-065).
+- **Errors:** `invalid_dimensions` and `invalid_field_name` have Arabic and English messages. The database also refuses impossible values on its own (tested).
+- **Evidence:** pgTAP +2 (392), 3 new shared test groups, and the live owner run (37/37). Seven operator evidence rows for seven changes, none for later saves; an impossible length is refused and saves nothing. Test data was removed.

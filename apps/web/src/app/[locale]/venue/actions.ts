@@ -1,7 +1,14 @@
 'use server';
 
 import { isLocale } from '@nujoom/i18n';
-import { DAY_KEYS, isValidOpeningHours, nextAmenities, type OpeningHours } from '@nujoom/shared';
+import {
+  DAY_KEYS,
+  isValidOpeningHours,
+  nextAmenities,
+  parseDimension,
+  parseFieldLabel,
+  type OpeningHours,
+} from '@nujoom/shared';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
@@ -109,10 +116,25 @@ export async function confirmField(form: FormData) {
   for (const [k, column] of [
     ['indoor', 'indoor'],
     ['lights', 'lights'],
+    ['futsal', 'futsal'],
   ] as const) {
     if (!changed(k)) continue;
     if (!['yes', 'no'].includes(get(`fact_${k}`))) redirect(`${back}?error=invalid_action`);
     facts[column] = get(`fact_${k}`) === 'yes';
+  }
+  // Dimensions and the field's name (D-067): typed values that differ from the stored ones.
+  for (const [k, column] of [
+    ['length', 'length_m'],
+    ['width', 'width_m'],
+  ] as const) {
+    const value = parseDimension(column, get(`fact_${k}`));
+    if (value === 'invalid') redirect(`${back}?error=invalid_dimensions`);
+    if (value !== null && value !== Number(get(`was_${k}`) || NaN)) facts[column] = value;
+  }
+  for (const column of ['label_ar', 'label_en'] as const) {
+    const value = parseFieldLabel(get(`fact_${column}`));
+    if (value === 'invalid') redirect(`${back}?error=invalid_field_name`);
+    if (value !== null && value !== get(`was_${column}`)) facts[column] = value;
   }
   // Amenities (D-066): the shared rule decides whether the ticks are a change.
   const amenities = nextAmenities(

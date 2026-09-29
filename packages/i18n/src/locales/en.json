@@ -924,7 +924,9 @@
       "alreadyStaff": "This venue is already on your account.",
       "noOperations": "Save the price and booking length first, then switch the schedule on.",
       "noOpeningHours": "Set your opening hours first, then switch the schedule on.",
-      "invalidOpeningHours": "Those opening hours don't work: each period must end after it starts, and periods can't overlap."
+      "invalidOpeningHours": "Those opening hours don't work: each period must end after it starts, and periods can't overlap.",
+      "invalidDimensions": "Those measurements don't add up: length between 10 and 130 m, width between 5 and 100 m.",
+      "invalidFieldName": "The field name must be 60 characters or fewer."
     },
     "notFound": "We couldn't find it. It may have been removed.",
     "forbidden": "You don't have access to this."
@@ -1378,7 +1380,14 @@
           "seating": "Seating for spectators",
           "toilets": "Toilets",
           "cafe": "Café"
-        }
+        },
+        "nameAr": "Field name (Arabic)",
+        "nameEn": "Field name (English)",
+        "length": "Length (metres)",
+        "width": "Width (metres)",
+        "futsal": "Futsal?",
+        "futsalYes": "Futsal",
+        "futsalNo": "Not futsal"
       }
     }
   }

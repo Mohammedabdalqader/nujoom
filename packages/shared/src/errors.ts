@@ -58,6 +58,9 @@ const SQL_ERROR_KEYS = {
   no_operations: 'errors.venue.noOperations',
   no_opening_hours: 'errors.venue.noOpeningHours',
   invalid_opening_hours: 'errors.venue.invalidOpeningHours',
+  // Checked by the owner page before saving (D-067).
+  invalid_dimensions: 'errors.venue.invalidDimensions',
+  invalid_field_name: 'errors.venue.invalidFieldName',
 } as const;
 
 /** Supabase Auth error codes (AuthError.code) we explain specifically. */

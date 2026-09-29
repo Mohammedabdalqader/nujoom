@@ -37,3 +37,33 @@ export function nextAmenities(
   const next = known.length > 0 ? known : noneTicked || storedKey !== 'unknown' ? [] : null;
   return next && amenitiesKey(next) !== storedKey ? next : null;
 }
+
+/** Field size limits in metres (the pitches.length_m / width_m checks). */
+export const DIMENSION_LIMITS = { length_m: [10, 130], width_m: [5, 100] } as const;
+
+/**
+ * An owner's typed dimension: '' → null (leave as stored), a number within the limits rounded to
+ * 0.1 m (the column's precision), anything else → 'invalid'. Accepts a decimal comma and Arabic
+ * digits as typed on phones in Jordan.
+ */
+export function parseDimension(
+  kind: keyof typeof DIMENSION_LIMITS,
+  raw: string,
+): number | null | 'invalid' {
+  const text = raw
+    .trim()
+    .replace(/[٠-٩]/g, (d) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)))
+    .replace(/[,٫]/, '.');
+  if (text === '') return null;
+  if (!/^\d{1,3}(\.\d+)?$/.test(text)) return 'invalid';
+  const value = Math.round(Number(text) * 10) / 10;
+  const [min, max] = DIMENSION_LIMITS[kind];
+  return value >= min && value <= max ? value : 'invalid';
+}
+
+/** A field's name as typed: trimmed, inner spaces collapsed; '' → null, over 60 → 'invalid'. */
+export function parseFieldLabel(raw: string): string | null | 'invalid' {
+  const text = raw.trim().replace(/\s+/g, ' ');
+  if (text === '') return null;
+  return text.length <= 60 ? text : 'invalid';
+}

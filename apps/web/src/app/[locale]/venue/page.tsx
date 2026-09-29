@@ -188,6 +188,13 @@ export default async function VenuePage({ params, searchParams }: Props) {
       ]),
     ),
     none: t('web.owner.facts.none'),
+    nameAr: t('web.owner.facts.nameAr'),
+    nameEn: t('web.owner.facts.nameEn'),
+    length: t('web.owner.facts.length'),
+    width: t('web.owner.facts.width'),
+    futsal: t('web.owner.facts.futsal'),
+    futsalYes: t('web.owner.facts.futsalYes'),
+    futsalNo: t('web.owner.facts.futsalNo'),
   };
   const hoursStrings = {
     title: t('web.owner.hours.title'),

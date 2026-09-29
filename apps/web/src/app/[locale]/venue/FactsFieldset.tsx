@@ -24,6 +24,13 @@ export type FactStrings = {
   amenities: string;
   amenityNames: Record<string, string>;
   none: string;
+  nameAr: string;
+  nameEn: string;
+  length: string;
+  width: string;
+  futsal: string;
+  futsalYes: string;
+  futsalNo: string;
 };
 
 export const SURFACES = [
@@ -46,6 +53,10 @@ export function FactsFieldset({
     indoor?: unknown;
     lights?: unknown;
     amenities?: unknown;
+    futsal?: unknown;
+    length_m?: unknown;
+    width_m?: unknown;
+    label?: unknown;
   };
   strings: FactStrings;
 }) {
@@ -56,7 +67,21 @@ export function FactsFieldset({
     surface: typeof field.surface === 'string' ? field.surface : '',
     indoor: yesNo(field.indoor),
     lights: yesNo(field.lights),
+    futsal: yesNo(field.futsal),
   };
+  const label = (field.label ?? {}) as { ar?: string | null; en?: string | null };
+  const text = (name: string, labelText: string, value: unknown, extra: object) => (
+    <label className="flex flex-col gap-1 text-sm">
+      {labelText}
+      <input type="hidden" name={`was_${name}`} value={value == null ? '' : String(value)} />
+      <input
+        name={`fact_${name}`}
+        defaultValue={value == null ? '' : String(value)}
+        className={select}
+        {...extra}
+      />
+    </label>
+  );
   const row = (name: keyof typeof current, label: string, options: [string, string][]) => (
     <label className="flex flex-col gap-1 text-sm">
       {label}
@@ -96,6 +121,14 @@ export function FactsFieldset({
         ['yes', s.lit],
         ['no', s.unlit],
       ])}
+      {row('futsal', s.futsal, [
+        ['yes', s.futsalYes],
+        ['no', s.futsalNo],
+      ])}
+      {text('length', s.length, field.length_m, { inputMode: 'decimal', dir: 'ltr', maxLength: 6 })}
+      {text('width', s.width, field.width_m, { inputMode: 'decimal', dir: 'ltr', maxLength: 6 })}
+      {text('label_ar', s.nameAr, label.ar, { dir: 'rtl', lang: 'ar', maxLength: 60 })}
+      {text('label_en', s.nameEn, label.en, { dir: 'ltr', lang: 'en', maxLength: 60 })}
       <div className="flex flex-col gap-2 text-sm sm:col-span-2">
         {s.amenities}
         <input type="hidden" name="was_amenities" value={amenitiesKey(field.amenities)} />
