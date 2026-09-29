@@ -946,7 +946,9 @@
       "invalidPhone": "That phone number doesn't look right. Use the international format, e.g. +9627XXXXXXXX.",
       "invalidTeamName": "Team names must be 30 characters or fewer.",
       "invalidWindow": "Couldn't load the times. Try again.",
-      "sizeUnknown": "The field size must be known before it can be verified."
+      "sizeUnknown": "The field size must be known before it can be verified.",
+      "invalidWalkInName": "Enter the customer's name (up to 60 characters).",
+      "invalidReason": "Pick a reason for blocking the time."
     }
   },
   "demo": {

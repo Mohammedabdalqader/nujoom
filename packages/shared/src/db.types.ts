@@ -135,6 +135,9 @@ export type Database = {
       }
       bookings: {
         Row: {
+          block_reason:
+            | Database["public"]["Enums"]["booking_cancel_reason"]
+            | null
           cancel_reason:
             | Database["public"]["Enums"]["booking_cancel_reason"]
             | null
@@ -156,6 +159,9 @@ export type Database = {
           team_b_name: string | null
         }
         Insert: {
+          block_reason?:
+            | Database["public"]["Enums"]["booking_cancel_reason"]
+            | null
           cancel_reason?:
             | Database["public"]["Enums"]["booking_cancel_reason"]
             | null
@@ -177,6 +183,9 @@ export type Database = {
           team_b_name?: string | null
         }
         Update: {
+          block_reason?:
+            | Database["public"]["Enums"]["booking_cancel_reason"]
+            | null
           cancel_reason?:
             | Database["public"]["Enums"]["booking_cancel_reason"]
             | null
@@ -1692,6 +1701,15 @@ export type Database = {
         Args: { p_evidence?: Json; p_facility: string }
         Returns: undefined
       }
+      block_slots: {
+        Args: {
+          p_ends_at: string
+          p_pitch: string
+          p_reason?: Database["public"]["Enums"]["booking_cancel_reason"]
+          p_starts_at: string
+        }
+        Returns: Json
+      }
       booking_details: { Args: { p_booking: string }; Returns: Json }
       cancel_account_deletion: { Args: never; Returns: Json }
       cancel_booking: {
@@ -1731,6 +1749,16 @@ export type Database = {
           p_starts_at: string
           p_team_a?: string
           p_team_b?: string
+        }
+        Returns: Json
+      }
+      create_manual_booking: {
+        Args: {
+          p_client_request_id?: string
+          p_contact_phone?: string
+          p_pitch: string
+          p_starts_at: string
+          p_walk_in_name: string
         }
         Returns: Json
       }
@@ -1844,6 +1872,10 @@ export type Database = {
         Returns: Json
       }
       update_profile: { Args: { p_patch: Json }; Returns: Json }
+      venue_schedule: {
+        Args: { p_facility: string; p_from: string; p_to: string }
+        Returns: Json
+      }
     }
     Enums: {
       age_group: "U12" | "U14" | "U16" | "U18" | "ADULT"

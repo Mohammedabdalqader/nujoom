@@ -79,6 +79,8 @@ const SQL_ERROR_KEYS = {
   invalid_team_name: 'errors.booking.invalidTeamName',
   invalid_window: 'errors.booking.invalidWindow',
   size_unknown: 'errors.booking.sizeUnknown',
+  invalid_walk_in_name: 'errors.booking.invalidWalkInName',
+  invalid_reason: 'errors.booking.invalidReason',
 } as const;
 
 /** Supabase Auth error codes (AuthError.code) we explain specifically. */

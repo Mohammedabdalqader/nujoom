@@ -715,3 +715,12 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
 - **Errors:** every new code has an Arabic and English message (`errors.booking.*`).
 - **Evidence:** pgTAP `190-bookings.sql` has 34 assertions (453 total) plus 3 races. A live smoke run went through the real owner/admin path: a verified temporary venue, book, retry, clash, availability without names, privacy, staff view, cancel and rebook, all passing. Everything was removed afterwards, including test analytics events.
 - **Next:** staff side (`venue_schedule`, manual bookings, blocks) and the calendar on the owner page.
+
+**D-072 Booking part 2: the venue's side (2026-09-29).**
+
+- **`venue_schedule(facility, from, to)`:** the staff calendar. It lists every booking and block on the venue's fields in a window of up to 31 days, cancelled ones included, with organizer display name, walk-in name, contact phone, player count, recorded flag, price snapshot and block or cancel reason. Venue staff only (owner or staff).
+- **`create_manual_booking(pitch, starts_at, walk_in_name, phone, request_id)`:** phone and walk-in customers. Same slot rules as the app, with no organizer limit. A name is required and the phone is optional. Price snapshot, retry-safe, rate-limited (100/hour) and audited. Any staff member may do it.
+- **`block_slots(pitch, from, to, reason)`:** owners take time off sale in whole slots inside the opening hours, up to 90 days ahead, for `venue_closed`, `maintenance`, `weather` or `staff_other`. It's refused over confirmed bookings (cancel those first). Unblocking is `cancel_booking` on the block. Audited. Players see blocked time only as taken time.
+- **Shared rules:** manual bookings and blocks use the same exclusion constraint and per-field lock as app bookings (D-071). A fourth real race (a staff walk-in and a player booking the same hour at once) always has exactly one winner.
+- **Evidence:** pgTAP `200-venue-schedule.sql` has 20 assertions (473 total) plus 4 races. The live smoke run now covers walk-in, block, calendar, privacy and unblock (15/15), with test data removed. New error messages: `invalid_walk_in_name`, `invalid_reason`.
+- **Next:** the calendar on the owner page (web), then the app's booking data layer.

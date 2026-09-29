@@ -50,6 +50,19 @@ export async function runRaces(connect) {
     `update public.pitches set participation = 'verified', verified_at = now() where id = $1`,
     [PITCH],
   );
+  // The venue's owner, for walk-in bookings (D-072).
+  const { rows: ownerRow } = await setup.query('select tests.create_user($1) as id', [
+    'race-owner@nujoom.test',
+  ]);
+  users.owner = ownerRow[0].id;
+  await setup.query('begin');
+  await setup.query('select tests.act_as($1)', [users.owner]);
+  await setup.query(`select public.create_owner_profile('Owner', '1980-05-05', true)`);
+  await setup.query('commit');
+  await setup.query(
+    `insert into public.pitch_staff (facility_id, user_id, role) values ($1, $2, 'owner')`,
+    [FACILITY, users.owner],
+  );
   const at = (hhmm) => `${tomorrow} ${hhmm}:00+03`;
   const book = `select (public.create_booking($1, $2::timestamptz, true, null, null, null, $3) ->> 'id') as id`;
 
@@ -110,6 +123,20 @@ export async function runRaces(connect) {
       r3.filter((r) => !r.ok && r.e.message === 'too_many_bookings').length === 1 &&
       upcoming[0].n === 3,
     JSON.stringify({ r3: r3.map((r) => (r.ok ? 'ok' : r.e.message)), upcoming: upcoming[0].n }),
+  );
+
+  // 4. A walk-in booked by staff and a player's booking for the same hour, at once (D-072).
+  const walkIn = `select (public.create_manual_booking($1, $2::timestamptz, 'Abu Ali') ->> 'id') as id`;
+  const r4 = await race(connect, [
+    { user: users.owner, sql: walkIn, params: [PITCH, at('10:00')] },
+    { user: users.bob, sql: book, params: [PITCH, at('10:00'), null] },
+  ]);
+  check(
+    'a walk-in and a player booking for the same hour: exactly one wins',
+    r4.filter((r) => r.ok).length === 1 &&
+      r4.filter((r) => !r.ok && r.e.message === 'slot_taken').length === 1 &&
+      (await confirmedAt('10:00')) === 1,
+    JSON.stringify(r4.map((r) => (r.ok ? 'ok' : r.e.message))),
   );
 
   await setup.end();
