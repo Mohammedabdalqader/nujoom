@@ -871,7 +871,14 @@
     "shareText": "⚽ تشكيلة مباراة {{when}}: {{teamA}} ضد {{teamB}}!\n🏟️ {{pitch}}\n\n🔵 {{teamA}}:\n{{listA}}\n\n🟠 {{teamB}}:\n{{listB}}\n\nتعال شجع وشوف اللقطات بعد المباراة على {{app}}.\n{{url}}",
     "notFound": "المباراة مش متاحة، أو إنت مش ضمن لاعبيها.",
     "unrecorded": "التصوير: مباراة بدون تصوير",
-    "unassigned": "لسا مش بفريق"
+    "unassigned": "لسا مش بفريق",
+    "cancel": "الغِ الحجز",
+    "cancelConfirm": "متأكد بدك تلغي الحجز؟ الموعد برجع متاح لغيرك.",
+    "cancelYes": "آه، الغيه",
+    "cancelNo": "لا، خليه",
+    "cancelling": "عم نلغي...",
+    "cancelDone": "انلغى الحجز",
+    "cancelledNote": "هاد الحجز انلغى."
   },
   "missingOne": {
     "title": "ناقصنا واحد (طلب عاجل)",

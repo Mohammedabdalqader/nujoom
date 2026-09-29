@@ -843,7 +843,14 @@
     "shareText": "⚽ Line-ups for {{when}}: {{teamA}} vs {{teamB}}!\n🏟️ {{pitch}}\n\n🔵 {{teamA}}:\n{{listA}}\n\n🟠 {{teamB}}:\n{{listB}}\n\nCome and watch, and catch the clips afterwards on {{app}}.\n{{url}}",
     "notFound": "This match isn't available, or you're not one of its players.",
     "unrecorded": "Recording: not recorded",
-    "unassigned": "Not in a team yet"
+    "unassigned": "Not in a team yet",
+    "cancel": "Cancel booking",
+    "cancelConfirm": "Cancel this booking? The time becomes free for others.",
+    "cancelYes": "Yes, cancel it",
+    "cancelNo": "No, keep it",
+    "cancelling": "Cancelling...",
+    "cancelDone": "Booking cancelled",
+    "cancelledNote": "This booking was cancelled."
   },
   "missingOne": {
     "title": "One short (urgent)",

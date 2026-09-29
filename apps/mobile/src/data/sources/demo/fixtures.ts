@@ -488,6 +488,9 @@ export const previewMatchDetails: MatchDetails = {
   recorded: true,
   recordingBy: 'أحمد المالكي',
   unassigned: [],
+  organizer: false,
+  cancelled: false,
+  total: null,
   lineups: [
     [
       lineup('me', 'أحمد المالكي', 1, 'FWD', 8.4, PHOTOS.ahmadMalki, true),

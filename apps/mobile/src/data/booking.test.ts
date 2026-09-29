@@ -191,7 +191,29 @@ describe('the next match on Home', () => {
     expect(d.lineups[0].map((p) => p.name)).toEqual(['A2', 'A9']);
     expect(d.lineups[1].map((p) => p.name)).toEqual(['B7']);
     expect(d.unassigned.map((p) => p.name)).toEqual(['Organizer']);
-    expect(d).toMatchObject({ size: 5, recorded: false, recordingBy: null });
+    expect(d).toMatchObject({
+      size: 5,
+      recorded: false,
+      recordingBy: null,
+      organizer: true,
+      cancelled: false,
+      total: 20,
+    });
     expect(d.lineups[0][0]).not.toHaveProperty('team');
+  });
+
+  it('marks a cancelled booking and a viewer who is not the organizer', () => {
+    const d = toMatchDetails(
+      toBookingDetails({
+        ...receipt,
+        status: 'cancelled',
+        is_organizer: false,
+        cancelled_at: '2026-09-30T10:00:00Z',
+        cancel_reason: 'venue_closed',
+        players: [],
+      }),
+      names,
+    );
+    expect(d).toMatchObject({ cancelled: true, organizer: false });
   });
 });

@@ -827,3 +827,19 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
   - no page errors
   - Test data was removed.
 - **Next:** cancel from the app (organizer, with a confirmation) and a list of all upcoming bookings (up to three).
+
+**D-080 Cancelling a booking from the app (2026-09-29).**
+
+- **Where:** the match details dialog (D-079). Only the organizer sees "Cancel booking", only before kick-off (`cancel_booking` checks both again).
+- **Confirmation first:** "Cancel this booking? The time becomes free for others." with "Yes, cancel it" and "No, keep it". Cancelling can't be undone, so there's never a one-tap cancel.
+- **After cancelling:** a toast, the dialog closes, and Home, my bookings, the day's slots and the details refresh. Home then shows "no upcoming match". Server errors (for example "the match has started") show in place.
+- **Receipt facts:** the dialog now shows the booked total with "cash at the pitch". A cancelled booking says so and has no cancel button.
+- **View model:** `MatchDetails.organizer`, `cancelled` and `total`. The demo's sample match isn't the viewer's booking, so it shows no cancel.
+- **Verified** on Expo web (production variant, 390 px) against a temporary live pitch, 15/15 checks:
+  - the total "25 JOD (cash at the pitch)" showed
+  - Cancel asked first, and "No, keep it" left the booking confirmed
+  - "Yes, cancel it" set it to cancelled with reason `organizer` in the database, closed the dialog, and Home went back to "no upcoming match"
+  - reopening the booking said it was cancelled, with no cancel button
+  - no page errors
+  - Test data was removed.
+- **Found, not fixed here:** opening a dialog route directly (a link or a reload on `/match-details/…` or `/pitch/…`) draws it over an empty background instead of the tabs. Next step: render the tabs beneath deep-linked dialogs.

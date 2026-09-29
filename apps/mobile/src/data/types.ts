@@ -191,6 +191,11 @@ export type MatchDetails = UpcomingMatch & {
   lineups: [LineupPlayer[], LineupPlayer[]];
   /** Players not split into teams yet. */
   unassigned: LineupPlayer[];
+  /** The viewer organized this booking (only they can cancel it). */
+  organizer: boolean;
+  cancelled: boolean;
+  /** The price as booked, paid in cash at the pitch; null when unknown. */
+  total: number | null;
 };
 
 export type MissingOne = {

@@ -265,5 +265,8 @@ export function toMatchDetails(d: BookingDetails, names: TeamNames): MatchDetail
         .sort(byBib),
     ],
     unassigned: players.filter((p) => p.team === null).map(strip),
+    organizer: d.isOrganizer,
+    cancelled: d.status === 'cancelled',
+    total: d.total,
   };
 }

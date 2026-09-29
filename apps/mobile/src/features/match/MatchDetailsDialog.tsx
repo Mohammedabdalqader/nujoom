@@ -1,11 +1,14 @@
+import { errorKey } from '@nujoom/shared';
 import { useRouter } from 'expo-router';
+import { useState } from 'react';
 import { Pressable, View } from 'react-native';
 
-import { useMatchDetails } from '@/data/api';
+import { useCancelBooking, useMatchDetails } from '@/data/api';
 import type { LineupPlayer, MatchDetails, Team } from '@/data/types';
 import { sfx } from '@/design/sound';
 import { useLocale } from '@/lib/locale';
 import { shareToWhatsApp } from '@/lib/share';
+import { useNow } from '@/lib/useNow';
 import { describeKickoff } from '@/lib/when';
 import { Dialog, DialogLoading } from '@/ui/Dialog';
 import { Icon } from '@/ui/Icon';
@@ -15,7 +18,8 @@ import { useToast } from '@/ui/Toast';
 /**
  * "تشكيلة وتفاصيل المباراة": both line-ups with bibs and form, the pitch, time, size and who
  * films it (or that it isn't filmed). Players not in a team yet are listed below the line-ups.
- * Only the booking's players can open it (booking_details). Sharing needs the join link.
+ * Only the booking's players can open it (booking_details). Sharing needs the join link. The
+ * organizer can cancel before kick-off, after confirming; the total is paid in cash at the pitch.
  */
 export function MatchDetailsDialog({ bookingId }: { bookingId: string }) {
   const query = useMatchDetails(bookingId);
@@ -60,7 +64,7 @@ function NotFound() {
 }
 
 function Details({ match }: { match: MatchDetails }) {
-  const { t, locale, pick, number } = useLocale();
+  const { t, locale, pick, number, jod } = useLocale();
   const toast = useToast();
   const [teamA, teamB] = match.teams;
   const when = describeKickoff(match.startsAt, locale, t);
@@ -117,6 +121,16 @@ function Details({ match }: { match: MatchDetails }) {
             {t('matchDetails.duration', { value: number(minutes) })}
           </Text>
         </View>
+        {match.total !== null ? (
+          <Text font="grotesk" className="text-[12px] text-primary font-bold">
+            {t('catalog.booking.total', { total: jod(match.total) })}
+          </Text>
+        ) : null}
+        {match.cancelled ? (
+          <Text className="text-[12px] text-error font-bold">
+            {t('matchDetails.cancelledNote')}
+          </Text>
+        ) : null}
         <Text className="text-[12px] text-on-surface-variant">
           {!match.recorded
             ? t('matchDetails.unrecorded')
@@ -153,7 +167,74 @@ function Details({ match }: { match: MatchDetails }) {
           </Text>
         </Pressable>
       ) : null}
+
+      <CancelBooking match={match} />
     </Dialog>
+  );
+}
+
+/** The organizer's cancel, before kick-off only, behind a confirmation (the server checks too). */
+function CancelBooking({ match }: { match: MatchDetails }) {
+  const { t } = useLocale();
+  const router = useRouter();
+  const toast = useToast();
+  const now = useNow(30_000);
+  const cancel = useCancelBooking();
+  const [confirming, setConfirming] = useState(false);
+  if (!match.organizer || match.cancelled || new Date(match.startsAt).getTime() <= now) return null;
+
+  if (!confirming) {
+    return (
+      <Pressable
+        onPress={() => setConfirming(true)}
+        accessibilityRole="button"
+        className="self-center px-4 py-2 rounded-lg border border-error/50 active:bg-error/10"
+      >
+        <Text font="rubik" className="text-[13px] text-error font-bold">
+          {t('matchDetails.cancel')}
+        </Text>
+      </Pressable>
+    );
+  }
+  return (
+    <View className="bg-surface-container-low p-3 rounded-xl border border-error/50 gap-2">
+      <Text className="text-[13px] text-on-surface">{t('matchDetails.cancelConfirm')}</Text>
+      {cancel.isError ? (
+        <Text accessibilityRole="alert" className="text-[12px] text-error">
+          {t(errorKey(cancel.error))}
+        </Text>
+      ) : null}
+      <View className="flex-row gap-2">
+        <Pressable
+          onPress={() =>
+            cancel.mutate(match.bookingId, {
+              onSuccess: () => {
+                toast.show(t('matchDetails.cancelDone'));
+                router.back();
+              },
+            })
+          }
+          disabled={cancel.isPending}
+          accessibilityRole="button"
+          accessibilityState={{ disabled: cancel.isPending, busy: cancel.isPending }}
+          className="flex-1 py-2.5 rounded-lg bg-error-container active:opacity-80 items-center disabled:opacity-50"
+        >
+          <Text font="rubik" className="text-[14px] text-on-error-container font-bold">
+            {cancel.isPending ? t('matchDetails.cancelling') : t('matchDetails.cancelYes')}
+          </Text>
+        </Pressable>
+        <Pressable
+          onPress={() => setConfirming(false)}
+          disabled={cancel.isPending}
+          accessibilityRole="button"
+          className="flex-1 py-2.5 rounded-lg bg-surface-container-high active:bg-surface-container-highest items-center"
+        >
+          <Text font="rubik" className="text-[14px] text-on-surface font-bold">
+            {t('matchDetails.cancelNo')}
+          </Text>
+        </Pressable>
+      </View>
+    </View>
   );
 }
 
