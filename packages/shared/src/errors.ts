@@ -81,6 +81,14 @@ const SQL_ERROR_KEYS = {
   size_unknown: 'errors.booking.sizeUnknown',
   invalid_walk_in_name: 'errors.booking.invalidWalkInName',
   invalid_reason: 'errors.booking.invalidReason',
+  booking_cancelled: 'errors.booking.cancelled',
+  // Invites and joining (D-083)
+  invite_invalid: 'errors.invites.invalid',
+  booking_full: 'errors.invites.full',
+  removed_from_booking: 'errors.invites.removed',
+  youth_only_match: 'errors.invites.youthOnly',
+  organizer_cannot_leave: 'errors.invites.organizerCannotLeave',
+  not_a_player: 'errors.invites.notAPlayer',
 } as const;
 
 /** Supabase Auth error codes (AuthError.code) we explain specifically. */

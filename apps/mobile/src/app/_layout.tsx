@@ -47,13 +47,15 @@ function Navigator() {
   const account = useAccount();
   const stage = session.status === 'signedIn' ? (account.data?.stage ?? 'onboarding') : 'auth';
   const routed = session.status === 'signedIn' && account.isSuccess;
+  const inApp = stage === 'app';
 
-  // A link opened while signed out (a guardian approval) resumes once sign-in has routed.
+  // A link opened while signed out (a guardian approval, a match invite) resumes once sign-in has
+  // routed, and again once onboarding is done (a join link asks new players to finish first).
   useEffect(() => {
     if (!routed) return;
     const next = takeResume();
     if (next) router.push(next as Href);
-  }, [routed, router]);
+  }, [routed, inApp, router]);
 
   if (session.status === 'misconfigured') return <MisconfiguredScreen error={session.error} />;
   if (session.status === 'loading' || (session.status === 'signedIn' && account.isPending)) {
@@ -100,6 +102,8 @@ function Navigator() {
         <Stack.Screen name="legal/[doc]" />
         {/* Any stage: the guardian may be signed out, a player, or not a player at all. */}
         <Stack.Screen name="guardian/accept/[token]" />
+        {/* Any stage: a join link says what to do first (sign in, finish signing up). */}
+        <Stack.Screen name="j/[token]" />
       </Stack>
     </>
   );

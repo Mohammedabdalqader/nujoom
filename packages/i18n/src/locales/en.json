@@ -957,7 +957,16 @@
       "invalidWindow": "Couldn't load the times. Try again.",
       "sizeUnknown": "The field size must be known before it can be verified.",
       "invalidWalkInName": "Enter the customer's name (up to 60 characters).",
-      "invalidReason": "Pick a reason for blocking the time."
+      "invalidReason": "Pick a reason for blocking the time.",
+      "cancelled": "This match was cancelled."
+    },
+    "invites": {
+      "invalid": "This link doesn't work. The organizer may have changed it, or the match was cancelled.",
+      "full": "The match is full.",
+      "removed": "The organizer removed you from this match, so this link won't let you back in.",
+      "youthOnly": "This match is for players under 18.",
+      "organizerCannotLeave": "The organizer can't leave; cancel the match instead.",
+      "notAPlayer": "You're not in this match."
     }
   },
   "demo": {
@@ -1610,6 +1619,35 @@
       "when": "{{day}} {{date}} · {{from}} – {{to}}",
       "total": "Total: {{total}} (cash at the pitch)",
       "again": "Book another time"
+    }
+  },
+  "invites": {
+    "title": "Join the match",
+    "signInBody": "Sign in to see the match details and join.",
+    "signIn": "Sign in",
+    "invitedBy": "Invited by {{name}}",
+    "spotsLeft_one": "1 spot left",
+    "spotsLeft_other": "{{count}} spots left",
+    "recorded": "Recorded match",
+    "unrecorded": "Not recorded",
+    "join": "Join the match",
+    "joining": "Joining...",
+    "joined": "You're in ✓",
+    "openMatch": "Open match details",
+    "finishSignUp": "Finish signing up",
+    "openSettings": "Open settings",
+    "home": "Go home",
+    "invalid": "This link doesn't work. The organizer may have changed it, or the match was cancelled.",
+    "reasons": {
+      "alreadyJoined": "You're already in this match.",
+      "notOnboarded": "Finish signing up first, then you'll come back here.",
+      "cancelled": "This match was cancelled.",
+      "started": "The match has started, so joining is closed.",
+      "removed": "The organizer removed you from this match, so this link won't let you back in.",
+      "youthOnly": "This match is for players under 18.",
+      "recordingConsent": "This match is recorded. To join, allow recording in Settings.",
+      "guardianRequired": "Recorded matches need your guardian to approve first.",
+      "full": "The match is full."
     }
   }
 }

@@ -956,3 +956,29 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
 - **Production:** calls `my_favorite_pitches` (photos signed like search results) and `set_pitch_favorite`. The live RPC checks in D-086 used these same calls.
 - **Demo:** the same rules as the server: verified fields only, newest first, once each, and removing always works. A test covers it (`sources/demo/favorites.test.ts`).
 - **No screen yet:** the heart on the pitch page and a favourites list need wording, so they wait for Codex's locale claim.
+
+**D-088 The app's join screen for invite links (2026-09-29).**
+
+- **Where:** route `j/[token]` (`features/invites/JoinScreen.tsx`), a full page like the guardian link. It's open at any stage, so it can say what to do first.
+- **States:**
+  - **Malformed or unknown link:** "this link doesn't work". A malformed link isn't sent to the server.
+  - **Signed out:** sign in, then come back here. This uses the existing resume, which now also fires when onboarding finishes. A brand-new player is told to finish signing up and comes back afterwards.
+  - **Signed in:** the match card: venue · field, city, day/date/time, size, spots left (Arabic plural forms), recorded or not, the total with "cash at the pitch", and "invited by" (adult organizers only). There's no roster before joining (§6).
+  - **Then either Join, or the one reason they can't,** with a way forward when there is one:
+    - already in → open the match
+    - not signed up → finish signing up
+    - recorded without permission → Settings
+    - cancelled, started, removed, youth-only, guardian needed or full → the reason and a way home
+  - **After joining:** "done" shows only after the server answers, then the match details open over Home.
+- **Wording:** new `invites.*` keys and `errors.invites.*`. New error codes are mapped in `@nujoom/shared` errors, and `booking_cancelled` is now mapped too. Codex owns the copy and may rewrite it (the coordination thread lists it).
+- **Verified** on Expo web (production variant, 390 px) against a temporary live match, 14/14 checks:
+  - signed out, the link asked to sign in, and after the tester code it came back to the match
+  - the card showed "23 spots left", not recorded, "25 JOD (cash at the pitch)" and "invited by", and no other player's name
+  - Join opened the match details over Home with both players, and the database had both
+  - opening the link again said "you're in"
+  - unknown and malformed links said the link doesn't work
+  - a brand-new account was told to finish signing up, and the button opened onboarding
+  - no page errors
+  - Test data was removed.
+- **Mistake during testing:** a manual cleanup swept every `e2e-*@nujoom.test` account and deleted Codex's QA tester. Codex has been told how to recreate it (coordination 12:20). My scripts now delete only the accounts they created, by id.
+- **Next:** the organizer's share (once the site address exists), reset and remove actions in the match details, and a player's leave.
