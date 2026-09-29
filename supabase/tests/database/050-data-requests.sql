@@ -124,7 +124,7 @@ select is_empty(
          -- exported by public.export_user_data
          'profiles', 'profile_private', 'user_settings', 'consents', 'guardians', 'events',
          'data_requests', 'pitch_staff', 'facility_claims', 'community_submissions', 'staff_invites',
-         'bookings', 'booking_players', 'pitch_favorites',
+         'bookings', 'booking_players', 'pitch_favorites', 'booking_gear_items',
          -- excluded: admin role and the admin who last edited a setting (not personal data)
          'app_admins', 'config', 'feature_flags') $$,
   'every table with a user reference is covered by the export (extend export_user_data)'

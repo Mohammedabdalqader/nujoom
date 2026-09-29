@@ -83,6 +83,11 @@ const SQL_ERROR_KEYS = {
   invalid_reason: 'errors.booking.invalidReason',
   booking_cancelled: 'errors.booking.cancelled',
   invalid_assignment: 'errors.booking.invalidAssignment',
+  booking_ended: 'errors.booking.ended',
+  // The gear checklist (D-093)
+  gear_taken: 'errors.gear.taken',
+  invalid_gear_name: 'errors.gear.invalidName',
+  too_many_gear_items: 'errors.gear.tooMany',
   // Invites and joining (D-083)
   invite_invalid: 'errors.invites.invalid',
   booking_full: 'errors.invites.full',

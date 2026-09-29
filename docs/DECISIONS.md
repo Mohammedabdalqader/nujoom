@@ -1043,3 +1043,20 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
 - **Verified:**
   - pgTAP `250`: 14 checks, and the whole suite (556) passes.
   - Pushed live. A live check (4/4): the organizer saved a line-up, the joined player saw their team, bib and position, a bad bib was refused, and a player couldn't save teams. Test data was removed.
+
+**D-093 The gear checklist: the database (2026-09-29).**
+
+- **What:** migration `20260928003500_booking_gear.sql`, adding the `booking_gear_items` table (RLS, no client access) and RPCs `booking_gear`, `claim_gear_item`, `set_gear_ready`, `add_gear_item` and `remove_gear_item` (spec §6.6 "Gear checklist"). The shape follows the demo's gear screen.
+- **Rules:**
+  - **Players only:** only the match's active players see and use the checklist, until the match ends (`booking_ended`, new) and never on a cancelled match.
+  - **Defaults:** the first open fills in the default items (ball, bibs, water, whistle/referee, first-aid kit), once.
+  - **Claiming:** a player says they'll bring an item, which also marks it ready. Someone else's item can't be taken over or let go (`gear_taken`); the organizer can free any item.
+  - **Ready:** any player can tick an item ready, like the demo checklist.
+  - **Organizer only:** adding custom items and removing items. Custom names are tidied, at most 40 characters (`invalid_gear_name`), and a list holds at most 15 items (`too_many_gear_items`). The spec lets the organizer edit the match tools while participants view them; organizer-only custom names also keep the list from turning into messages (§7).
+  - **Names only:** players see who brings what by display name, never ids.
+  - Limited to 120 actions an hour per person. A claim counts as `tool_used`.
+- **Data rights:** the export lists the items a person said they'd bring (`gear_claimed`). The coverage guard lists the table. Deleting an account frees its items (`on delete set null`).
+- **Verified:**
+  - pgTAP `260`: 17 checks, and the whole suite (573) passes.
+  - Pushed live; a guest is refused. A live check (5/5): the five default items, a player claiming the ball, the organizer seeing who brings it by name only, a player refused when adding, and the organizer adding a custom item. Test data was removed.
+- **Next:** the app's data layer and wiring the demo's gear screen to it. The screen is Codex's, so I'll post the data shape first.

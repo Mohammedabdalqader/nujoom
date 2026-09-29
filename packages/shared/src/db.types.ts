@@ -62,6 +62,51 @@ export type Database = {
         }
         Relationships: []
       }
+      booking_gear_items: {
+        Row: {
+          assignee_id: string | null
+          booking_id: string
+          created_at: string
+          id: string
+          kind: Database["public"]["Enums"]["gear_kind"]
+          name: string | null
+          ready: boolean
+        }
+        Insert: {
+          assignee_id?: string | null
+          booking_id: string
+          created_at?: string
+          id?: string
+          kind: Database["public"]["Enums"]["gear_kind"]
+          name?: string | null
+          ready?: boolean
+        }
+        Update: {
+          assignee_id?: string | null
+          booking_id?: string
+          created_at?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["gear_kind"]
+          name?: string | null
+          ready?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_gear_items_assignee_id_fkey"
+            columns: ["assignee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "booking_gear_items_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       booking_invites: {
         Row: {
           booking_id: string
@@ -1677,6 +1722,10 @@ export type Database = {
         Returns: Json
       }
       accept_staff_invite: { Args: { p_token: string }; Returns: string }
+      add_gear_item: {
+        Args: { p_booking: string; p_name: string }
+        Returns: Json
+      }
       add_pitch_media: {
         Args: {
           p_attribution?: string
@@ -1779,6 +1828,7 @@ export type Database = {
         Returns: Json
       }
       booking_details: { Args: { p_booking: string }; Returns: Json }
+      booking_gear: { Args: { p_booking: string }; Returns: Json }
       booking_invite: { Args: { p_booking: string }; Returns: Json }
       booking_preview: { Args: { p_token: string }; Returns: Json }
       booking_preview_public: { Args: { p_token: string }; Returns: Json }
@@ -1796,6 +1846,10 @@ export type Database = {
       claim_facility: {
         Args: { p_evidence_paths?: string[]; p_facility: string }
         Returns: string
+      }
+      claim_gear_item: {
+        Args: { p_claim: boolean; p_item: string }
+        Returns: Json
       }
       complete_onboarding: {
         Args: {
@@ -1924,6 +1978,7 @@ export type Database = {
         }
         Returns: Json
       }
+      remove_gear_item: { Args: { p_item: string }; Returns: Json }
       remove_player: {
         Args: { p_booking: string; p_player_ref: string }
         Returns: Json
@@ -1940,6 +1995,10 @@ export type Database = {
       search_pitches: { Args: { p?: Json }; Returns: Json }
       set_booking_teams: {
         Args: { p_assignments: Json; p_booking: string }
+        Returns: Json
+      }
+      set_gear_ready: {
+        Args: { p_item: string; p_ready: boolean }
         Returns: Json
       }
       set_pitch_favorite: {
@@ -2009,6 +2068,14 @@ export type Database = {
         | "school_only"
         | "closed"
         | "unknown"
+      gear_kind:
+        | "ball"
+        | "bibs"
+        | "water"
+        | "referee"
+        | "firstaid"
+        | "booking"
+        | "custom"
       guardian_status: "pending" | "confirmed" | "revoked"
       job_status: "queued" | "running" | "succeeded" | "dead"
       listing_state:
@@ -2229,6 +2296,15 @@ export const Constants = {
         "school_only",
         "closed",
         "unknown",
+      ],
+      gear_kind: [
+        "ball",
+        "bibs",
+        "water",
+        "referee",
+        "firstaid",
+        "booking",
+        "custom",
       ],
       guardian_status: ["pending", "confirmed", "revoked"],
       job_status: ["queued", "running", "succeeded", "dead"],
