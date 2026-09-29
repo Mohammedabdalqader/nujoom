@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  addDays,
   autoBalance,
   dayKeyOf,
   generateSlots,
@@ -252,5 +253,13 @@ describe('joinTokenFromPath', () => {
     expect(joinTokenFromPath(`/join/${token}/../x`)).toBe(token);
     expect(joinTokenFromPath('/join/has spaces in it here')).toBeNull();
     expect(joinTokenFromPath(`/rejoin/${token}`)).toBeNull();
+  });
+});
+
+describe('addDays', () => {
+  it('moves across month and year ends', () => {
+    expect(addDays('2026-09-30', 1)).toBe('2026-10-01');
+    expect(addDays('2026-01-01', -1)).toBe('2025-12-31');
+    expect(addDays('2028-02-28', 1)).toBe('2028-02-29');
   });
 });

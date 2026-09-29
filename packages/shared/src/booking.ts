@@ -174,3 +174,9 @@ export function joinTokenFromPath(path: string): string | null {
 
 /** A remembered invite expires after a day, so a stale link never hijacks a later sign-in. */
 export const PENDING_JOIN_TTL_MS = 24 * 60 * 60 * 1000;
+
+/** A calendar date (YYYY-MM-DD) moved by whole days, e.g. the calendar's previous/next day. */
+export function addDays(date: string, days: number): string {
+  const [y, m, d] = date.split('-').map(Number);
+  return new Date(Date.UTC(y ?? 1970, (m ?? 1) - 1, (d ?? 1) + days)).toISOString().slice(0, 10);
+}

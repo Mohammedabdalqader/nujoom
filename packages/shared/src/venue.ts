@@ -1,3 +1,5 @@
+import { generateSlots, type OpeningHours } from './booking';
+
 /**
  * Venue owner rules shared by the website and, later, the app (D-066). The database is the
  * authority (pitches.amenities check, owner_confirm_field); these decide what a form submits.
@@ -66,4 +68,59 @@ export function parseFieldLabel(raw: string): string | null | 'invalid' {
   const text = raw.trim().replace(/\s+/g, ' ');
   if (text === '') return null;
   return text.length <= 60 ? text : 'invalid';
+}
+
+/** One row of a venue calendar (venue_schedule, D-072). */
+export type ScheduleEntry = {
+  id: string;
+  pitch_id: string;
+  kind: 'app' | 'manual' | 'block';
+  status: 'confirmed' | 'cancelled';
+  starts_at: string;
+  ends_at: string;
+  organizer?: string | null;
+  walk_in_name?: string | null;
+  contact_phone?: string | null;
+  block_reason?: string | null;
+  cancel_reason?: string | null;
+  players?: number;
+};
+
+export type DayRow =
+  | { type: 'free'; startsAt: string; endsAt: string; past: boolean }
+  | { type: 'entry'; entry: ScheduleEntry; started: boolean };
+
+/**
+ * A field's day for the staff calendar (D-073): its confirmed bookings and blocks, plus every
+ * free slot of the opening hours that nothing overlaps, in time order. Bookings that no longer fit
+ * the grid (hours changed after booking) still show. `past` free slots can't be booked any more;
+ * `started` entries can't be cancelled.
+ */
+export function dayRows(
+  hours: OpeningHours,
+  slotMinutes: number,
+  date: string,
+  entries: readonly ScheduleEntry[],
+  now: Date = new Date(),
+): DayRow[] {
+  const taken = entries.filter((e) => e.status === 'confirmed');
+  const overlaps = (start: string, end: string) =>
+    taken.some(
+      (e) => Date.parse(e.starts_at) < Date.parse(end) && Date.parse(e.ends_at) > Date.parse(start),
+    );
+  const free: DayRow[] = generateSlots(hours, slotMinutes, date)
+    .filter((s) => !overlaps(s.startsAt, s.endsAt))
+    .map((s) => ({
+      type: 'free',
+      startsAt: s.startsAt,
+      endsAt: s.endsAt,
+      past: Date.parse(s.startsAt) < now.getTime(),
+    }));
+  const booked: DayRow[] = taken.map((entry) => ({
+    type: 'entry',
+    entry,
+    started: Date.parse(entry.starts_at) <= now.getTime(),
+  }));
+  const start = (r: DayRow) => Date.parse(r.type === 'free' ? r.startsAt : r.entry.starts_at);
+  return [...free, ...booked].sort((a, b) => start(a) - start(b));
 }

@@ -265,7 +265,15 @@ export default async function VenuePage({ params, searchParams }: Props) {
             const isOwner = v.role === 'owner';
             return (
               <Card key={String(v.facility_id)}>
-                <h3 className="font-headline text-lg font-bold">{pick(v.name, locale)}</h3>
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <h3 className="font-headline text-lg font-bold">{pick(v.name, locale)}</h3>
+                  <Link
+                    href={`/${locale}/venue/calendar/${String(v.facility_id)}`}
+                    className={quiet}
+                  >
+                    {t('web.calendar.open')}
+                  </Link>
+                </div>
                 <p className="text-sm text-on-surface-variant">{pick(v.city, locale)}</p>
                 <p className="mt-2 text-sm">
                   {t(

@@ -92,7 +92,7 @@ Newest first. The day-to-day thread between the two agents is in `agentic_system
 
 ### Next
 
-1. Booking (R2): the rules are written (D-070) and the core is live in the database (D-071). A player can book a verified field's free hour, the same hour can never be booked twice (tested with real simultaneous attempts), and cancelling frees it. Venues can also enter phone and walk-in bookings, owners can block time (maintenance, closures), and staff have a calendar of everything; none of these can overlap (D-072). Next: that calendar on the owner page, then the app screens. One question for you (B-Q1). The QR poster comes with check-in (R4b).
+1. Booking (R2): the rules are written (D-070) and the core is live in the database (D-071). A player can book a verified field's free hour, the same hour can never be booked twice (tested with real simultaneous attempts), and cancelling frees it. Venues can also enter phone and walk-in bookings, owners can block time (maintenance, closures), and staff have a calendar of everything; none of these can overlap (D-072). Venue staff now work from a booking calendar on the website: each day's free times, app bookings, walk-ins and blocked times, where they add walk-ins and cancel, and owners block time (D-073). Next: connecting the app's booking screens to this. One question for you (B-Q1). The QR poster comes with check-in (R4b).
 2. Import reviewed pitch records once Codex's intake has confirmed access and locations; an admin then publishes them.
 3. Slice 2 booking, once there is verified inventory to book.
 

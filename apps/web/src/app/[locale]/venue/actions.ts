@@ -243,3 +243,71 @@ export async function createProfileAndJoin(form: FormData) {
   }
   await joinTeam(form);
 }
+
+// The venue calendar (D-073). Every action returns to the same day of the same venue's calendar;
+// the database checks staff/owner roles and the slot rules again.
+const DATE = /^\d{4}-\d{2}-\d{2}$/;
+const REASONS = ['venue_closed', 'maintenance', 'weather', 'staff_other'];
+
+function calendar(form: FormData) {
+  const { get } = read(form);
+  const locale = get('locale');
+  const facility = get('facility');
+  const date = get('date');
+  if (!UUID.test(facility) || !DATE.test(date)) redirect(`/${locale}/venue?error=invalid_action`);
+  return { get, back: `/${locale}/venue/calendar/${facility}?date=${date}` };
+}
+
+function calendarFinish(back: string, error: { message?: string } | null, done: string): never {
+  if (error) redirect(`${back}&error=${encodeURIComponent(error.message ?? 'generic')}`);
+  revalidatePath(back.split('?')[0] ?? back);
+  redirect(`${back}&done=${done}`);
+}
+
+export async function addWalkIn(form: FormData) {
+  const { get, back } = calendar(form);
+  const [pitch, startsAt] = get('slot').split('|');
+  if (!pitch || !UUID.test(pitch) || !startsAt || Number.isNaN(Date.parse(startsAt))) {
+    redirect(`${back}&error=invalid_slot`);
+  }
+  const supabase = await client(back);
+  const { error } = await supabase.rpc('create_manual_booking', {
+    p_pitch: pitch,
+    p_starts_at: startsAt,
+    p_walk_in_name: get('name'),
+    p_contact_phone: get('phone') || null,
+  });
+  calendarFinish(back, error, 'walk_in');
+}
+
+export async function blockTime(form: FormData) {
+  const { get, back } = calendar(form);
+  const pitch = get('pitch');
+  const from = get('from');
+  const to = get('to');
+  if (!UUID.test(pitch) || Number.isNaN(Date.parse(from)) || Number.isNaN(Date.parse(to))) {
+    redirect(`${back}&error=invalid_slot`);
+  }
+  if (!REASONS.includes(get('reason'))) redirect(`${back}&error=invalid_reason`);
+  const supabase = await client(back);
+  const { error } = await supabase.rpc('block_slots', {
+    p_pitch: pitch,
+    p_starts_at: from,
+    p_ends_at: to,
+    p_reason: get('reason') as 'venue_closed' | 'maintenance' | 'weather' | 'staff_other',
+  });
+  calendarFinish(back, error, 'blocked');
+}
+
+export async function cancelFromCalendar(form: FormData) {
+  const { get, back } = calendar(form);
+  const booking = get('booking');
+  if (!UUID.test(booking)) redirect(`${back}&error=invalid_action`);
+  const reason = REASONS.includes(get('reason')) ? get('reason') : 'staff_other';
+  const supabase = await client(back);
+  const { error } = await supabase.rpc('cancel_booking', {
+    p_booking: booking,
+    p_reason: reason as 'venue_closed' | 'maintenance' | 'weather' | 'staff_other',
+  });
+  calendarFinish(back, error, 'cancelled');
+}

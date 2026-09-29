@@ -724,3 +724,17 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
 - **Shared rules:** manual bookings and blocks use the same exclusion constraint and per-field lock as app bookings (D-071). A fourth real race (a staff walk-in and a player booking the same hour at once) always has exactly one winner.
 - **Evidence:** pgTAP `200-venue-schedule.sql` has 20 assertions (473 total) plus 4 races. The live smoke run now covers walk-in, block, calendar, privacy and unblock (15/15), with test data removed. New error messages: `invalid_walk_in_name`, `invalid_reason`.
 - **Next:** the calendar on the owner page (web), then the app's booking data layer.
+
+**D-073 The venue calendar on the website (2026-09-29).**
+
+- **Where:** `/[locale]/venue/calendar/<venue>?date=YYYY-MM-DD`, opened from each venue card ("Booking calendar"). One Amman day at a time, with previous/next/today and a date picker. The venue's staff only (others get a 404).
+- **What it shows:** for each field, the free slots of that day's opening hours and every confirmed booking and block, in time order.
+  - App bookings show the organizer's name, player count and contact phone; walk-ins show the customer's name and phone; blocks show the reason.
+  - Past slots are dimmed, and cancelled bookings are listed separately with the reason.
+  - The day logic is a pure, tested function (`dayRows` in `@nujoom/shared`). It also keeps showing bookings that no longer fit changed hours.
+- **Actions** (server actions; the database re-checks roles and slot rules, D-072):
+  - staff add a walk-in customer to a free slot and cancel with a reason (venue closed, maintenance, weather, other)
+  - owners also block time with from/until and a reason, and unblock
+  - blocking over a booking is refused with a clear message
+- **Translation keys:** reason codes become camelCase keys, because the i18n plural test reads keys ending in `_other` as plural forms.
+- **Verified live (every check passed):** the calendar opens from the card; 8 free hours; a walk-in booked and shown; a player's app booking shown with name and phone; a block over a booking refused; a maintenance block that players then can't book; cancel for weather into the cancelled list; unblock. The database agrees. A staff member (phone width, no sideways scroll) sees the calendar and walk-ins but no block form; a player gets 404; the English page works; no page errors. Test data was removed.

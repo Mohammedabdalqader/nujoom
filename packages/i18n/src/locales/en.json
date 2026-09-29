@@ -1442,6 +1442,63 @@
       "open": "Open my venues",
       "profileHint": "To join you must be 18 or older. We keep only your name and date of birth.",
       "joined": "You've joined the team."
+    },
+    "calendar": {
+      "open": "Booking calendar",
+      "title": "Booking calendar",
+      "back": "← My venues",
+      "prev": "Previous day",
+      "next": "Next day",
+      "today": "Today",
+      "go": "Show",
+      "pickDate": "Pick a day",
+      "done": {
+        "walkIn": "Customer booking added.",
+        "blocked": "Time blocked.",
+        "cancelled": "Cancelled."
+      },
+      "noHours": "You haven't set opening hours for this field yet.",
+      "closed": "The field is closed on this day.",
+      "past": "Past",
+      "free": "Free",
+      "kind": {
+        "app": "App booking",
+        "manual": "Customer booking",
+        "block": "Blocked"
+      },
+      "players": "Players: {{n}}",
+      "reasons": {
+        "venueClosed": "Venue closed",
+        "maintenance": "Maintenance",
+        "weather": "Weather",
+        "staffOther": "Other reason"
+      },
+      "cancelReasons": {
+        "organizer": "Cancelled by the organizer",
+        "venueClosed": "Venue closed",
+        "maintenance": "Maintenance",
+        "weather": "Weather",
+        "staffOther": "Cancelled by the venue",
+        "admin": "Cancelled by an admin",
+        "accountDeleted": "Account deleted"
+      },
+      "reason": "Reason",
+      "cancel": "Cancel booking",
+      "unblock": "Unblock",
+      "cancelledTitle": "Cancelled on this day",
+      "walkInTitle": "Customer booking (phone or walk-in)",
+      "walkInHint": "For people who book with you directly. It shows in the calendar and nobody can book the same time.",
+      "noFree": "No free times on this day.",
+      "slot": "Field and time",
+      "name": "Customer's name",
+      "phone": "Phone number (optional)",
+      "addWalkIn": "Book",
+      "blockTitle": "Block time",
+      "blockHint": "For maintenance or a private event. It must be within opening hours, and you can't block time that has a booking (cancel it first).",
+      "field": "Field",
+      "from": "From",
+      "to": "Until",
+      "block": "Block the time"
     }
   }
 }
