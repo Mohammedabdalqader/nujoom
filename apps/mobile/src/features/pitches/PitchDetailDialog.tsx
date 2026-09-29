@@ -1,15 +1,18 @@
+import { errorKey } from '@nujoom/shared';
 import { Image } from 'expo-image';
 import * as Linking from 'expo-linking';
 import { useRouter } from 'expo-router';
+import type { ReactNode } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 
-import { useCatalogPitch } from '@/data/api';
+import { useCatalogPitch, useFavoritePitches, useSetPitchFavorite } from '@/data/api';
 import type { CatalogDetail, Localized } from '@/data/catalog';
 import { BookingSection } from '@/features/pitches/BookingSection';
 import { useLocale } from '@/lib/locale';
 import { Dialog, DialogLoading } from '@/ui/Dialog';
 import { Icon, type IconName } from '@/ui/Icon';
 import { Text } from '@/ui/Text';
+import { useToast } from '@/ui/Toast';
 
 /** Codes to translation keys (keys ending in "_other" would read as plural forms). */
 const key = (code: string) => code.replace(/_(\w)/g, (_, c: string) => c.toUpperCase());
@@ -27,7 +30,7 @@ export function PitchDetailDialog({ pitchId }: { pitchId: string }) {
   return data ? <Detail item={data} /> : <Missing />;
 }
 
-function Header({ title }: { title: string }) {
+function Header({ title, action }: { title: string; action?: ReactNode }) {
   const { t } = useLocale();
   const router = useRouter();
   return (
@@ -35,6 +38,7 @@ function Header({ title }: { title: string }) {
       <Text font="rubik" className="flex-1 text-[18px] text-on-surface font-bold" numberOfLines={2}>
         {title}
       </Text>
+      {action}
       <Pressable
         onPress={() => router.back()}
         accessibilityRole="button"
@@ -56,6 +60,47 @@ function Missing() {
         {t('catalog.detail.missing')}
       </Text>
     </Dialog>
+  );
+}
+
+/**
+ * The favourite heart (D-086/D-091): only verified fields can be added (spec §5), and a favourite
+ * that lost its badge can still be removed. It shows the state it's being set to while the
+ * server answers, then the server's list decides.
+ */
+function FavoriteButton({ pitchId, verified }: { pitchId: string; verified: boolean }) {
+  const { t } = useLocale();
+  const toast = useToast();
+  const favorites = useFavoritePitches();
+  const set = useSetPitchFavorite();
+  const saved = favorites.data?.some((f) => f.pitchId === pitchId) ?? false;
+  const on = set.isPending ? set.variables.favorite : saved;
+  if (!favorites.isSuccess || (!verified && !saved)) return null;
+  return (
+    <Pressable
+      onPress={() =>
+        set.mutate(
+          { pitchId, favorite: !on },
+          {
+            onSuccess: (now) =>
+              toast.show(now ? t('catalog.favorite.added') : t('catalog.favorite.removed')),
+            onError: (error) => toast.show(t(errorKey(error))),
+          },
+        )
+      }
+      disabled={set.isPending}
+      accessibilityRole="button"
+      accessibilityState={{ selected: on, busy: set.isPending }}
+      accessibilityLabel={on ? t('catalog.favorite.remove') : t('catalog.favorite.add')}
+      className="w-8 h-8 rounded-full bg-surface-container-high active:bg-surface-container-highest items-center justify-center"
+    >
+      <Icon
+        name={on ? 'favorite' : 'favorite_border'}
+        filled={on}
+        size={18}
+        className={on ? 'text-error' : 'text-on-surface'}
+      />
+    </Pressable>
   );
 }
 
@@ -90,7 +135,10 @@ function Detail({ item }: { item: CatalogDetail }) {
 
   return (
     <Dialog scroll>
-      <Header title={title} />
+      <Header
+        title={title}
+        action={<FavoriteButton pitchId={item.pitchId} verified={verified} />}
+      />
 
       <View className="gap-2">
         <View

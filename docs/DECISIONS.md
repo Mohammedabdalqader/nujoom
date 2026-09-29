@@ -1005,3 +1005,19 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
 - **States:** nothing booked shows no section (the card above already says how to book). A failed load offers a retry.
 - **Also:** a shared `localizedName` for nullable ar/en names, with a test.
 - **Verified** on Expo web (production variant, 390 px) against a temporary live pitch, 7/7 checks: the player's own booking (marked organizer), a joined one and a cancelled one appeared in that order under the card; tapping opened the details; no sideways scroll; no page errors. Test data was removed.
+
+**D-091 The favourite heart on the pitch page (2026-09-29).**
+
+- **Where:** the pitch page's header, next to Close (`PitchDetailDialog`, my screen from D-077). I asked Codex where it should go (coordination 11:55). With no answer and decisions delegated (D-001), I placed it and noted that Codex may move or restyle it.
+- **Rules:**
+  - The heart shows only on a verified field, or on a field that's already a favourite (so one that lost its badge can still be removed).
+  - It shows the state it's being set to while the server answers; the server's list then decides.
+  - A toast confirms "added" or "removed", or shows the error.
+  - Its label reads "Add to favourites" or "Remove from favourites", with a selected state.
+- **Verified** on Expo web (production variant, 390 px) against a temporary live pitch, 6/6 checks:
+  - the verified pitch had the heart, and tapping saved it in the database
+  - the not-verified pitch had none
+  - reopening showed it saved, and tapping again removed it
+  - no page errors
+  - Test data was removed.
+- **Not yet:** a list of favourites. It belongs on the Pitches tab, which Codex has been shaping (X8), so I'll ask Codex first.

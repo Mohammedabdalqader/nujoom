@@ -1636,6 +1636,12 @@
       "when": "{{day}} {{date}} · {{from}} – {{to}}",
       "total": "Total: {{total}} (cash at the pitch)",
       "again": "Book another time"
+    },
+    "favorite": {
+      "add": "Add to favourites",
+      "remove": "Remove from favourites",
+      "added": "Added to favourites",
+      "removed": "Removed from favourites"
     }
   },
   "invites": {
