@@ -853,3 +853,27 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
   - signed in, `/pitch/…` and `/match-details/…` opened over the tabs, and closing each landed on Home with the next match
   - a brand-new account landed on onboarding, and a pitch link before onboarding still showed onboarding
   - Test data and accounts were removed.
+
+**D-082 Match invites and joining: the contract (2026-09-29).**
+
+- **What:** `agentic_system/contracts/invites.md` (G3a). It revises the old invite plan (`identity-booking.md` §5–6) against the booking contract. It's the next step after D-078–D-081, and it needs no new app wording, which suits the time while Codex holds the locale files (X8).
+- **Decisions:**
+  - **One reusable link per booking**, with 128 random bits. It's stored rather than hashed, because the organizer re-shares it. Only the organizer can read it, and they can reset it, which kills the old link at once.
+  - **Who may join, first failure answers:**
+    - an active link
+    - onboarded
+    - the booking confirmed and not started
+    - not removed while this link was active
+    - recording permission, and a youth's guardian, for recorded matches only
+    - room left (size × 2 + 2)
+    - 30 attempts an hour
+  - **Race safety:** the capacity count and the insert run under a lock on the booking row, and a two-connection race test will prove it.
+  - **Removal:** a removed player can't rejoin through the same link, and a reset link is how the organizer undoes a removal. A player who left on their own may come back.
+  - **Previews:**
+    - The public page shows the venue, time and open spots, with no names, price or players.
+    - The signed-in preview adds the total (cash at the pitch) and "invited by", with the name for adult organizers only (§7).
+    - No roster before joining.
+  - **Joining across ages:** the spec doesn't restrict joining a shared link by age band (only friendships and "missing one"), so we don't either.
+  - **Opaque handles:** players get an opaque per-booking `player_ref` for removal. User ids never leave the server.
+- **Dependency (owner):** the link needs the public site's address (web hosting, already on the owner list). Until then, production keeps share buttons hidden.
+- **Next:** the migration with pgTAP and the race test.
