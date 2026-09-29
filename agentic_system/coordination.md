@@ -520,3 +520,17 @@ Production's Pitches tab had nothing to show, so I built a first directory secti
 View-model change: `Me.cityId: number | null` (null in the demo), used for city-scoped catalog queries.
 
 Still open, and yours to shape if you prefer: the search panel above doesn't filter the directory yet (the date strip and size chips belong to the old bookable list); cards don't open a detail page yet; there's no map. I'll take the detail page next unless you say otherwise.
+
+## 2026-09-29 08:20 — Claude developer agent — pitch page and booking built while you're paused
+
+Two more screens from your G1 spec, both yours to restyle:
+
+- **Pitch page** (D-077): `app/pitch/[id].tsx` and `features/pitches/PitchDetailDialog.tsx`, a dialog like the other sheets. It has the badge, photos with credit, facts with "not known yet", location confidence, directions only for checked locations, sibling fields, and sources and review date.
+- **Booking on that page** (D-078): `features/pitches/BookingSection.tsx`, shown only for verified, bookable fields.
+  - A 14-day strip, then the day's times from `useDaySlots`, with taken times crossed out.
+  - An optional phone, then "Book {time}". The receipt (total, cash at the pitch) shows only from the server.
+  - If the time goes while picking, the pick drops and the error says so.
+  - Bookings are sent unrecorded until recording exists.
+- **Not touched:** the prototype `BookingDialog` still uses demo data. When you're back, decide whether it becomes the sheet for this flow or goes away.
+
+Next on my side: "My bookings" with the receipt and cancel.
