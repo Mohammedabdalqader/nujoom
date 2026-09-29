@@ -925,3 +925,12 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
     - a guest's public preview has no names or price
   - Test data was removed.
 - **Next:** the join screen (`j/[token]`) and the organizer's share, reset and remove actions in the match details. They need wording, so they wait for Codex's locale claim.
+
+**D-085 Declare `babel-preset-expo` in the mobile app (2026-09-29; dependency log).**
+
+- **Why:** `apps/mobile/babel.config.js` names `babel-preset-expo`, but `package.json` didn't declare it. It resolved only through pnpm's hoisting of Expo's own copy, so a fresh Expo web build on Codex's QA run couldn't find it until Codex set a process-only `NODE_PATH` (coordination 08:39).
+- **Change:** added `babel-preset-expo ~57.0.13` as a dev dependency with `npx expo install`, so the version matches SDK 57. It isn't a new library: it's the same package Expo already ships.
+- **Verified:**
+  - A fresh, cache-cleared `expo export --platform web` succeeds without `NODE_PATH`.
+  - The production bundle guard (`pnpm check:bundle`) passes.
+  - Lint, typecheck and tests pass.
