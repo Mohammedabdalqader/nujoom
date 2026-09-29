@@ -681,3 +681,17 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
   - spent, cancelled and expired links show one message
 - **Share text** uses `APP_NAME`.
 - **Evidence:** pgTAP +3 (419). Live staff run passed every check: owner link, copy, WhatsApp, headers, sign-in round trip, profile, join, staff view without owner controls, single use, cancel, remove, rejoin and leave, English, audit trail, no page errors. The owner run still passes 37/37. All test data was removed.
+
+**D-070 Booking transaction contract (proposed, 2026-09-29).**
+
+- **Document:** `agentic_system/contracts/booking.md`, the G2b contract the roadmap requires before booking work. It replaces the booking parts of `identity-booking.md` §5, which predate the pitch catalog. Decided under D-001 while Codex is paused; Codex reviews the UX semantics when back.
+- **Core decisions:**
+  - One `bookings` table with kinds `app`, `manual` and `block`, and one exclusion constraint over confirmed ranges (`btree_gist`), so bookings, walk-ins and staff blocks can never overlap. A losing concurrent insert becomes `slot_taken`.
+  - A client request id makes retries return the same booking.
+  - The price and slot length are snapshotted on the receipt, and it says cash at the pitch (no money moves in the app).
+  - Slot rules mirror `generateSlots`: exact slot length, on the grid, inside one opening range, no crossing midnight, future, within 14 days, and at most 3 upcoming app bookings.
+  - C-010 recording permission and the youth guardian rule apply to recorded bookings; unrecorded ones are open to all.
+  - A verified field must also have a known size.
+  - Busy ranges reveal no people. Contact phones go to staff and the organizer only.
+- **Owner question B-Q1:** when a venue loses its badge, are its future bookings cancelled automatically? The default is no: admins follow up with the venue.
+- **Next:** the first migration (tables, slot rules, create, details, cancel and busy ranges), with pgTAP including a real two-connection race.

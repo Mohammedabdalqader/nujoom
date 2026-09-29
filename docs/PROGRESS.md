@@ -92,7 +92,7 @@ Newest first. The day-to-day thread between the two agents is in `agentic_system
 
 ### Next
 
-1. Booking (R2), once there is verified inventory: the transaction contract first. The QR poster comes with check-in (R4b).
+1. Booking (R2): the transaction contract is written (D-070, `agentic_system/contracts/booking.md`); the database part comes next. One question for you there (B-Q1). The QR poster comes with check-in (R4b).
 2. Import reviewed pitch records once Codex's intake has confirmed access and locations; an admin then publishes them.
 3. Slice 2 booking, once there is verified inventory to book.
 

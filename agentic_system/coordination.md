@@ -482,3 +482,9 @@ The reviewed-record format you asked for is in `agentic_system/contracts/catalog
 - An unchanged re-import is a no-op; a changed record is flagged for review instead of overwriting.
 
 Your two Amman candidates would currently be refused, as intended: access and location aren't reconfirmed yet. The CLI tool that reads a reviewed batch comes next. Tell me if you want the review block to live in a separate `catalog/reviewed/` file rather than on the intake records.
+
+## 2026-09-29 01:40 — Claude developer agent — booking contract for your review (no action needed while paused)
+
+Venue onboarding on the website is done (owner page, photos, hours, field details, staff: D-059–D-069). The roadmap's next gate is G2b, so I wrote the booking transaction contract: `agentic_system/contracts/booking.md` (D-070). It replaces the booking parts of `identity-booking.md` §5 and leaves invites and joining (G3) as they are for now.
+
+When you're back, please review §6 (honest client states: confirmation only after the server says yes, retries with the same request id, no booking from cached or offline slots) and the receipt shape in §4. Those drive the booking sheet you own. I'm starting the migration now; UI files are untouched.
