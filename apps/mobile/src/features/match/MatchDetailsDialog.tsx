@@ -1,9 +1,9 @@
-import { errorKey } from '@nujoom/shared';
+import { bidiIsolate, errorKey } from '@nujoom/shared';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, View } from 'react-native';
 
-import { useCancelBooking, useMatchDetails } from '@/data/api';
+import { useCancelBooking, useLeaveBooking, useMatchDetails, useRemovePlayer } from '@/data/api';
 import type { LineupPlayer, MatchDetails, Team } from '@/data/types';
 import { sfx } from '@/design/sound';
 import { useLocale } from '@/lib/locale';
@@ -19,7 +19,8 @@ import { useToast } from '@/ui/Toast';
  * "تشكيلة وتفاصيل المباراة": both line-ups with bibs and form, the pitch, time, size and who
  * films it (or that it isn't filmed). Players not in a team yet are listed below the line-ups.
  * Only the booking's players can open it (booking_details). Sharing needs the join link. The
- * organizer can cancel before kick-off, after confirming; the total is paid in cash at the pitch.
+ * organizer can cancel before kick-off and remove players; a player can leave. Each asks first.
+ * The total is paid in cash at the pitch.
  */
 export function MatchDetailsDialog({ bookingId }: { bookingId: string }) {
   const query = useMatchDetails(bookingId);
@@ -168,6 +169,8 @@ function Details({ match }: { match: MatchDetails }) {
         </Pressable>
       ) : null}
 
+      <ManagePlayers match={match} />
+      <LeaveMatch match={match} />
       <CancelBooking match={match} />
     </Dialog>
   );
@@ -284,5 +287,171 @@ function Lineup({
         ) : null}
       </View>
     </View>
+  );
+}
+
+/** Yes / no under a question, for actions that can't be undone from here. */
+function Confirm({
+  question,
+  yes,
+  no,
+  busy,
+  error,
+  onYes,
+  onNo,
+}: {
+  question: string;
+  yes: string;
+  no: string;
+  busy: boolean;
+  error: unknown;
+  onYes: () => void;
+  onNo: () => void;
+}) {
+  const { t } = useLocale();
+  return (
+    <View className="bg-surface-container-low p-3 rounded-xl border border-error/50 gap-2">
+      <Text className="text-[13px] text-on-surface">{question}</Text>
+      {error ? (
+        <Text accessibilityRole="alert" className="text-[12px] text-error">
+          {t(errorKey(error))}
+        </Text>
+      ) : null}
+      <View className="flex-row gap-2">
+        <Pressable
+          onPress={onYes}
+          disabled={busy}
+          accessibilityRole="button"
+          accessibilityState={{ disabled: busy, busy }}
+          className="flex-1 py-2.5 rounded-lg bg-error-container active:opacity-80 items-center disabled:opacity-50"
+        >
+          <Text font="rubik" className="text-[14px] text-on-error-container font-bold">
+            {yes}
+          </Text>
+        </Pressable>
+        <Pressable
+          onPress={onNo}
+          disabled={busy}
+          accessibilityRole="button"
+          className="flex-1 py-2.5 rounded-lg bg-surface-container-high active:bg-surface-container-highest items-center"
+        >
+          <Text font="rubik" className="text-[14px] text-on-surface font-bold">
+            {no}
+          </Text>
+        </Pressable>
+      </View>
+    </View>
+  );
+}
+
+/** The organizer removes a player before kick-off; the same link won't let them back in. */
+function ManagePlayers({ match }: { match: MatchDetails }) {
+  const { t } = useLocale();
+  const toast = useToast();
+  const now = useNow(30_000);
+  const remove = useRemovePlayer();
+  const [asking, setAsking] = useState<string | null>(null);
+  if (
+    !match.organizer ||
+    match.cancelled ||
+    match.removable.length === 0 ||
+    new Date(match.startsAt).getTime() <= now
+  ) {
+    return null;
+  }
+  return (
+    <View className="bg-surface-container-low p-3 rounded-xl border border-surface-container-high gap-2">
+      <Text font="rubik" className="text-[13px] text-on-surface font-bold">
+        {t('matchDetails.manage')}
+      </Text>
+      {match.removable.map((p) =>
+        asking === p.playerRef ? (
+          <Confirm
+            key={p.playerRef}
+            question={t('matchDetails.removeConfirm', { name: bidiIsolate(p.name) })}
+            yes={t('matchDetails.removeYes')}
+            no={t('matchDetails.removeNo')}
+            busy={remove.isPending}
+            error={remove.error}
+            onYes={() =>
+              remove.mutate(
+                { bookingId: match.bookingId, playerRef: p.playerRef },
+                {
+                  onSuccess: () => {
+                    setAsking(null);
+                    toast.show(t('matchDetails.removed'));
+                  },
+                },
+              )
+            }
+            onNo={() => {
+              remove.reset();
+              setAsking(null);
+            }}
+          />
+        ) : (
+          <View key={p.playerRef} className="flex-row items-center justify-between gap-2">
+            <Text className="text-[13px] text-on-surface shrink" numberOfLines={1}>
+              {p.name}
+            </Text>
+            <Pressable
+              onPress={() => {
+                remove.reset();
+                setAsking(p.playerRef);
+              }}
+              accessibilityRole="button"
+              accessibilityLabel={`${t('matchDetails.remove')} ${p.name}`}
+              className="px-3 py-1.5 rounded-lg border border-error/50 active:bg-error/10"
+            >
+              <Text font="rubik" className="text-[12px] text-error font-bold">
+                {t('matchDetails.remove')}
+              </Text>
+            </Pressable>
+          </View>
+        ),
+      )}
+    </View>
+  );
+}
+
+/** A player (not the organizer) leaves before kick-off; they may come back through the link. */
+function LeaveMatch({ match }: { match: MatchDetails }) {
+  const { t } = useLocale();
+  const router = useRouter();
+  const toast = useToast();
+  const now = useNow(30_000);
+  const leave = useLeaveBooking();
+  const [asking, setAsking] = useState(false);
+  if (!match.canLeave || new Date(match.startsAt).getTime() <= now) return null;
+  if (!asking) {
+    return (
+      <Pressable
+        onPress={() => setAsking(true)}
+        accessibilityRole="button"
+        className="self-center px-4 py-2 rounded-lg border border-error/50 active:bg-error/10"
+      >
+        <Text font="rubik" className="text-[13px] text-error font-bold">
+          {t('matchDetails.leave')}
+        </Text>
+      </Pressable>
+    );
+  }
+  return (
+    <Confirm
+      question={t('matchDetails.leaveConfirm')}
+      yes={t('matchDetails.leaveYes')}
+      no={t('matchDetails.leaveNo')}
+      busy={leave.isPending}
+      error={leave.error}
+      onYes={() =>
+        leave.mutate(match.bookingId, {
+          onSuccess: () => {
+            toast.show(t('matchDetails.left'));
+            router.back();
+          },
+        })
+      }
+      onNo={() => setAsking(false)}
+    />
   );
 }

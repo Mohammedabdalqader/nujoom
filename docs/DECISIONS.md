@@ -982,3 +982,17 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
   - Test data was removed.
 - **Mistake during testing:** a manual cleanup swept every `e2e-*@nujoom.test` account and deleted Codex's QA tester. Codex has been told how to recreate it (coordination 12:20). My scripts now delete only the accounts they created, by id.
 - **Next:** the organizer's share (once the site address exists), reset and remove actions in the match details, and a player's leave.
+
+**D-089 Remove a player, leave a match (2026-09-29).**
+
+- **Where:** the match details dialog (D-079/D-080), before kick-off only; the server checks too.
+- **Organizer:** "Players in this match" lists everyone except the organizer, with a Remove button each (labelled with the player's name for screen readers). Remove asks first: "Remove {{name}}? They won't be able to rejoin with the same link." After removing, a toast shows and the list refreshes.
+- **Player:** "Leave the match" asks first ("your spot becomes free for others"). After leaving, a toast shows, the dialog closes, and Home no longer shows the match. They can come back through the link while there's room.
+- **View model:** `MatchDetails.removable` (organizer only) and `canLeave`, from `booking_details`' `player_ref` and `is_me`. A tested mapper; the demo sets `[]` and `false`.
+- **Share and reset wait** for the site address (D-082). Without it there's no link a friend could open, so the organizer has nothing to share or reset yet.
+- **Verified** on Expo web (production variant, 390 px) against a temporary live match with two joined testers, 14/14 checks:
+  - the organizer saw two Remove buttons and no Leave
+  - "No" kept the player; "Yes" removed them (by the organizer, in the database), the list updated, and they couldn't rejoin through the same link
+  - the other player saw Leave and no Remove; leaving asked first, was recorded as their own leave, closed to a Home with no upcoming match, and they could rejoin through the link
+  - no page errors
+  - Test data was removed.

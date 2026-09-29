@@ -196,6 +196,10 @@ export type MatchDetails = UpcomingMatch & {
   cancelled: boolean;
   /** The price as booked, paid in cash at the pitch; null when unknown. */
   total: number | null;
+  /** Players the viewer (the organizer) may remove; empty for everyone else. */
+  removable: { playerRef: string; name: string }[];
+  /** The viewer is a player here but not the organizer, so they may leave. */
+  canLeave: boolean;
 };
 
 export type MissingOne = {

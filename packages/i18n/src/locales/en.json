@@ -850,7 +850,18 @@
     "cancelNo": "No, keep it",
     "cancelling": "Cancelling...",
     "cancelDone": "Booking cancelled",
-    "cancelledNote": "This booking was cancelled."
+    "cancelledNote": "This booking was cancelled.",
+    "manage": "Players in this match",
+    "remove": "Remove",
+    "removeConfirm": "Remove {{name}}? They won't be able to rejoin with the same link.",
+    "removeYes": "Yes, remove",
+    "removeNo": "No, keep them",
+    "removed": "Player removed",
+    "leave": "Leave the match",
+    "leaveConfirm": "Leave this match? Your spot becomes free for others.",
+    "leaveYes": "Yes, leave",
+    "leaveNo": "No, stay",
+    "left": "You left the match"
   },
   "missingOne": {
     "title": "One short (urgent)",

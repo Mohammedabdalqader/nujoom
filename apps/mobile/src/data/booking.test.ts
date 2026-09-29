@@ -209,6 +209,45 @@ describe('the next match on Home', () => {
     expect(d.lineups[0][0]).not.toHaveProperty('team');
   });
 
+  it('lets the organizer remove others and a player leave', () => {
+    const players = [
+      { name: 'Org', team: null, bib: null, is_organizer: true, is_me: true, player_ref: 'r0' },
+      { name: 'Bob', team: 'a', bib: 2, is_organizer: false, is_me: false, player_ref: 'r1' },
+    ];
+    const asOrganizer = toMatchDetails(toBookingDetails({ ...receipt, players }), names);
+    expect(asOrganizer.removable).toEqual([{ playerRef: 'r1', name: 'Bob' }]);
+    expect(asOrganizer.canLeave).toBe(false);
+    const asPlayer = toMatchDetails(
+      toBookingDetails({
+        ...receipt,
+        is_organizer: false,
+        players: [
+          {
+            name: 'Org',
+            team: null,
+            bib: null,
+            is_organizer: true,
+            is_me: false,
+            player_ref: null,
+          },
+          { name: 'Me', team: null, bib: null, is_organizer: false, is_me: true, player_ref: null },
+        ],
+      }),
+      names,
+    );
+    expect(asPlayer).toMatchObject({ removable: [], canLeave: true });
+    const cancelled = toMatchDetails(
+      toBookingDetails({
+        ...receipt,
+        status: 'cancelled',
+        is_organizer: false,
+        players: [{ name: 'Me', team: null, bib: null, is_organizer: false, is_me: true }],
+      }),
+      names,
+    );
+    expect(cancelled.canLeave).toBe(false);
+  });
+
   it('marks a cancelled booking and a viewer who is not the organizer', () => {
     const d = toMatchDetails(
       toBookingDetails({

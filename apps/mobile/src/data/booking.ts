@@ -347,5 +347,9 @@ export function toMatchDetails(d: BookingDetails, names: TeamNames): MatchDetail
     organizer: d.isOrganizer,
     cancelled: d.status === 'cancelled',
     total: d.total,
+    removable: d.players.flatMap((p) =>
+      p.playerRef && !p.isOrganizer ? [{ playerRef: p.playerRef, name: p.name }] : [],
+    ),
+    canLeave: !d.isOrganizer && d.status === 'confirmed' && d.players.some((p) => p.isMe),
   };
 }

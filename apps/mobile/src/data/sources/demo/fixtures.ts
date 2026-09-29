@@ -491,6 +491,8 @@ export const previewMatchDetails: MatchDetails = {
   organizer: false,
   cancelled: false,
   total: null,
+  removable: [],
+  canLeave: false,
   lineups: [
     [
       lineup('me', 'أحمد المالكي', 1, 'FWD', 8.4, PHOTOS.ahmadMalki, true),
