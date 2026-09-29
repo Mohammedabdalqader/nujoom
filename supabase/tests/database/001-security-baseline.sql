@@ -21,8 +21,11 @@ select is_empty(
   $$ select p.proname::text
      from pg_proc p join pg_namespace n on n.oid = p.pronamespace
      where n.nspname = 'public' and has_function_privilege('anon', p.oid, 'execute')
-       and p.prokind = 'f' and p.prosecdef $$,
-  'anon can execute no SECURITY DEFINER function in public (none are allow-listed yet)'
+       and p.prokind = 'f' and p.prosecdef
+       -- Allow-listed: the join link's public page (D-083). Needs the unguessable link token and
+       -- returns no names, price or players.
+       and p.proname not in ('booking_preview_public') $$,
+  'anon can execute only the allow-listed SECURITY DEFINER functions in public'
 );
 
 select ok(

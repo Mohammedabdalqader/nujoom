@@ -62,11 +62,44 @@ export type Database = {
         }
         Relationships: []
       }
+      booking_invites: {
+        Row: {
+          booking_id: string
+          created_at: string
+          id: string
+          revoked_at: string | null
+          token: string
+        }
+        Insert: {
+          booking_id: string
+          created_at?: string
+          id?: string
+          revoked_at?: string | null
+          token: string
+        }
+        Update: {
+          booking_id?: string
+          created_at?: string
+          id?: string
+          revoked_at?: string | null
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_invites_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       booking_players: {
         Row: {
           bib: number | null
           booking_id: string
           joined_at: string
+          player_ref: string
           removed_at: string | null
           removed_by: string | null
           team: string | null
@@ -76,6 +109,7 @@ export type Database = {
           bib?: number | null
           booking_id: string
           joined_at?: string
+          player_ref?: string
           removed_at?: string | null
           removed_by?: string | null
           team?: string | null
@@ -85,6 +119,7 @@ export type Database = {
           bib?: number | null
           booking_id?: string
           joined_at?: string
+          player_ref?: string
           removed_at?: string | null
           removed_by?: string | null
           team?: string | null
@@ -1711,6 +1746,9 @@ export type Database = {
         Returns: Json
       }
       booking_details: { Args: { p_booking: string }; Returns: Json }
+      booking_invite: { Args: { p_booking: string }; Returns: Json }
+      booking_preview: { Args: { p_token: string }; Returns: Json }
+      booking_preview_public: { Args: { p_token: string }; Returns: Json }
       cancel_account_deletion: { Args: never; Returns: Json }
       cancel_booking: {
         Args: {
@@ -1804,6 +1842,8 @@ export type Database = {
           youth_name: string
         }[]
       }
+      join_booking: { Args: { p_token: string }; Returns: Json }
+      leave_booking: { Args: { p_booking: string }; Returns: Json }
       mark_data_export_ready: {
         Args: { p_path: string; p_request: string }
         Returns: Json
@@ -1850,12 +1890,17 @@ export type Database = {
         }
         Returns: Json
       }
+      remove_player: {
+        Args: { p_booking: string; p_player_ref: string }
+        Returns: Json
+      }
       remove_staff: {
         Args: { p_facility: string; p_user: string }
         Returns: undefined
       }
       request_account_deletion: { Args: never; Returns: Json }
       request_data_export: { Args: never; Returns: Json }
+      reset_booking_invite: { Args: { p_booking: string }; Returns: Json }
       revoke_staff_invite: { Args: { p_invite: string }; Returns: undefined }
       run_catalog_freshness: { Args: never; Returns: number }
       search_pitches: { Args: { p?: Json }; Returns: Json }

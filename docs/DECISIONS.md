@@ -877,3 +877,26 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
   - **Opaque handles:** players get an opaque per-booking `player_ref` for removal. User ids never leave the server.
 - **Dependency (owner):** the link needs the public site's address (web hosting, already on the owner list). Until then, production keeps share buttons hidden.
 - **Next:** the migration with pgTAP and the race test.
+
+**D-083 Match invites and joining: the database (2026-09-29).**
+
+- **What:** migration `20260928003200_booking_invites.sql`.
+  - The `booking_invites` table.
+  - `booking_players.player_ref`.
+  - RPCs `booking_invite`, `reset_booking_invite`, `booking_preview`, `booking_preview_public`, `join_booking`, `leave_booking` and `remove_player`.
+  - `booking_details` now shows capacity, open spots, `is_me` and remove handles (the organizer only).
+  - The join rules live in one place (`private.join_blocker`), used by both the preview and the join, so the preview's reason and the join's answer always agree.
+- **Changes from the proposal (D-082),** folded into `contracts/invites.md`:
+  - **Tokens** have 256 random bits (43 characters), not 128.
+  - **The link table holds no person.** It belongs to the booking, whose organizer made it, so the export and deletion guard is unchanged.
+  - **Leave vs removal:** told apart by `removed_by` (themselves or the organizer). There's no new column.
+  - **The attempt limit** (30 an hour) is checked before the link lookup, so guessing links is slow too.
+  - **Exact moments:** a link's creation and a removal record the exact moment (`clock_timestamp()`), not the transaction's start. "Removed while this link was active" must compare real order; the test found this.
+  - **A youth's match is for youth** (`youth_only_match`), a new rule. The spec keeps friendships and "missing one" within the age band, and I applied the same caution to links, since a youth organizer's link could otherwise bring adult strangers in. Youth may still join adults' matches. Owner question B-Q2: relax it, or keep it (the default)?
+  - **The public page shows nothing about a youth's match**, not even place or time (`details_hidden`), in line with §7 "a youth's booking never appears publicly".
+- **The first anon-callable function:** `booking_preview_public`, for the web page. The security baseline test (pgTAP `001`) now allow-lists it by name, with the reason: it needs the unguessable token and returns no names, price or players.
+- **Verified:**
+  - pgTAP `230` has 42 checks: every rule in order, joining twice, leaving and coming back, removal and reset, the organizer can't leave or remove themselves, strangers, room left, a youth's match, started and cancelled matches, and the previews' contents.
+  - Race 5 in `tools/db-test/races.mjs`: two people take the last of 12 spots at once, exactly one gets in and the other is told `booking_full`.
+  - The whole suite passes (529 checks, 5 races).
+- **Not yet:** new error codes aren't mapped to app wording yet (they show the generic error), because Codex holds the locale files. The app's join route, the organizer's actions and the web page come next.

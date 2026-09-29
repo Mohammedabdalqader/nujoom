@@ -139,6 +139,63 @@ export async function runRaces(connect) {
     JSON.stringify(r4.map((r) => (r.ok ? 'ok' : r.e.message))),
   );
 
+  // 5. Two players join the last spot through the same link at once (invites contract §3, D-083).
+  // Ana's 5-a-side booking has room for 12: she and ten others fill 11, then two more race for the
+  // last spot.
+  const { rows: fillers } = await setup.query(
+    `select tests.create_user('race-fill-' || g || '@nujoom.test') as id from generate_series(1, 10) g`,
+  );
+  for (const [i, f] of fillers.entries()) {
+    await setup.query('begin');
+    await setup.query('select tests.act_as($1)', [f.id]);
+    await setup.query(
+      `select public.complete_onboarding($1, $2::date, $3, null, 'MID', $4::jsonb)`,
+      [`Filler ${i + 1}`, dob, city, JSON.stringify(consents)],
+    );
+    await setup.query('commit');
+  }
+  const { rows: late } = await setup.query(
+    `select tests.create_user('race-late-' || g || '@nujoom.test') as id from generate_series(1, 2) g`,
+  );
+  for (const [i, f] of late.entries()) {
+    await setup.query('begin');
+    await setup.query('select tests.act_as($1)', [f.id]);
+    await setup.query(
+      `select public.complete_onboarding($1, $2::date, $3, null, 'MID', $4::jsonb)`,
+      [`Late ${i + 1}`, dob, city, JSON.stringify(consents)],
+    );
+    await setup.query('commit');
+  }
+  const [open] = await race(connect, [
+    { user: users.ana, sql: book, params: [PITCH, at('12:00'), null] },
+  ]);
+  const match = open.r.rows[0].id;
+  const [link] = await race(connect, [
+    {
+      user: users.ana,
+      sql: `select public.booking_invite($1) ->> 'token' as token`,
+      params: [match],
+    },
+  ]);
+  const token = link.r.rows[0].token;
+  const join = `select (public.join_booking($1) ->> 'id') as id`;
+  for (const f of fillers) await race(connect, [{ user: f.id, sql: join, params: [token] }]);
+  const r5 = await race(
+    connect,
+    late.map((f) => ({ user: f.id, sql: join, params: [token] })),
+  );
+  const { rows: inMatch } = await setup.query(
+    `select count(*)::int as n from public.booking_players where booking_id = $1 and removed_at is null`,
+    [match],
+  );
+  check(
+    'two players, the last spot: exactly one gets in, the other told "booking_full"',
+    r5.filter((r) => r.ok).length === 1 &&
+      r5.filter((r) => !r.ok && r.e.message === 'booking_full').length === 1 &&
+      inMatch[0].n === 12,
+    JSON.stringify({ r5: r5.map((r) => (r.ok ? 'ok' : r.e.message)), inMatch: inMatch[0].n }),
+  );
+
   await setup.end();
   return failures;
 }
