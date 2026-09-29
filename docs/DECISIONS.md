@@ -843,3 +843,13 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
   - no page errors
   - Test data was removed.
 - **Found, not fixed here:** opening a dialog route directly (a link or a reload on `/match-details/…` or `/pitch/…`) draws it over an empty background instead of the tabs. Next step: render the tabs beneath deep-linked dialogs.
+
+**D-081 Dialogs opened from a link sit on the tabs (2026-09-29).**
+
+- **Problem (found in D-080):** a dialog route opened directly drew over an empty black background, and closing it had nowhere to go. That covers a shared pitch link, a match from a future notification, or a web reload. It broke "never a black screen".
+- **Fix:** the root stack's initial route is `(tabs)` (`unstable_settings.initialRouteName`, the standard expo-router setting). A deep-linked dialog now opens over Home, and closing it lands on Home. The journey guards are unchanged: signed out still shows sign-in, and a new account still shows onboarding.
+- **Verified** on Expo web (production variant, 390 px) against the live project, 13/13 checks:
+  - signed out, a pitch link showed sign-in with no page errors
+  - signed in, `/pitch/…` and `/match-details/…` opened over the tabs, and closing each landed on Home with the next match
+  - a brand-new account landed on onboarding, and a pitch link before onboarding still showed onboarding
+  - Test data and accounts were removed.

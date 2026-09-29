@@ -30,6 +30,12 @@ void SplashScreen.preventAutoHideAsync();
 const DIALOG = { presentation: 'transparentModal', animation: 'fade' } as const;
 
 /**
+ * A dialog opened straight from a link or a reload (a shared pitch, a match from a notification)
+ * gets the tabs underneath, so it never floats over an empty screen and closing it lands on Home.
+ */
+export const unstable_settings = { initialRouteName: '(tabs)' };
+
+/**
  * The journey router (contract §3): signed out → sign-in; not onboarded → onboarding; terms
  * changed → re-consent; youth without a guardian → guardian step; otherwise the app. The demo
  * build is always signed in. Loading shows the brand, failures show a retry, never a black screen.
