@@ -1368,7 +1368,17 @@
         "open": "Open air",
         "lights": "Floodlights",
         "lit": "Floodlit",
-        "unlit": "No floodlights"
+        "unlit": "No floodlights",
+        "amenities": "Amenities",
+        "none": "None of these",
+        "amenityNames": {
+          "changing_rooms": "Changing rooms",
+          "parking": "Parking",
+          "water": "Drinking water",
+          "seating": "Seating for spectators",
+          "toilets": "Toilets",
+          "cafe": "Café"
+        }
       }
     }
   }

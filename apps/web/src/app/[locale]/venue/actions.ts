@@ -1,7 +1,7 @@
 'use server';
 
 import { isLocale } from '@nujoom/i18n';
-import { DAY_KEYS, isValidOpeningHours, type OpeningHours } from '@nujoom/shared';
+import { DAY_KEYS, isValidOpeningHours, nextAmenities, type OpeningHours } from '@nujoom/shared';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
@@ -22,7 +22,8 @@ function read(form: FormData) {
   };
   const locale = get('locale');
   if (!isLocale(locale)) throw new Error('invalid_request');
-  return { get, back: `/${locale}/venue` };
+  const all = (k: string) => form.getAll(k).filter((v): v is string => typeof v === 'string');
+  return { get, all, back: `/${locale}/venue` };
 }
 
 async function client(back: string) {
@@ -69,7 +70,7 @@ export async function createProfileAndClaim(form: FormData) {
 }
 
 export async function confirmField(form: FormData) {
-  const { get, back } = read(form);
+  const { get, all, back } = read(form);
   const pitch = get('pitch');
   const price = Number(get('price').replace(',', '.'));
   const slot = Number(get('slot'));
@@ -113,6 +114,13 @@ export async function confirmField(form: FormData) {
     if (!['yes', 'no'].includes(get(`fact_${k}`))) redirect(`${back}?error=invalid_action`);
     facts[column] = get(`fact_${k}`) === 'yes';
   }
+  // Amenities (D-066): the shared rule decides whether the ticks are a change.
+  const amenities = nextAmenities(
+    all('amenity'),
+    get('amenities_none') === 'on',
+    get('was_amenities'),
+  );
+  if (amenities) facts.amenities = amenities;
   const supabase = await client(back);
   const { error } = await supabase.rpc('owner_confirm_field', {
     p_pitch: pitch,

@@ -180,6 +180,14 @@ export default async function VenuePage({ params, searchParams }: Props) {
     lights: t('web.owner.facts.lights'),
     lit: t('web.owner.facts.lit'),
     unlit: t('web.owner.facts.unlit'),
+    amenities: t('web.owner.facts.amenities'),
+    amenityNames: Object.fromEntries(
+      ['changing_rooms', 'parking', 'water', 'seating', 'toilets', 'cafe'].map((k) => [
+        k,
+        t(`web.owner.facts.amenityNames.${k}`),
+      ]),
+    ),
+    none: t('web.owner.facts.none'),
   };
   const hoursStrings = {
     title: t('web.owner.hours.title'),

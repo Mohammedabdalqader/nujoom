@@ -631,3 +631,13 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
 - **Only real changes are recorded:** each select carries the stored value, and the action sends only facts the owner changed. "Not set" never erases a known fact. Each change goes through `owner_confirm_field` and is recorded as operator evidence (D-046), so re-saving a price doesn't create duplicate evidence.
 - **Not yet:** amenities and dimensions (`my_venues()` doesn't return them yet), and the field's name.
 - **Verified live:** the imported "11-a-side" showed as current; the owner changed it to 7-a-side with floodlights. Exactly two operator evidence rows were written, later saves added none, and every earlier check still passed.
+
+**D-066 Owners confirm amenities (2026-09-29).**
+
+- **Form:** "Amenities" checkboxes in the field details on `/[locale]/venue` (changing rooms, parking, drinking water, spectator seating, toilets, café), plus "None of these". `my_venues()` now returns each field's amenities (migration `…2400`).
+- **Meaning** (pure and tested: `nextAmenities` in `@nujoom/shared`, new `venue.ts`):
+  - ticked items are saved exactly, with unknown values dropped
+  - nothing ticked on a list that was never checked keeps it unknown, because not ticking isn't a statement
+  - "None of these", or unticking a known list, records "checked, none"
+  - an unchanged list sends nothing, so no duplicate evidence
+- **Evidence:** pgTAP +2 (390 total), 5 shared unit tests, and the live owner run (parking and water saved as one operator evidence row; still ticked after reload; later saves add nothing). Live on the project.

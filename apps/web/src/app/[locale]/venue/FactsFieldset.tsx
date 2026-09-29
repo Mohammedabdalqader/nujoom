@@ -1,3 +1,5 @@
+import { AMENITIES, amenitiesKey } from '@nujoom/shared';
+
 /**
  * The field's design facts inside the owner's save form (D-065): size, surface, covered or open,
  * floodlights. "Not set" leaves a fact unchanged; each select carries the stored value in a hidden
@@ -19,6 +21,9 @@ export type FactStrings = {
   lights: string;
   lit: string;
   unlit: string;
+  amenities: string;
+  amenityNames: Record<string, string>;
+  none: string;
 };
 
 export const SURFACES = [
@@ -35,7 +40,13 @@ export function FactsFieldset({
   field,
   strings: s,
 }: {
-  field: { players_per_side?: unknown; surface?: unknown; indoor?: unknown; lights?: unknown };
+  field: {
+    players_per_side?: unknown;
+    surface?: unknown;
+    indoor?: unknown;
+    lights?: unknown;
+    amenities?: unknown;
+  };
   strings: FactStrings;
 }) {
   const select =
@@ -85,6 +96,31 @@ export function FactsFieldset({
         ['yes', s.lit],
         ['no', s.unlit],
       ])}
+      <div className="flex flex-col gap-2 text-sm sm:col-span-2">
+        {s.amenities}
+        <input type="hidden" name="was_amenities" value={amenitiesKey(field.amenities)} />
+        <div className="flex flex-wrap gap-x-4 gap-y-2">
+          {AMENITIES.map((a) => (
+            <label key={a} className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                name="amenity"
+                value={a}
+                defaultChecked={Array.isArray(field.amenities) && field.amenities.includes(a)}
+              />
+              {s.amenityNames[a] ?? a}
+            </label>
+          ))}
+          <label className="flex items-center gap-2 text-on-surface-variant">
+            <input
+              type="checkbox"
+              name="amenities_none"
+              defaultChecked={Array.isArray(field.amenities) && field.amenities.length === 0}
+            />
+            {s.none}
+          </label>
+        </div>
+      </div>
     </fieldset>
   );
 }

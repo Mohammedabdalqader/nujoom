@@ -13,3 +13,4 @@ export * from './phone';
 export * from './progression';
 export * from './redirect';
 export * from './visibility';
+export * from './venue';

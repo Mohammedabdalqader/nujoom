@@ -1,6 +1,6 @@
 -- Opening hours: validated shape, kept across price saves, required to switch on (D-063).
 begin;
-select plan(13);
+select plan(15);
 
 create function pg_temp.city(p_slug text) returns bigint language sql as $$
   select id from public.cities where slug = p_slug $$;
@@ -62,6 +62,11 @@ select is(pg_temp.hours(), '{"sun":[["16:00","24:00"]],"fri":[["14:00","23:00"]]
 select tests.act_as(tests.id('owner'));
 select is(public.my_venues() -> 0 -> 'fields' -> 0 -> 'operations' -> 'opening_hours',
   '{"sun":[["16:00","24:00"]],"fri":[["14:00","23:00"]]}'::jsonb, 'the owner page reads them back (D-064)');
+select is(public.my_venues() -> 0 -> 'fields' -> 0 -> 'amenities', 'null'::jsonb,
+  'amenities read back as unknown until someone checks them (D-066)');
+select public.owner_confirm_field('00000000-0000-4000-8000-00000000001a', '{"amenities":["parking","water"]}');
+select is(public.my_venues() -> 0 -> 'fields' -> 0 -> 'amenities', '["parking", "water"]'::jsonb,
+  'and as the owner''s list once confirmed');
 select lives_ok($$ select public.owner_set_schedule_active('00000000-0000-4000-8000-00000000001a', true) $$,
   'with hours the schedule switches on');
 select public.owner_confirm_field('00000000-0000-4000-8000-00000000001a', '{}',
