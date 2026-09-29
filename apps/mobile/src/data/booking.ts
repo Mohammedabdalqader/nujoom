@@ -164,3 +164,16 @@ export async function withRetry<T>(
     }
   }
 }
+
+/**
+ * A fresh request id (UUID v4 format) for one booking attempt (contract §6). It only has to be
+ * unique per organizer, since the database keys retries on (organizer, request id); Hermes has
+ * no crypto.randomUUID, so the random source is injectable for tests.
+ */
+export function newRequestId(random: () => number = Math.random): string {
+  const hex = Array.from({ length: 32 }, () => Math.floor(random() * 16).toString(16));
+  hex[12] = '4';
+  hex[16] = ((parseInt(hex[16]!, 16) & 0x3) | 0x8).toString(16);
+  const s = hex.join('');
+  return `${s.slice(0, 8)}-${s.slice(8, 12)}-${s.slice(12, 16)}-${s.slice(16, 20)}-${s.slice(20)}`;
+}

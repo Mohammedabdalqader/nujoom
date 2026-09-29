@@ -5,6 +5,7 @@ import { Pressable, ScrollView, View } from 'react-native';
 
 import { useCatalogPitch } from '@/data/api';
 import type { CatalogDetail, Localized } from '@/data/catalog';
+import { BookingSection } from '@/features/pitches/BookingSection';
 import { useLocale } from '@/lib/locale';
 import { Dialog, DialogLoading } from '@/ui/Dialog';
 import { Icon, type IconName } from '@/ui/Icon';
@@ -159,6 +160,8 @@ function Detail({ item }: { item: CatalogDetail }) {
           </Text>
         )}
       </View>
+
+      {verified && item.operations?.bookable ? <BookingSection pitchId={item.pitchId} /> : null}
 
       <View>
         <Text font="rubik" className="text-[14px] text-on-surface font-bold mb-1">

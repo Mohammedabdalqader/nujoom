@@ -783,3 +783,24 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
   - Where the details came from and when they were last reviewed, plus the OSM credit.
 - **Not yet:** the day's slots and booking on this page, and "Report a problem" / "Add a missing pitch" (the database side exists, D-048). Those are next.
 - **Verified** on Expo web (production variant, 390 px) against temporary live pitches, 15/15 checks. The verified field showed "25 JOD / hour" and "60 minutes"; the owner-confirmed surface and floodlights showed and unknown facts said so; the approximate location had no directions; sources and review date showed; the not-verified field showed its note and no price; no page errors. Test data was removed.
+
+**D-078 Booking from a pitch's page (2026-09-29).**
+
+- **Where:** the pitch page (D-077), only for a verified field that's taking bookings. Everything else keeps its "not bookable" note.
+- **Flow** (contract `agentic_system/contracts/booking.md`):
+  - A 14-day date strip (today, tomorrow, then weekday and date).
+  - The day's times come fresh from the server (`pitch_day_slots`). Free times can be picked; taken ones are shown crossed out and can't be picked; past ones are hidden. A day with nothing free says so; a failed load offers a retry.
+  - An optional phone for the venue, checked and stored in E.164. Only the venue's staff and the organizer can see it.
+  - "Book {time}" shows "done" only from the server's receipt: day, date, from–to, the price total, and "cash at the pitch". The app takes no money.
+- **Safe retries:** each booking attempt carries a client request id (`newRequestId`, tested). A retried request can never book twice. After a success the next booking gets a new id.
+- **Someone else was faster:** the server says the slot was just taken, the day's list refreshes, and the pick drops, so the button asks for a time again. It never shows a fake success. The live check found this gap (the stale pick stayed selected) and it's fixed.
+- **Unrecorded for now:** until recording exists (R4), app bookings are sent as unrecorded. Offering a "recorded match" now would promise something we can't do (honesty rule). The choice appears when recording ships.
+- **Verified** on Expo web (production variant, 390 px) against a temporary live bookable pitch, 11/11 checks:
+  - tomorrow's eight hourly times from 4 pm
+  - booking 6 pm showed the receipt with 25 JOD and cash at the pitch
+  - the database had one unrecorded booking with the phone in E.164
+  - 6 pm then showed as taken
+  - a second tester took 8 pm between picking and pressing Book: the page said it was just taken, 8 pm turned taken, the pick dropped, and the player still had one booking
+  - no page errors
+  - The directory check (D-076/D-077) passed again, 15/15. All test data was removed.
+- **Next:** "My bookings" with the receipt and cancel, then "Report a problem" / "Add a missing pitch".

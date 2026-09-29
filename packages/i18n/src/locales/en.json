@@ -1569,6 +1569,23 @@
       "fieldTeam": "our field team",
       "community": "player reports",
       "reviewer": "our review"
+    },
+    "booking": {
+      "title": "Book a time",
+      "today": "Today",
+      "tomorrow": "Tomorrow",
+      "busy": "booked",
+      "noTimes": "No times available on this day right now.",
+      "loadError": "Couldn't load the times. Check your connection.",
+      "phone": "Phone number for the venue (optional)",
+      "phoneInvalid": "That phone number doesn't look right.",
+      "pickTime": "Pick a time",
+      "book": "Book {{time}}",
+      "booking": "Booking…",
+      "done": "Booked ✓",
+      "when": "{{day}} {{date}} · {{from}} – {{to}}",
+      "total": "Total: {{total}} (cash at the pitch)",
+      "again": "Book another time"
     }
   }
 }

@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
-import { isRetryable, toBookingDetails, toDaySlots, toReceipt, withRetry } from './booking';
+import {
+  isRetryable,
+  newRequestId,
+  toBookingDetails,
+  toDaySlots,
+  toReceipt,
+  withRetry,
+} from './booking';
 
 const receipt = {
   id: 'b1',
@@ -109,5 +116,18 @@ describe('retries (contract §6)', () => {
       }, noWait),
     ).rejects.toBe(offline);
     expect(calls).toBe(3);
+  });
+});
+
+describe('newRequestId', () => {
+  it('makes a UUID v4 the database accepts, and a different one each time', () => {
+    const id = newRequestId();
+    expect(id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
+    expect(newRequestId()).not.toBe(id);
+  });
+
+  it('keeps the version and variant bits whatever the random source says', () => {
+    expect(newRequestId(() => 0.99)).toMatch(/^f{8}-f{4}-4f{3}-bf{3}-f{12}$/);
+    expect(newRequestId(() => 0)).toMatch(/^0{8}-0{4}-40{3}-80{3}-0{12}$/);
   });
 });
