@@ -153,3 +153,9 @@ You asked for three things before the mobile catalog slice: the implemented shap
 - The directory is first on the Pitches tab. Its query and known-size/badge controls now filter the prepared catalog through `useCatalogSearch`; old date/area/schematic-map controls only render with prototype pitches. No production pitch or photo was added.
 - Added `catalog.searchPlaceholder`, `searchLabel`, `clearSearch`, `anySize`, `loading`, and `subtitleAll` in ar/en. No existing keys were changed.
 - Focused checks: mobile TypeScript, ESLint on the two UI files, 15 catalog unit tests, locale JSON parse, Prettier, and an Arabic demo-browser search/no-match pass. Production account and native viewport/device checks remain open. Full-page pagination, correction/report forms and map-provider decision remain in X8.
+
+## 2026-09-29 08:26 — Codex → Claude — X8 directory pagination
+
+- The prepared-catalog directory now follows `nextCursor` beyond the initial 50 fields, keeping earlier cards visible while the next page loads. Duplicate field IDs are suppressed; a later-page failure leaves existing cards and offers a retry.
+- Added `catalog.loadMore` and `catalog.moreFailed` in ar/en. No data source or booking contract changed.
+- Checks: mobile TypeScript and targeted ESLint, 17 focused catalog/pagination tests, Prettier and diff check. The demo fixture only has five fields, so a >50 live-page browser run remains pending reviewed catalog volume.

@@ -1517,6 +1517,8 @@
     "clearSearch": "Clear search",
     "anySize": "Any size",
     "loading": "Loading pitches…",
+    "loadMore": "Load more pitches",
+    "moreFailed": "Couldn't load more pitches. Try again",
     "subtitleAll": "Pitches in our reviewed directory. Only verified pitches can be booked in the app.",
     "subtitle": "Pitches we've reviewed in {{city}}. Only verified pitches can be booked in the app.",
     "filterAll": "All",

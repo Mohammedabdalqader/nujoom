@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import { Pressable, TextInput, View } from 'react-native';
 
 import { useCatalogCityCounts, useCatalogSearch, useMe } from '@/data/api';
-import { catalogListState, type CatalogBadge } from '@/data/catalog';
+import { catalogListState, type CatalogBadge, type CatalogListing } from '@/data/catalog';
 import { useTheme } from '@/design/theme';
 import { CatalogCard } from '@/features/pitches/CatalogCard';
+import { mergeCatalogPages } from '@/features/pitches/catalogPagination';
 import { useLocale } from '@/lib/locale';
 import { Icon } from '@/ui/Icon';
 import { Text } from '@/ui/Text';
@@ -24,20 +25,31 @@ export function CatalogSection() {
   const [query, setQuery] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [size, setSize] = useState<number | null>(null);
+  const [pagination, setPagination] = useState<{
+    key: string;
+    cursor: number;
+    items: CatalogListing[];
+  }>({ key: '', cursor: 0, items: [] });
   useEffect(() => {
     const timer = setTimeout(() => setSearchTerm(query.trim()), 250);
     return () => clearTimeout(timer);
   }, [query]);
   const cityId = me?.cityId ?? undefined;
+  const searchKey = JSON.stringify([cityId, badge, searchTerm, size]);
+  const cursor = pagination.key === searchKey ? pagination.cursor : 0;
   const search = useCatalogSearch({
     cityId,
     badge,
     q: searchTerm || undefined,
     playersPerSide: size === null ? undefined : [size],
     limit: 50,
+    cursor,
   });
   const counts = useCatalogCityCounts(cityId);
-  const items = search.data?.items ?? [];
+  const items =
+    cursor === 0
+      ? (search.data?.items ?? [])
+      : mergeCatalogPages(pagination.items, search.data?.items ?? [], cursor);
   const city = me ? pick(me.city) : '';
   const state =
     cityId === undefined
@@ -46,6 +58,7 @@ export function CatalogSection() {
         : 'no_match'
       : catalogListState(counts.data, items.length, badge);
   const clearFilters = () => {
+    setPagination({ key: '', cursor: 0, items: [] });
     setBadge('all');
     setSize(null);
     setQuery('');
@@ -76,7 +89,10 @@ export function CatalogSection() {
         <Icon name="search" size={20} className="text-on-surface-variant" />
         <TextInput
           value={query}
-          onChangeText={setQuery}
+          onChangeText={(value) => {
+            setPagination({ key: '', cursor: 0, items: [] });
+            setQuery(value);
+          }}
           placeholder={t('catalog.searchPlaceholder')}
           placeholderTextColor={color('muted')}
           accessibilityLabel={t('catalog.searchLabel')}
@@ -86,7 +102,11 @@ export function CatalogSection() {
         />
         {query ? (
           <Pressable
-            onPress={() => setQuery('')}
+            onPress={() => {
+              setPagination({ key: '', cursor: 0, items: [] });
+              setQuery('');
+              setSearchTerm('');
+            }}
             accessibilityRole="button"
             accessibilityLabel={t('catalog.clearSearch')}
             className="min-w-[44px] min-h-[44px] items-center justify-center"
@@ -100,7 +120,10 @@ export function CatalogSection() {
         {[null, 5, 6, 7, 11].map((n) => (
           <Pressable
             key={n ?? 'any'}
-            onPress={() => setSize(n)}
+            onPress={() => {
+              setPagination({ key: '', cursor: 0, items: [] });
+              setSize(n);
+            }}
             accessibilityRole="radio"
             accessibilityState={{ checked: size === n }}
             className={`min-h-[44px] px-3 rounded-lg border justify-center ${size === n ? 'bg-secondary-container border-secondary-container' : 'border-border-strong'}`}
@@ -119,7 +142,10 @@ export function CatalogSection() {
         {filters.map((f) => (
           <Pressable
             key={f.value}
-            onPress={() => setBadge(f.value)}
+            onPress={() => {
+              setPagination({ key: '', cursor: 0, items: [] });
+              setBadge(f.value);
+            }}
             accessibilityRole="radio"
             accessibilityState={{ checked: badge === f.value }}
             className={`min-h-[44px] px-3 rounded-full border justify-center ${badge === f.value ? 'bg-primary-container border-primary-container' : 'border-border-strong'}`}
@@ -134,7 +160,7 @@ export function CatalogSection() {
         ))}
       </View>
 
-      {search.isError || counts.isError ? (
+      {(search.isError && cursor === 0) || counts.isError ? (
         <View className="bg-surface-container-low rounded-xl p-5 items-center gap-3 border border-border/60">
           <Icon name="wifi_off" size={32} className="text-surface-bright" />
           <Text className="text-[14px] text-on-surface-variant text-center">
@@ -153,12 +179,43 @@ export function CatalogSection() {
             </Text>
           </Pressable>
         </View>
-      ) : search.isLoading || counts.isLoading ? (
+      ) : (search.isLoading && cursor === 0) || counts.isLoading ? (
         <Text accessibilityRole="alert" className="text-[14px] text-on-surface-variant py-4">
           {t('catalog.loading')}
         </Text>
       ) : state === 'results' ? (
-        items.map((item) => <CatalogCard key={item.pitchId} item={item} />)
+        <>
+          {items.map((item) => (
+            <CatalogCard key={item.pitchId} item={item} />
+          ))}
+          {cursor > 0 && search.isError ? (
+            <Pressable
+              onPress={() => void search.refetch()}
+              accessibilityRole="button"
+              className="min-h-[44px] px-4 justify-center rounded-lg bg-surface-container-high"
+            >
+              <Text font="rubik" className="text-[13px] text-primary font-bold text-center">
+                {t('catalog.moreFailed')}
+              </Text>
+            </Pressable>
+          ) : cursor > 0 && search.isLoading ? (
+            <Text accessibilityRole="alert" className="text-[14px] text-on-surface-variant py-4">
+              {t('catalog.loading')}
+            </Text>
+          ) : search.data?.nextCursor != null ? (
+            <Pressable
+              onPress={() =>
+                setPagination({ key: searchKey, cursor: search.data!.nextCursor!, items })
+              }
+              accessibilityRole="button"
+              className="min-h-[44px] px-4 justify-center rounded-lg bg-surface-container-high"
+            >
+              <Text font="rubik" className="text-[13px] text-primary font-bold text-center">
+                {t('catalog.loadMore')}
+              </Text>
+            </Pressable>
+          ) : null}
+        </>
       ) : (
         <View className="bg-surface-container-low rounded-xl p-5 items-center gap-3 border border-border/60">
           <Icon name="stadium" size={36} className="text-surface-bright" />
