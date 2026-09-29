@@ -613,3 +613,14 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
 - **Rule:** a schedule can be switched on only when at least one day has hours (`no_opening_hours`). Pausing is always allowed. Bad hours give `invalid_opening_hours`. Both have messages in Arabic and English.
 - **Evidence:** pgTAP `170-opening-hours.sql` has 12 assertions; the lifecycle and freshness tests now stage hours (387 total). Shared unit tests were added. Live on the project.
 - **Next:** the opening-hours form on the owner page (D-060), needed before an owner can switch their schedule on.
+
+**D-064 Opening hours on the owner page (2026-09-29).**
+
+- **Form:** the field's save form on `/[locale]/venue` now has an "Opening hours" section. Each day has an open tick, one period and an optional second one for a break (e.g. Friday prayers), in 30-minute steps shown on the 12-hour clock (D-008), with midnight as the end of the day. Day names come from `formatDateTime` (Intl, rendered on the server), so no new day strings were needed.
+- **Saving:** one save sends price, length, notes and hours together. The server action builds the hours, checks them with the shared validator, and the database checks them again (D-063). `my_venues()` now returns each field's hours so the form shows what is stored.
+- **Honest defaults:** an unticked day is closed. The selects start at 4 pm–midnight only as a starting point; nothing is saved until the owner ticks a day and saves.
+- **Verified live (31/31):**
+  - switching on without hours is refused with a clear message, and overlapping periods are refused
+  - a normal Sunday and a split Friday are saved without touching the price, and shown again after reload; then the schedule switches on
+  - the layout stays clean at phone width
+  - test accounts and files were removed afterwards

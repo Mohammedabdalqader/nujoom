@@ -1,6 +1,7 @@
 'use server';
 
 import { isLocale } from '@nujoom/i18n';
+import { DAY_KEYS, isValidOpeningHours, type OpeningHours } from '@nujoom/shared';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
@@ -79,6 +80,15 @@ export async function confirmField(form: FormData) {
   ) {
     redirect(`${back}?error=invalid_action`);
   }
+  // The weekly hours (D-064): a ticked day has one period and optionally a second one.
+  const hours: OpeningHours = {};
+  for (const day of DAY_KEYS) {
+    if (get(`open_${day}`) !== 'on') continue;
+    const ranges: [string, string][] = [[get(`s1_${day}`), get(`e1_${day}`)]];
+    if (get(`s2_${day}`) && get(`e2_${day}`)) ranges.push([get(`s2_${day}`), get(`e2_${day}`)]);
+    hours[day] = ranges;
+  }
+  if (!isValidOpeningHours(hours)) redirect(`${back}?error=invalid_opening_hours`);
   const supabase = await client(back);
   const { error } = await supabase.rpc('owner_confirm_field', {
     p_pitch: pitch,
@@ -88,6 +98,7 @@ export async function confirmField(form: FormData) {
       slot_minutes: slot,
       price_note_ar: get('note_ar').slice(0, 120) || null,
       price_note_en: get('note_en').slice(0, 120) || null,
+      opening_hours: hours,
     },
   });
   finish(back, error, 'saved');

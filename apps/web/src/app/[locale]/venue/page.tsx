@@ -3,13 +3,14 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import type { ReactNode } from 'react';
 
-import { ERROR_KEYS, errorKey } from '@nujoom/shared';
+import { ERROR_KEYS, errorKey, isValidOpeningHours } from '@nujoom/shared';
 
 import { SiteShell } from '@/components/SiteShell';
 import { getT, localeFrom, type Locale } from '@/lib/i18n';
 import { serverSupabase } from '@/lib/supabase/server';
 
 import { claimVenue, confirmField, createProfileAndClaim, setSchedule } from './actions';
+import { HoursFieldset } from './HoursFieldset';
 import { PhotoUpload, type PhotoStrings } from './PhotoUpload';
 
 type Props = {
@@ -159,6 +160,13 @@ export default async function VenuePage({ params, searchParams }: Props) {
       ? await supabase.storage.from('pitch-media').createSignedUrls(photoPaths, 600)
       : { data: [] as { path: string | null; signedUrl: string; error: string | null }[] };
   const previews = new Map((signed ?? []).map((x) => [x.path, x.error ? null : x.signedUrl]));
+  const hoursStrings = {
+    title: t('web.owner.hours.title'),
+    hint: t('web.owner.hours.hint'),
+    open: t('web.owner.hours.open'),
+    second: t('web.owner.hours.second'),
+    midnight: t('web.owner.hours.midnight'),
+  };
   const photoStrings: PhotoStrings = {
     ...(Object.fromEntries(
       [
@@ -276,6 +284,11 @@ export default async function VenuePage({ params, searchParams }: Props) {
                             className={input}
                           />
                         </label>
+                        <HoursFieldset
+                          locale={locale}
+                          hours={isValidOpeningHours(ops?.opening_hours) ? ops.opening_hours : null}
+                          strings={hoursStrings}
+                        />
                         <p className="text-xs text-on-surface-variant sm:col-span-2">
                           {t('web.owner.opsHint')}
                         </p>

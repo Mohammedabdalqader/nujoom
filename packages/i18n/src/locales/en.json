@@ -1341,6 +1341,13 @@
           "approved": "Shown to players",
           "rejected": "Rejected"
         }
+      },
+      "hours": {
+        "title": "Opening hours",
+        "hint": "Tick the days you're open. If you close for a break (Friday prayers, for example), add a second period.",
+        "open": "Open",
+        "second": "Second period",
+        "midnight": "Midnight (end of day)"
       }
     }
   }
