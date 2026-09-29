@@ -1500,5 +1500,35 @@
       "to": "Until",
       "block": "Block the time"
     }
+  },
+  "catalog": {
+    "title": "Pitch directory",
+    "subtitle": "Pitches we've reviewed in {{city}}. Only verified pitches can be booked in the app.",
+    "filterAll": "All",
+    "filterVerified": "Verified by Nujoom",
+    "filterNotVerified": "Not verified",
+    "badgeVerified": "Verified by Nujoom",
+    "badgeNotVerified": "Not verified by Nujoom",
+    "size": "{{n}}-a-side",
+    "surfaces": {
+      "artificialTurf": "Artificial turf",
+      "naturalGrass": "Natural grass",
+      "hardCourt": "Hard court",
+      "sand": "Sand",
+      "other": "Other surface"
+    },
+    "indoor": "Covered",
+    "outdoor": "Open air",
+    "lights": "Floodlit",
+    "perHour": "{{price}} / hour",
+    "paused": "Bookings unavailable right now",
+    "notBookable": "Not bookable through the app yet",
+    "locationUnconfirmed": "Location not confirmed",
+    "locationApprox": "Approximate location",
+    "noneInCity": "We haven't reviewed pitches in {{city}} yet. More are on the way.",
+    "noneVerified": "No verified pitches in {{city}} yet.",
+    "noMatch": "No pitches match this choice.",
+    "showAll": "Show all pitches",
+    "error": "Couldn't load pitches. Check your connection."
   }
 }

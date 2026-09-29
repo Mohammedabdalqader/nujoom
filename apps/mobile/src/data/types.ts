@@ -34,6 +34,8 @@ export type Attributes = {
 export type Me = PlayerRef & {
   firstName: string;
   city: Bilingual;
+  /** The home city's id, for city-scoped queries like the pitch directory (D-076); null in the demo. */
+  cityId: number | null;
   country: Bilingual;
   countryCode: string;
   neighborhood: Bilingual | null;

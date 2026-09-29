@@ -755,3 +755,17 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
 - **Detail photos:** `catalog_pitch` now returns `photos`, every approved, rights-cleared photo of the field or the whole venue, the field's own first, each with its credit (a sibling field never shows another field's photos). The app signs each one for an hour and drops any it can't sign.
 - **City counts:** `catalog_city_counts(city)` gives the city's published fields, how many are verified and how many take bookings now (paused schedules don't count). The list can then say truthfully whether nothing is reviewed there yet, entries exist but none are verified, or the filters match nothing. The app hook is `useCatalogCityCounts`, with a demo version for the sample city.
 - **Evidence:** pgTAP `220-catalog-ux.sql` has 6 assertions (487 total) and 2 mobile unit tests. Live on the project.
+
+**D-076 The pitch directory on the app's Pitches tab (2026-09-29).**
+
+- **Why now:** in production the Pitches tab showed only an empty state, because nothing used the real catalog. Codex is paused and the owner wants a working production app, so I built the directory section following Codex's accepted G1 spec (`docs/DESIGN.md`) and the existing UI primitives. Codex may restyle it when back.
+- **What it shows:**
+  - The heading "دليل الملاعب" / "Pitch directory" for the player's home city, with the note that only verified pitches can be booked.
+  - A badge filter: All, Verified by Nujoom, Not verified.
+  - One card per field (`CatalogCard`): facility and field name, area; the badge as icon plus text (never colour alone); only evidenced facts (size, surface, covered or open air, floodlit), with unknowns left out; a price per hour only from a verified field's confirmed operations; "bookings unavailable right now" for a paused verified field; "not bookable through the app yet" for a not-verified one; "location not confirmed" or "approximate location"; the photo credit when there's a photo.
+  - An accessible label that reads name, badge, location and bookability.
+- **Empty states:** `catalogListState` (pure, tested) uses the city counts (D-075) to tell apart "not reviewed in {city} yet", "no verified pitches in {city} yet" and "no pitches match this choice". Offline shows a retry.
+- **Demo:** the prototype-shaped "tonight" list only renders when it has sample venues, so production shows the directory instead of an empty list. The demo shows both.
+- **View-model change (announced to Codex):** `Me.cityId` (null in the demo).
+- **Verified:** on Expo web (production variant, 390 px), a tester in the pitches' city saw both temporary published pitches. The verified one had its badge and "25 JOD / hour"; the other said it's not bookable yet; approximate locations were labelled; both filters worked; no sideways scroll; no page errors. The temporary venues and accounts were removed.
+- **Known gaps:** the prototype's search panel above (date strip, size chips) doesn't filter the directory; the cards don't open a detail page yet; there's still no licensed map provider (owner decision). Those are the next steps.

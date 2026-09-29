@@ -7,6 +7,7 @@ import { useAreas, useHomeFeed, useMe, usePitches } from '@/data/api';
 import { useFlags } from '@/data/flags';
 import type { Pitch } from '@/data/types';
 import { sfx } from '@/design/sound';
+import { CatalogSection } from '@/features/pitches/CatalogSection';
 import { filterPitches, type FormatFilter } from '@/features/pitches/logic';
 import { MapDrawer } from '@/features/pitches/MapDrawer';
 import { PitchCard, type PitchCardVariant } from '@/features/pitches/PitchCard';
@@ -79,53 +80,66 @@ export function PitchesScreen() {
         />
       ) : null}
 
-      <View className="flex-row items-center justify-between pt-1">
-        <View className="flex-row items-center gap-2 flex-1">
-          <Icon name="sports_soccer" size={20} className="text-primary" />
-          <Text
-            font="rubik"
-            className="text-[22px] leading-[30px] text-on-surface font-extrabold tracking-tight"
-          >
-            {isToday
-              ? t('pitches.titleTonight')
-              : t('pitches.titleDay', { day: day(`${date}T12:00:00+03:00`) })}
-          </Text>
-        </View>
-        {list.some((p) => p.amenities.includes('lights')) ? (
-          <View className="bg-surface-container px-2 py-0.5 rounded-md border border-border">
-            <Text font="grotesk" className="text-[11px] text-primary-fixed-dim">
-              {t('pitches.floodlit')}
-            </Text>
-          </View>
-        ) : null}
-      </View>
-
-      {list.length ? (
-        list.map((pitch, index) => (
-          <PitchCard key={pitch.id} pitch={pitch} date={date} variant={variantFor(pitch, index)} />
-        ))
-      ) : (
-        <View className="bg-surface-container-low rounded-xl p-5 items-center gap-3 border border-border/60">
-          <Icon name="stadium" size={40} className="text-surface-bright" />
-          <Text className="text-[14px] text-on-surface-variant text-center">
-            {/* No bookable pitches at all is honest news, not a filter problem (docs/DESIGN.md). */}
-            {pitches.length === 0 ? t('pitches.noneBookable') : t('pitches.empty')}
-          </Text>
-          {pitches.length === 0 ? null : (
-            <Pressable
-              onPress={() => {
-                setArea('all');
-                setFormat('all');
-              }}
-              className="px-4 py-2 rounded-lg bg-surface-container-high active:bg-surface-container-highest"
-            >
-              <Text font="rubik" className="text-[13px] text-primary font-bold">
-                {t('pitches.emptyCta')}
+      {/* The bookable list of the prototype shape (demo sample venues); production has none of
+          these, so the directory below is the tab's content there (D-076). */}
+      {pitches.length ? (
+        <>
+          <View className="flex-row items-center justify-between pt-1">
+            <View className="flex-row items-center gap-2 flex-1">
+              <Icon name="sports_soccer" size={20} className="text-primary" />
+              <Text
+                font="rubik"
+                className="text-[22px] leading-[30px] text-on-surface font-extrabold tracking-tight"
+              >
+                {isToday
+                  ? t('pitches.titleTonight')
+                  : t('pitches.titleDay', { day: day(`${date}T12:00:00+03:00`) })}
               </Text>
-            </Pressable>
+            </View>
+            {list.some((p) => p.amenities.includes('lights')) ? (
+              <View className="bg-surface-container px-2 py-0.5 rounded-md border border-border">
+                <Text font="grotesk" className="text-[11px] text-primary-fixed-dim">
+                  {t('pitches.floodlit')}
+                </Text>
+              </View>
+            ) : null}
+          </View>
+
+          {list.length ? (
+            list.map((pitch, index) => (
+              <PitchCard
+                key={pitch.id}
+                pitch={pitch}
+                date={date}
+                variant={variantFor(pitch, index)}
+              />
+            ))
+          ) : (
+            <View className="bg-surface-container-low rounded-xl p-5 items-center gap-3 border border-border/60">
+              <Icon name="stadium" size={40} className="text-surface-bright" />
+              <Text className="text-[14px] text-on-surface-variant text-center">
+                {/* No bookable pitches at all is honest news, not a filter problem (docs/DESIGN.md). */}
+                {pitches.length === 0 ? t('pitches.noneBookable') : t('pitches.empty')}
+              </Text>
+              {pitches.length === 0 ? null : (
+                <Pressable
+                  onPress={() => {
+                    setArea('all');
+                    setFormat('all');
+                  }}
+                  className="px-4 py-2 rounded-lg bg-surface-container-high active:bg-surface-container-highest"
+                >
+                  <Text font="rubik" className="text-[13px] text-primary font-bold">
+                    {t('pitches.emptyCta')}
+                  </Text>
+                </Pressable>
+              )}
+            </View>
           )}
-        </View>
-      )}
+        </>
+      ) : null}
+
+      <CatalogSection />
 
       <PerksBar />
     </Screen>

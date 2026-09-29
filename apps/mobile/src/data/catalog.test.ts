@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
-import { toCatalogDetail, toCatalogListing, toCityCounts, toSearchParams } from './catalog';
+import {
+  catalogListState,
+  toCatalogDetail,
+  toCatalogListing,
+  toCityCounts,
+  toSearchParams,
+} from './catalog';
 
 // Shapes as public.search_pitches / public.catalog_pitch return them (supabase/tests 070, 080).
 const verified = {
@@ -162,5 +168,27 @@ describe('catalog UX support (D-075)', () => {
       bookable: 0,
     });
     expect(toCityCounts(null)).toEqual({ listed: 0, verified: 0, bookable: 0 });
+  });
+});
+
+describe('catalogListState (D-076)', () => {
+  const counts = { listed: 3, verified: 0, bookable: 0 };
+  it('shows results whenever there are any', () => {
+    expect(catalogListState(counts, 2, 'all')).toBe('results');
+  });
+  it('says when nothing is reviewed in the city yet', () => {
+    expect(catalogListState({ listed: 0, verified: 0, bookable: 0 }, 0, 'all')).toBe(
+      'none_in_city',
+    );
+    expect(catalogListState(undefined, 0, 'verified')).toBe('none_in_city');
+  });
+  it('says when the city has entries but none verified', () => {
+    expect(catalogListState(counts, 0, 'verified')).toBe('none_verified');
+  });
+  it('otherwise blames the filters, not the city', () => {
+    expect(catalogListState(counts, 0, 'not_verified')).toBe('no_match');
+    expect(catalogListState({ listed: 3, verified: 2, bookable: 1 }, 0, 'verified')).toBe(
+      'no_match',
+    );
   });
 });

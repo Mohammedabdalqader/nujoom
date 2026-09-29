@@ -1532,5 +1532,35 @@
       "to": "لغاية",
       "block": "سكّر الوقت"
     }
+  },
+  "catalog": {
+    "title": "دليل الملاعب",
+    "subtitle": "ملاعب راجعناها بـ{{city}}. بس الملاعب الموثّقة بتنحجز من التطبيق.",
+    "filterAll": "الكل",
+    "filterVerified": "موثّق من نجوم الحارة",
+    "filterNotVerified": "غير موثّق",
+    "badgeVerified": "موثّق من نجوم الحارة",
+    "badgeNotVerified": "غير موثّق من نجوم الحارة",
+    "size": "{{n}} ضد {{n}}",
+    "surfaces": {
+      "artificialTurf": "عشب صناعي",
+      "naturalGrass": "عشب طبيعي",
+      "hardCourt": "أرضية صلبة",
+      "sand": "رمل",
+      "other": "أرضية ثانية"
+    },
+    "indoor": "مغطى",
+    "outdoor": "مكشوف",
+    "lights": "فيه إضاءة",
+    "perHour": "{{price}} / ساعة",
+    "paused": "الحجز موقف حالياً",
+    "notBookable": "مش متاح للحجز عبر التطبيق بعد",
+    "locationUnconfirmed": "الموقع غير مؤكد",
+    "locationApprox": "موقع تقريبي",
+    "noneInCity": "لسا ما راجعنا ملاعب بـ{{city}}. عم نضيف ملاعب جديدة.",
+    "noneVerified": "لسا ما في ملاعب موثّقة بـ{{city}}.",
+    "noMatch": "ما في ملاعب بهاد الاختيار.",
+    "showAll": "اعرض كل الملاعب",
+    "error": "ما قدرنا نجيب الملاعب. تأكد من الإنترنت."
   }
 }

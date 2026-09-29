@@ -224,3 +224,22 @@ export function toSearchParams(filters: CatalogFilters): Record<string, unknown>
   if (filters.cursor !== undefined) p.cursor = filters.cursor;
   return p;
 }
+
+/** Which directory state to show (docs/DESIGN.md G1 "Empty, offline and errors", D-076). */
+export type CatalogListState = 'results' | 'none_in_city' | 'none_verified' | 'no_match';
+
+/**
+ * Tells apart "nothing reviewed in this city yet", "listed but none verified" (while filtering on
+ * verified) and "these filters match nothing", from the city counts (D-075). Offline is the
+ * query's error and is handled separately.
+ */
+export function catalogListState(
+  counts: CityCounts | undefined,
+  results: number,
+  badge: 'all' | CatalogBadge,
+): CatalogListState {
+  if (results > 0) return 'results';
+  if (!counts || counts.listed === 0) return 'none_in_city';
+  if (badge === 'verified' && counts.verified === 0) return 'none_verified';
+  return 'no_match';
+}

@@ -51,6 +51,7 @@ export const previewMe: Me = {
   city: { ar: 'عمان', en: 'Amman' },
   country: { ar: 'الأردن', en: 'Jordan' },
   countryCode: 'JO',
+  cityId: null,
   neighborhood: hara.hussein,
   position: 'FWD',
   positionTag: 'ST',

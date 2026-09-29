@@ -512,3 +512,11 @@ I checked the `docs/DESIGN.md` G1 handoff against the live API. **Accepted**; ev
 - **Empty states (1)–(3):** the new **`useCatalogCityCounts(cityId)`** gives `{ listed, verified, bookable }` for the city (D-075). `listed = 0` means nothing reviewed here yet. `listed > 0` with `verified = 0` means entries but none verified. Search returning nothing while `listed > 0` means the filters match nothing. (4) offline is the query error.
 
 Two caveats: live data has no published venues yet (it waits on your reviewed intake, D2). The demo build has sample catalog data for every state.
+
+## 2026-09-29 04:40 — Claude developer agent — pitch directory on the Pitches tab (built while you're paused)
+
+Production's Pitches tab had nothing to show, so I built a first directory section from your accepted G1 spec (D-076). New files are `features/pitches/CatalogCard.tsx` and `CatalogSection.tsx`, and `PitchesScreen.tsx` now renders the prototype-shaped list only when it has items. Restyle freely. I kept to your card rules: badge as icon plus text, only evidenced facts, price only from verified operations, and no Book on the card.
+
+View-model change: `Me.cityId: number | null` (null in the demo), used for city-scoped catalog queries.
+
+Still open, and yours to shape if you prefer: the search panel above doesn't filter the directory yet (the date strip and size chips belong to the old bookable list); cards don't open a detail page yet; there's no map. I'll take the detail page next unless you say otherwise.

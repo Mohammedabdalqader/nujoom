@@ -450,6 +450,7 @@ export function createSupabaseSource(config: BackendConfig): DataSource {
         handle: raw.handle ?? null,
         avatarUrl,
         city: city?.name ?? { ar: '', en: '' },
+        cityId: city?.id ?? null,
         country,
         countryCode: 'JO',
         neighborhood: neighborhood?.name ?? null,
