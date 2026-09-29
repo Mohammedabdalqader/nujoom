@@ -14,6 +14,7 @@ import {
   toMatchDetails,
   toReceipt,
   toUpcomingMatch,
+  upcomingBookings,
   withRetry,
 } from './booking';
 
@@ -159,6 +160,17 @@ describe('the next match on Home', () => {
     expect(nextBooking(list, now)?.id).toBe('playing');
     expect(nextBooking(list.slice(0, 3), now)?.id).toBe('later');
     expect(nextBooking([list[1]!, list[2]!], now)).toBeNull();
+  });
+
+  it('lists upcoming bookings soonest first, cancelled ones last', () => {
+    const list = [
+      at('later', '2026-10-01T15:00:00Z', '2026-10-01T16:00:00Z'),
+      at('over', '2026-09-30T13:00:00Z', '2026-09-30T14:00:00Z'),
+      at('cancelled', '2026-09-30T17:00:00Z', '2026-09-30T18:00:00Z', 'cancelled'),
+      at('playing', '2026-09-30T15:00:00Z', '2026-09-30T16:00:00Z'),
+    ];
+    expect(upcomingBookings(list, now).map((b) => b.id)).toEqual(['playing', 'later', 'cancelled']);
+    expect(upcomingBookings([], now)).toEqual([]);
   });
 
   it('shows a booking with default team names, never ranked and with no link to share yet', () => {

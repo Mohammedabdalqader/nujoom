@@ -112,6 +112,12 @@ const bilingual = (v: unknown): Bilingual | null => {
   return o && typeof o.ar === 'string' && typeof o.en === 'string' ? { ar: o.ar, en: o.en } : null;
 };
 
+/** A nullable ar/en name in the viewer's language, falling back to the other one, else ''. */
+export function localizedName(l: Localized | null, locale: string): string {
+  if (!l) return '';
+  return (locale === 'ar' ? (l.ar ?? l.en) : (l.en ?? l.ar)) ?? '';
+}
+
 export function toCatalogListing(raw: unknown): CatalogListing {
   const r = obj(raw) ?? {};
   const loc = obj(r.location);

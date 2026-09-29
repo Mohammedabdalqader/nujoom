@@ -996,3 +996,12 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
   - the other player saw Leave and no Remove; leaving asked first, was recorded as their own leave, closed to a Home with no upcoming match, and they could rejoin through the link
   - no page errors
   - Test data was removed.
+
+**D-090 Your upcoming bookings on the Match tab (2026-09-29).**
+
+- **Why:** in production the Match tab showed only "no match today", so a player couldn't see what they had booked or joined beyond the next match on Home. A player can organize three and join more.
+- **What:** under the demo's "no match today" card, "Your upcoming bookings" (`features/match/MyBookings.tsx`) lists the matches they organize or joined that haven't ended, soonest first. Each row shows the venue · field, day, date and time, and "You organize" where it applies, and opens the match details.
+- **Cancelled bookings stay,** marked "Cancelled" and listed last, so a venue's cancellation isn't missed. `upcomingBookings` is pure and tested.
+- **States:** nothing booked shows no section (the card above already says how to book). A failed load offers a retry.
+- **Also:** a shared `localizedName` for nullable ar/en names, with a test.
+- **Verified** on Expo web (production variant, 390 px) against a temporary live pitch, 7/7 checks: the player's own booking (marked organizer), a joined one and a cancelled one appeared in that order under the card; tapping opened the details; no sideways scroll; no page errors. Test data was removed.

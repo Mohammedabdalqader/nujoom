@@ -258,6 +258,20 @@ export function newRequestId(random: () => number = Math.random): string {
   return `${s.slice(0, 8)}-${s.slice(8, 12)}-${s.slice(12, 16)}-${s.slice(16, 20)}-${s.slice(20)}`;
 }
 
+/**
+ * The Match tab's list: bookings that haven't ended, soonest first. Cancelled ones stay (a venue
+ * may have cancelled, and the player must be able to see that), after the confirmed ones.
+ */
+export function upcomingBookings<T extends BookingReceipt>(bookings: T[], now: number): T[] {
+  return bookings
+    .filter((b) => new Date(b.endsAt).getTime() > now)
+    .sort(
+      (a, b) =>
+        Number(a.status === 'cancelled') - Number(b.status === 'cancelled') ||
+        new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime(),
+    );
+}
+
 /** The next booking to show on Home: the earliest confirmed one that hasn't ended yet. */
 export function nextBooking<T extends BookingReceipt>(bookings: T[], now: number): T | null {
   return (

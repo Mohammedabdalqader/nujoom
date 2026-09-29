@@ -316,6 +316,12 @@
       "title": "No match today",
       "body": "Book a pitch and invite the squad. On match day you'll find check-in, the clip button and voting here.",
       "cta": "Book a pitch"
+    },
+    "upcoming": {
+      "title": "Your upcoming bookings",
+      "organizer": "You organize",
+      "cancelled": "Cancelled",
+      "loadError": "Couldn't load your bookings."
     }
   },
   "kitsShort": {

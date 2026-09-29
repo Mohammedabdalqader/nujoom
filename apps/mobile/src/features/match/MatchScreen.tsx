@@ -8,6 +8,7 @@ import { CheckinCard } from '@/features/match/CheckinCard';
 import { ClipController } from '@/features/match/ClipController';
 import { MatchDayToolkit } from '@/features/match/MatchDayToolkit';
 import { MvpCard } from '@/features/match/MvpCard';
+import { MyBookings } from '@/features/match/MyBookings';
 import { Scoreboard } from '@/features/match/Scoreboard';
 import { Timeline } from '@/features/match/Timeline';
 import { useLocale } from '@/lib/locale';
@@ -73,7 +74,7 @@ function NoMatch() {
   const { t } = useLocale();
   const router = useRouter();
   return (
-    <Screen className="px-4 pt-4">
+    <Screen className="px-4 pt-4 gap-4">
       <View className="rounded-2xl bg-surface-container-low p-5 items-center gap-3 border border-border/60">
         <View className="w-14 h-14 rounded-xl bg-surface-container-high items-center justify-center">
           <Icon name="sports_soccer" size={30} className="text-primary" />
@@ -97,6 +98,7 @@ function NoMatch() {
           </Text>
         </Pressable>
       </View>
+      <MyBookings />
     </Screen>
   );
 }
