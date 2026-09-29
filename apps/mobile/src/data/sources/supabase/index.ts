@@ -533,6 +533,10 @@ export function createSupabaseSource(config: BackendConfig): DataSource {
       const items = await signPhotos(raw.items.map(toCatalogListing));
       return { items, nextCursor: raw.next_cursor ?? null };
     },
+    favoritePitches: async () =>
+      signPhotos((await rpc<unknown[]>('my_favorite_pitches')).map(toCatalogListing)),
+    setPitchFavorite: (pitchId, favorite) =>
+      rpc<boolean>('set_pitch_favorite', { p_pitch: pitchId, p_favorite: favorite }),
     async catalogPitch(pitchId) {
       const raw = await rpc<unknown>('catalog_pitch', { p_pitch_id: pitchId });
       if (!raw) return null;

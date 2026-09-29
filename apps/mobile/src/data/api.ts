@@ -9,7 +9,13 @@ import type {
   InvitePreview,
 } from '@/data/booking';
 import { getSource } from '@/data/source';
-import type { CatalogDetail, CatalogFilters, CatalogPage, CityCounts } from '@/data/catalog';
+import type {
+  CatalogDetail,
+  CatalogFilters,
+  CatalogListing,
+  CatalogPage,
+  CityCounts,
+} from '@/data/catalog';
 import type {
   AppNotification,
   Area,
@@ -58,6 +64,7 @@ export const keys = {
   booking: (id: string) => ['bookings', id] as const,
   invite: (bookingId: string) => ['bookings', bookingId, 'invite'] as const,
   invitePreview: (token: string) => ['invite-preview', token] as const,
+  favorites: ['catalog', 'favorites'] as const,
 };
 
 export const useMe = () => useQuery<Me>({ queryKey: keys.me, queryFn: () => getSource().me() });
@@ -113,6 +120,22 @@ export const useCatalogPitch = (pitchId: string | undefined) =>
     queryFn: () => getSource().catalogPitch(pitchId!),
     enabled: !!pitchId,
   });
+
+/** The player's favourite fields (D-086). */
+export const useFavoritePitches = () =>
+  useQuery<CatalogListing[]>({
+    queryKey: keys.favorites,
+    queryFn: () => getSource().favoritePitches(),
+  });
+
+/** Adds or removes a favourite; the list refetches from the server either way. */
+export function useSetPitchFavorite() {
+  const client = useQueryClient();
+  return useMutation<boolean, Error, { pitchId: string; favorite: boolean }>({
+    mutationFn: ({ pitchId, favorite }) => getSource().setPitchFavorite(pitchId, favorite),
+    onSettled: () => void client.invalidateQueries({ queryKey: keys.favorites }),
+  });
+}
 
 export const useAreas = () =>
   useQuery<Area[]>({ queryKey: keys.areas, queryFn: () => getSource().areas() });

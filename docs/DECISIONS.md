@@ -949,3 +949,10 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
   - Pushed live. A guest is refused.
   - A live tester, 4/4: a not-verified field is refused; a verified one is added and listed with its badge; removing empties the list. Test data was removed.
 - **Next:** the app's data layer and the heart on the pitch page, once wording is free. Star ratings need check-in (R4b), since only players who checked in may rate.
+
+**D-087 Favourites in the app's data layer (2026-09-29).**
+
+- **What:** `DataSource.favoritePitches()` and `setPitchFavorite(pitchId, favorite)` in both sources, with `useFavoritePitches` and `useSetPitchFavorite`. The list refetches after every change, success or not.
+- **Production:** calls `my_favorite_pitches` (photos signed like search results) and `set_pitch_favorite`. The live RPC checks in D-086 used these same calls.
+- **Demo:** the same rules as the server: verified fields only, newest first, once each, and removing always works. A test covers it (`sources/demo/favorites.test.ts`).
+- **No screen yet:** the heart on the pitch page and a favourites list need wording, so they wait for Codex's locale claim.

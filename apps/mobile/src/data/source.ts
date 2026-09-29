@@ -17,7 +17,13 @@ import type {
   InviteLink,
   InvitePreview,
 } from '@/data/booking';
-import type { CatalogDetail, CatalogFilters, CatalogPage, CityCounts } from '@/data/catalog';
+import type {
+  CatalogDetail,
+  CatalogFilters,
+  CatalogListing,
+  CatalogPage,
+  CityCounts,
+} from '@/data/catalog';
 import type {
   AppNotification,
   Area,
@@ -216,6 +222,10 @@ export type DataSource = {
   catalogPitch(pitchId: string): Promise<CatalogDetail | null>;
   /** How many published, verified and bookable fields a city has (honest empty states). */
   catalogCityCounts(cityId: number): Promise<CityCounts>;
+  /** The player's favourite fields still in the catalog, newest first (D-086). */
+  favoritePitches(): Promise<CatalogListing[]>;
+  /** Sets (not toggles) a favourite; only verified fields can be added. Returns the new state. */
+  setPitchFavorite(pitchId: string, favorite: boolean): Promise<boolean>;
   areas(): Promise<Area[]>;
   matchDay(): Promise<MatchDay | null>;
   matchDetails(bookingId: string): Promise<MatchDetails | null>;

@@ -191,6 +191,27 @@ export function demoCatalogPitch(id: string): CatalogDetail | null {
   };
 }
 
+/** Demo favourites, newest first, kept for the session (same rules as the server, D-086). */
+const demoFavorites: string[] = [];
+
+export function demoFavoritePitches(): CatalogListing[] {
+  return demoFavorites
+    .map((id) => demoCatalog.find((x) => x.pitchId === id))
+    .filter((x): x is CatalogListing => x !== undefined);
+}
+
+export function setDemoFavorite(pitchId: string, favorite: boolean): boolean {
+  const at = demoFavorites.indexOf(pitchId);
+  if (!favorite) {
+    if (at >= 0) demoFavorites.splice(at, 1);
+    return false;
+  }
+  const listing = demoCatalog.find((x) => x.pitchId === pitchId);
+  if (!listing || listing.badge !== 'verified') throw new Error('pitch_unavailable');
+  if (at < 0) demoFavorites.unshift(pitchId);
+  return true;
+}
+
 /** The demo catalog is one sample city: its counts, whatever city is asked for. */
 export function demoCityCounts() {
   return {
