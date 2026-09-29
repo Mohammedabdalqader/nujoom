@@ -1090,6 +1090,39 @@ export type Database = {
           },
         ]
       }
+      pitch_favorites: {
+        Row: {
+          created_at: string
+          pitch_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          pitch_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          pitch_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pitch_favorites_pitch_id_fkey"
+            columns: ["pitch_id"]
+            isOneToOne: false
+            referencedRelation: "pitches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pitch_favorites_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pitch_media: {
         Row: {
           attribution: string | null
@@ -1861,6 +1894,7 @@ export type Database = {
       my_catalog_reports: { Args: never; Returns: Json }
       my_claims: { Args: never; Returns: Json }
       my_data_requests: { Args: never; Returns: Json }
+      my_favorite_pitches: { Args: never; Returns: Json }
       my_guardians: { Args: never; Returns: Json }
       my_venues: { Args: never; Returns: Json }
       name_guardian: { Args: { p_email: string }; Returns: Json }
@@ -1904,6 +1938,10 @@ export type Database = {
       revoke_staff_invite: { Args: { p_invite: string }; Returns: undefined }
       run_catalog_freshness: { Args: never; Returns: number }
       search_pitches: { Args: { p?: Json }; Returns: Json }
+      set_pitch_favorite: {
+        Args: { p_favorite: boolean; p_pitch: string }
+        Returns: boolean
+      }
       set_settings: { Args: { p_patch: Json }; Returns: Json }
       set_visibility: {
         Args: {

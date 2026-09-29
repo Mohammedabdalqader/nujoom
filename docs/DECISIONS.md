@@ -934,3 +934,18 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
   - A fresh, cache-cleared `expo export --platform web` succeeds without `NODE_PATH`.
   - The production bundle guard (`pnpm check:bundle`) passes.
   - Lint, typecheck and tests pass.
+
+**D-086 Favourite pitches: the database (2026-09-29).**
+
+- **What:** migration `20260928003300_pitch_favorites.sql`. It adds the `pitch_favorites` table (RLS, no client access), `set_pitch_favorite(pitch, favorite)` and `my_favorite_pitches()`.
+- **Rules:**
+  - **Verified fields only.** Adding needs a published, verified field (spec §5: favourites are for verified participating fields). Removing always works.
+  - **Set, not toggled.** A double tap or a retry can't flip the state back. Limited to 60 changes an hour.
+  - **Same shape as search.** The list uses the same listing as search (`private.catalog_listing`), with each field's current badge. A field that loses its badge stays, shown as not verified; a venue taken out of the catalog drops out.
+  - **Private.** Nobody else ever sees someone's favourites.
+- **Data rights:** favourites are in the data export (`favorite_pitches`) and go with the account (cascade). The coverage guard in pgTAP `050` lists the table.
+- **Verified:**
+  - pgTAP `240` (13 checks) and the whole suite (542 checks) pass.
+  - Pushed live. A guest is refused.
+  - A live tester, 4/4: a not-verified field is refused; a verified one is added and listed with its badge; removing empties the list. Test data was removed.
+- **Next:** the app's data layer and the heart on the pitch page, once wording is free. Star ratings need check-in (R4b), since only players who checked in may rate.
