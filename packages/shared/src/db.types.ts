@@ -139,6 +139,110 @@ export type Database = {
           },
         ]
       }
+      booking_kitty: {
+        Row: {
+          booking_id: string
+          extras_fils: number
+          pitch_cost_fils: number
+          updated_at: string
+        }
+        Insert: {
+          booking_id: string
+          extras_fils?: number
+          pitch_cost_fils: number
+          updated_at?: string
+        }
+        Update: {
+          booking_id?: string
+          extras_fils?: number
+          pitch_cost_fils?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_kitty_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: true
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      booking_kitty_guests: {
+        Row: {
+          booking_id: string
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          booking_id: string
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          booking_id?: string
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_kitty_guests_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      booking_kitty_payments: {
+        Row: {
+          booking_id: string
+          guest_id: string | null
+          marked_at: string
+          method: string
+          user_id: string | null
+        }
+        Insert: {
+          booking_id: string
+          guest_id?: string | null
+          marked_at?: string
+          method: string
+          user_id?: string | null
+        }
+        Update: {
+          booking_id?: string
+          guest_id?: string | null
+          marked_at?: string
+          method?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_kitty_payments_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "booking_kitty_payments_guest_id_fkey"
+            columns: ["guest_id"]
+            isOneToOne: false
+            referencedRelation: "booking_kitty_guests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "booking_kitty_payments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       booking_players: {
         Row: {
           bib: number | null
@@ -1726,6 +1830,10 @@ export type Database = {
         Args: { p_booking: string; p_name: string }
         Returns: Json
       }
+      add_kitty_guest: {
+        Args: { p_booking: string; p_name: string }
+        Returns: Json
+      }
       add_pitch_media: {
         Args: {
           p_attribution?: string
@@ -1830,6 +1938,7 @@ export type Database = {
       booking_details: { Args: { p_booking: string }; Returns: Json }
       booking_gear: { Args: { p_booking: string }; Returns: Json }
       booking_invite: { Args: { p_booking: string }; Returns: Json }
+      booking_kitty: { Args: { p_booking: string }; Returns: Json }
       booking_preview: { Args: { p_token: string }; Returns: Json }
       booking_preview_public: { Args: { p_token: string }; Returns: Json }
       cancel_account_deletion: { Args: never; Returns: Json }
@@ -1943,6 +2052,10 @@ export type Database = {
         Args: { p_link_id: string }
         Returns: undefined
       }
+      mark_kitty_payment: {
+        Args: { p_booking: string; p_method: string; p_ref: string }
+        Returns: Json
+      }
       me: { Args: never; Returns: Json }
       my_bookings: { Args: never; Returns: Json }
       my_catalog_reports: { Args: never; Returns: Json }
@@ -1979,6 +2092,10 @@ export type Database = {
         Returns: Json
       }
       remove_gear_item: { Args: { p_item: string }; Returns: Json }
+      remove_kitty_guest: {
+        Args: { p_booking: string; p_guest: string }
+        Returns: Json
+      }
       remove_player: {
         Args: { p_booking: string; p_player_ref: string }
         Returns: Json
@@ -1999,6 +2116,14 @@ export type Database = {
       }
       set_gear_ready: {
         Args: { p_item: string; p_ready: boolean }
+        Returns: Json
+      }
+      set_kitty_costs: {
+        Args: {
+          p_booking: string
+          p_extras_fils: number
+          p_pitch_cost_fils: number
+        }
         Returns: Json
       }
       set_pitch_favorite: {

@@ -991,6 +991,12 @@
       "taken": "Someone else is already bringing that.",
       "invalidName": "Keep the item name short (up to 40 characters).",
       "tooMany": "The list already has 15 items, the most it can hold."
+    },
+    "kitty": {
+      "invalidAmount": "Enter an amount in JOD, from 0 to 1000.",
+      "invalidGuestName": "Enter the guest's first name only (up to 30 characters).",
+      "tooManyGuests": "You can add up to 12 guests.",
+      "invalidMethod": "Payments are cash or CliQ only."
     }
   },
   "demo": {

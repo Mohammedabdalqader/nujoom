@@ -88,6 +88,11 @@ const SQL_ERROR_KEYS = {
   gear_taken: 'errors.gear.taken',
   invalid_gear_name: 'errors.gear.invalidName',
   too_many_gear_items: 'errors.gear.tooMany',
+  // The pitch kitty (D-095)
+  invalid_amount: 'errors.kitty.invalidAmount',
+  invalid_guest_name: 'errors.kitty.invalidGuestName',
+  too_many_guests: 'errors.kitty.tooManyGuests',
+  invalid_payment_method: 'errors.kitty.invalidMethod',
   // Invites and joining (D-083)
   invite_invalid: 'errors.invites.invalid',
   booking_full: 'errors.invites.full',

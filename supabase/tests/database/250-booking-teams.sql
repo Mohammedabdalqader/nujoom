@@ -59,43 +59,43 @@ select throws_ok($$ select public.set_booking_teams(pg_temp.kept('b')::uuid, '[]
   'not_organizer', 'only the organizer saves the teams');
 
 select tests.act_as(tests.id('ana'));
-select pg_temp.keep('ana', pg_temp.ref('Ana'));
-select pg_temp.keep('bob', pg_temp.ref('Bob'));
-select pg_temp.keep('cat', pg_temp.ref('Cat'));
+select pg_temp.keep('ana_ref', pg_temp.ref('Ana'));
+select pg_temp.keep('bob_ref', pg_temp.ref('Bob'));
+select pg_temp.keep('cat_ref', pg_temp.ref('Cat'));
 select ok(
   (select pg_temp.player(d, 'Ana') ->> 'team' = 'a' and (pg_temp.player(d, 'Ana') ->> 'bib')::int = 1
       and pg_temp.player(d, 'Bob') ->> 'team' = 'b' and (pg_temp.player(d, 'Bob') ->> 'bib')::int = 2
       and pg_temp.player(d, 'Cat') ->> 'team' is null
    from public.set_booking_teams(pg_temp.kept('b')::uuid, jsonb_build_array(
-          jsonb_build_object('player_ref', pg_temp.kept('ana'), 'team', 'a', 'bib', 1),
-          jsonb_build_object('player_ref', pg_temp.kept('bob'), 'team', 'b', 'bib', 2))) d),
+          jsonb_build_object('player_ref', pg_temp.kept('ana_ref'), 'team', 'a', 'bib', 1),
+          jsonb_build_object('player_ref', pg_temp.kept('bob_ref'), 'team', 'b', 'bib', 2))) d),
   'the organizer saves a line-up; players left out aren''t placed');
 select ok(
   (select pg_temp.player(d, 'Ana') ->> 'team' = 'b' and (pg_temp.player(d, 'Ana') ->> 'bib')::int = 2
       and pg_temp.player(d, 'Bob') ->> 'team' is null and pg_temp.player(d, 'Bob') ->> 'bib' is null
       and pg_temp.player(d, 'Cat') ->> 'team' = 'a' and (pg_temp.player(d, 'Cat') ->> 'bib')::int = 1
    from public.set_booking_teams(pg_temp.kept('b')::uuid, jsonb_build_array(
-          jsonb_build_object('player_ref', pg_temp.kept('ana'), 'team', 'b', 'bib', 2),
-          jsonb_build_object('player_ref', pg_temp.kept('cat'), 'team', 'a', 'bib', 1))) d),
+          jsonb_build_object('player_ref', pg_temp.kept('ana_ref'), 'team', 'b', 'bib', 2),
+          jsonb_build_object('player_ref', pg_temp.kept('cat_ref'), 'team', 'a', 'bib', 1))) d),
   'saving again replaces the line-up, and bibs can move between players');
 
 -- Refused as a whole.
 select throws_ok(format($$ select public.set_booking_teams(%L, %L) $$, pg_temp.kept('b'), jsonb_build_array(
-  jsonb_build_object('player_ref', pg_temp.kept('ana'), 'team', 'a', 'bib', 3),
-  jsonb_build_object('player_ref', pg_temp.kept('bob'), 'team', 'b', 'bib', 3))),
+  jsonb_build_object('player_ref', pg_temp.kept('ana_ref'), 'team', 'a', 'bib', 3),
+  jsonb_build_object('player_ref', pg_temp.kept('bob_ref'), 'team', 'b', 'bib', 3))),
   'invalid_assignment', 'a bib used twice is refused');
 select throws_ok(format($$ select public.set_booking_teams(%L, %L) $$, pg_temp.kept('b'), jsonb_build_array(
-  jsonb_build_object('player_ref', pg_temp.kept('ana'), 'team', 'a'),
-  jsonb_build_object('player_ref', pg_temp.kept('ana'), 'team', 'b'))),
+  jsonb_build_object('player_ref', pg_temp.kept('ana_ref'), 'team', 'a'),
+  jsonb_build_object('player_ref', pg_temp.kept('ana_ref'), 'team', 'b'))),
   'invalid_assignment', 'a player named twice is refused');
 select throws_ok(format($$ select public.set_booking_teams(%L, %L) $$, pg_temp.kept('b'), jsonb_build_array(
-  jsonb_build_object('player_ref', pg_temp.kept('ana'), 'team', 'c'))),
+  jsonb_build_object('player_ref', pg_temp.kept('ana_ref'), 'team', 'c'))),
   'invalid_assignment', 'a team other than A or B is refused');
 select throws_ok(format($$ select public.set_booking_teams(%L, %L) $$, pg_temp.kept('b'), jsonb_build_array(
-  jsonb_build_object('player_ref', pg_temp.kept('ana'), 'bib', 13))),
+  jsonb_build_object('player_ref', pg_temp.kept('ana_ref'), 'bib', 13))),
   'invalid_assignment', 'bibs run 1 to 12');
 select throws_ok(format($$ select public.set_booking_teams(%L, %L) $$, pg_temp.kept('b'), jsonb_build_array(
-  jsonb_build_object('player_ref', pg_temp.kept('ana'), 'bib', 'x'))),
+  jsonb_build_object('player_ref', pg_temp.kept('ana_ref'), 'bib', 'x'))),
   'invalid_assignment', 'a bib that isn''t a number is refused, not an error');
 select throws_ok(format($$ select public.set_booking_teams(%L, %L) $$, pg_temp.kept('b'), jsonb_build_array(
   jsonb_build_object('player_ref', 'not-a-uuid', 'team', 'a'))),
@@ -106,9 +106,9 @@ select is((select pg_temp.player(public.booking_details(pg_temp.kept('b')::uuid)
   'a refused save changes nothing');
 
 -- A removed player can't be placed.
-select public.remove_player(pg_temp.kept('b')::uuid, pg_temp.kept('bob')::uuid);
+select public.remove_player(pg_temp.kept('b')::uuid, pg_temp.kept('bob_ref')::uuid);
 select throws_ok(format($$ select public.set_booking_teams(%L, %L) $$, pg_temp.kept('b'), jsonb_build_array(
-  jsonb_build_object('player_ref', pg_temp.kept('bob'), 'team', 'a'))),
+  jsonb_build_object('player_ref', pg_temp.kept('bob_ref'), 'team', 'a'))),
   'invalid_assignment', 'a removed player can''t be placed');
 
 select tests.act_as_postgres();

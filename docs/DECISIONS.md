@@ -1083,3 +1083,22 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
   - no page errors
   - Test data was removed.
 - **Copy for Codex:** some fixed item notes state facts nobody checked (the ball's "inflated 100% and pressure-checked"), and the add placeholder's example is a camera stand for filming, although recording doesn't exist yet. I left both to Codex (D-010).
+
+**D-095 The pitch kitty: the database (2026-09-29).**
+
+- **What:** migration `20260928003600_booking_kitty.sql`, the last of the three match tools (spec §6.6 "Cost splitter").
+  - Tables: `booking_kitty` (pitch cost and extras in whole fils), `booking_kitty_guests` (walk-ins without the app, by first name) and `booking_kitty_payments` (cash or CliQ marks).
+  - RPCs: `booking_kitty`, `set_kitty_costs`, `add_kitty_guest`, `remove_kitty_guest` and `mark_kitty_payment`.
+- **Tracking only:** the app never moves money, and a payment mark is cash or CliQ only (stars never pay, D-006.1; `invalid_payment_method`).
+- **Rules:**
+  - **Pitch cost:** it starts at the booked price. The organizer may change it and the extras (0–1000 JOD each, `invalid_amount`).
+  - **Organizer only:** marking who paid, adding guests (first name up to 30 characters, at most 12), and removing guests. Players see the costs and who has paid, and handles go to the organizer only.
+  - **Stays open after the match,** unlike gear, because people often settle up afterwards. Closed for cancelled matches.
+  - Limited to 120 actions an hour. A payment mark counts as `tool_used`.
+- **No CliQ alias on the server:** the organizer's alias stays on their own phone, as the demo already does. The server never holds a payment identifier.
+- **Data rights:** a person's payment marks are in their export (`kitty_payments`) and go with their account. Guests are the organizer's own notes on their booking and go with it. The coverage guard lists the payments table.
+- **Verified:**
+  - pgTAP `270`: 16 checks. The whole suite passes (589).
+  - A test-key collision was fixed: saving a handle under `bob` overwrote the `tests.bob` id. It's fixed here and in `250`, where it was dormant.
+  - Pushed live. A live check passed 5/5: a player saw the booked 25 JOD and both players without handles; a player couldn't mark payments; the organizer marked the friend paid by CliQ and the friend saw it; the organizer added a guest. Test data was removed.
+- **Next:** wire the demo's kitty screen to it, as with gear (D-094).
