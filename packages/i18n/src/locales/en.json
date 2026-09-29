@@ -926,7 +926,9 @@
       "noOpeningHours": "Set your opening hours first, then switch the schedule on.",
       "invalidOpeningHours": "Those opening hours don't work: each period must end after it starts, and periods can't overlap.",
       "invalidDimensions": "Those measurements don't add up: length between 10 and 130 m, width between 5 and 100 m.",
-      "invalidFieldName": "The field name must be 60 characters or fewer."
+      "invalidFieldName": "The field name must be 60 characters or fewer.",
+      "invalidStaffInvite": "This link has expired, was already used or was cancelled. Ask the venue owner for a new one.",
+      "staffLinkLimit": "You have 5 open links for this venue. Cancel one first."
     },
     "notFound": "We couldn't find it. It may have been removed.",
     "forbidden": "You don't have access to this."

@@ -651,3 +651,19 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
   - An empty box leaves the stored value alone, and only changed values are sent (operator evidence, D-065).
 - **Errors:** `invalid_dimensions` and `invalid_field_name` have Arabic and English messages. The database also refuses impossible values on its own (tested).
 - **Evidence:** pgTAP +2 (392), 3 new shared test groups, and the live owner run (37/37). Seven operator evidence rows for seven changes, none for later saves; an impossible length is refused and saves nothing. Test data was removed.
+
+**D-068 Venue staff: roles and one-time invite links (2026-09-29).**
+
+- **Roles:**
+  - An **owner** runs the venue: prices, hours, field details, the schedule and the team. `owner_confirm_field` and `owner_set_schedule_active` now require the owner role.
+  - **Staff** see the venue (`my_venues()` with role `staff`) and may add photos for review. They'll handle the calendar and manual bookings when booking arrives (R2).
+  - Accountability for anything players rely on (price, hours, facts) stays with owners (roadmap G2a).
+- **Joining without email:** an owner creates a one-time link (`create_staff_invite`) and shares it however they like, e.g. WhatsApp.
+  - Only the token's hash is stored. A link works once, for 7 days, and only while its maker is still an owner of the venue.
+  - Limits: at most 5 open links per venue and 10 new links a day per owner.
+  - Bad, used, revoked and expired links look the same (`invalid_staff_invite`).
+  - The joiner must be signed in and an adult; a website-only person gets the basic profile first (D-059).
+  - `staff_invite_preview` shows the venue, city and who invited.
+- **Leaving:** owners revoke links (`revoke_staff_invite`) and remove staff (`remove_staff`); staff can leave themselves. Owners are never removed this way, since that's an admin matter.
+- **Records:** every step is audited. The data export lists the links a person created, without tokens and without who joined (the joiner sees it in their own `venues_managed`). `staff_invites` is in the export coverage guard.
+- **Evidence:** pgTAP `180-staff-access.sql` has 24 assertions (416 total), live on the project. The web screens are next.

@@ -1294,6 +1294,64 @@ export type Database = {
           },
         ]
       }
+      staff_invites: {
+        Row: {
+          accepted_at: string | null
+          accepted_by: string | null
+          created_at: string
+          created_by: string | null
+          expires_at: string
+          facility_id: string
+          id: string
+          revoked_at: string | null
+          token_hash: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          created_at?: string
+          created_by?: string | null
+          expires_at: string
+          facility_id: string
+          id?: string
+          revoked_at?: string | null
+          token_hash: string
+        }
+        Update: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string
+          facility_id?: string
+          id?: string
+          revoked_at?: string | null
+          token_hash?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staff_invites_accepted_by_fkey"
+            columns: ["accepted_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "staff_invites_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "staff_invites_facility_id_fkey"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "facilities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_settings: {
         Row: {
           locale: string
@@ -1382,6 +1440,7 @@ export type Database = {
         }
         Returns: Json
       }
+      accept_staff_invite: { Args: { p_token: string }; Returns: string }
       add_pitch_media: {
         Args: {
           p_attribution?: string
@@ -1500,6 +1559,7 @@ export type Database = {
         Args: { p_accept_terms: boolean; p_dob: string; p_name: string }
         Returns: Json
       }
+      create_staff_invite: { Args: { p_facility: string }; Returns: Json }
       decline_guardian_invite: { Args: { p_token: string }; Returns: undefined }
       due_account_deletions: {
         Args: { p_limit?: number }
@@ -1573,8 +1633,13 @@ export type Database = {
         }
         Returns: Json
       }
+      remove_staff: {
+        Args: { p_facility: string; p_user: string }
+        Returns: undefined
+      }
       request_account_deletion: { Args: never; Returns: Json }
       request_data_export: { Args: never; Returns: Json }
+      revoke_staff_invite: { Args: { p_invite: string }; Returns: undefined }
       run_catalog_freshness: { Args: never; Returns: number }
       search_pitches: { Args: { p?: Json }; Returns: Json }
       set_settings: { Args: { p_patch: Json }; Returns: Json }
@@ -1584,6 +1649,7 @@ export type Database = {
         }
         Returns: Json
       }
+      staff_invite_preview: { Args: { p_token: string }; Returns: Json }
       submit_catalog_report: {
         Args: {
           p_facility?: string

@@ -61,6 +61,9 @@ const SQL_ERROR_KEYS = {
   // Checked by the owner page before saving (D-067).
   invalid_dimensions: 'errors.venue.invalidDimensions',
   invalid_field_name: 'errors.venue.invalidFieldName',
+  // Venue staff (D-068)
+  invalid_staff_invite: 'errors.venue.invalidStaffInvite',
+  staff_link_limit: 'errors.venue.staffLinkLimit',
 } as const;
 
 /** Supabase Auth error codes (AuthError.code) we explain specifically. */
