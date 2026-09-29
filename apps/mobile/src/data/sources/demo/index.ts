@@ -3,7 +3,7 @@ import { DEFAULT_CONFIG, DEFAULT_FEATURE_FLAGS } from '@nujoom/shared';
 import type { Account, DataSource } from '@/data/source';
 
 import { demoBooking } from './booking';
-import { demoCatalogPitch, searchDemoCatalog } from './catalog';
+import { demoCatalogPitch, demoCityCounts, searchDemoCatalog } from './catalog';
 
 import {
   DEMO_FIXTURE_MARKER,
@@ -110,6 +110,7 @@ export const demoSource: DataSource & { marker: string } = {
   pitches: () => copy(previewPitches),
   searchPitches: (filters) => copy(searchDemoCatalog(filters)),
   catalogPitch: (id) => copy(demoCatalogPitch(id)),
+  catalogCityCounts: () => copy(demoCityCounts()),
   areas: () => copy(previewAreas),
   matchDay: () => copy(previewMatchDay),
   matchDetails: (bookingId) =>

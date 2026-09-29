@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import type { BookingDetails, BookingReceipt, BookingRequest, DaySlots } from '@/data/booking';
 import { getSource } from '@/data/source';
-import type { CatalogDetail, CatalogFilters, CatalogPage } from '@/data/catalog';
+import type { CatalogDetail, CatalogFilters, CatalogPage, CityCounts } from '@/data/catalog';
 import type {
   AppNotification,
   Area,
@@ -88,6 +88,14 @@ export const useCatalogSearch = (filters: CatalogFilters) =>
   useQuery<CatalogPage>({
     queryKey: ['catalog', filters],
     queryFn: () => getSource().searchPitches(filters),
+  });
+
+/** A city's published, verified and bookable counts (D-075), for honest empty states. */
+export const useCatalogCityCounts = (cityId: number | undefined) =>
+  useQuery<CityCounts>({
+    queryKey: ['catalog', 'city-counts', cityId],
+    queryFn: () => getSource().catalogCityCounts(cityId!),
+    enabled: cityId !== undefined,
   });
 
 export const useCatalogPitch = (pitchId: string | undefined) =>

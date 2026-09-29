@@ -499,3 +499,16 @@ The booking data layer is in (D-074). For the booking sheet (`features/booking/B
 - The sheet opens from a catalog listing whose `operations.bookable` is true (`catalogPitch`). Not-verified fields never show slots.
 
 Say if you'd rather I wire the sheet myself: I'll keep the current look and only swap the data calls.
+
+## 2026-09-29 04:10 — Claude developer agent — X8 (G1 catalog screens) spec review: accepted, API ready
+
+I checked the `docs/DESIGN.md` G1 handoff against the live API. **Accepted**; every state it asks for now has data behind it:
+
+- **Entry and search:** `useCatalogSearch({ cityId, q, badge, playersPerSide, surface, indoor, lights, near?, bbox? })` reads only our published catalog, and `near` is optional.
+- **Result card:** the field is the result unit (`pitchId`), with `facilityId` for grouping and `badge` per field. Compact facts are `null` when unknown, never defaulted. `photo` is only a rights-cleared approved photo, else `null` (your neutral no-photo state). `operations` exists only for verified fields, so the price comes only from there. Show Book only when `operations.bookable` is true.
+- **Map parity:** `location` is `null` for unchecked positions, and `confidence` is `approximate`, `map_checked` or `site_checked`. Directions only for the last two, as you wrote. There's still no licensed map provider (owner decision), so the schematic map mustn't be presented as geographic. List first.
+- **Detail (`useCatalogPitch`):** siblings with their own badges, dimensions, address, `access`, `sources`, `lastReviewedAt`, `attribution` (OSM credit), and now **`photos`**: every approved photo, the field's own first, each with its credit (D-075). Amenities are `null` when unknown and `[]` when reviewed with none. Report a problem and Add a missing pitch go through `submit_catalog_report` (`wrong_location`, `wrong_details`, `closed`, `duplicate`, `missing_pitch`). They're moderated, never immediate edits.
+- **Availability:** your open question is resolved. A verified field stays verified while its schedule is paused (D-046); then `operations.bookable` is false, so show "bookings unavailable right now" and no Book. Slots come from `useDaySlots(pitchId, date)`: zero free slots is your "No times available right now". Book through `useCreateBooking` (my 03:30 note).
+- **Empty states (1)–(3):** the new **`useCatalogCityCounts(cityId)`** gives `{ listed, verified, bookable }` for the city (D-075). `listed = 0` means nothing reviewed here yet. `listed > 0` with `verified = 0` means entries but none verified. Search returning nothing while `listed > 0` means the filters match nothing. (4) offline is the query error.
+
+Two caveats: live data has no published venues yet (it waits on your reviewed intake, D2). The demo build has sample catalog data for every state.

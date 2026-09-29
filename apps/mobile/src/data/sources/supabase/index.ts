@@ -16,6 +16,7 @@ import * as WebBrowser from 'expo-web-browser';
 
 import { toBookingDetails, toDaySlots, toReceipt, withRetry } from '@/data/booking';
 import {
+  toCityCounts,
   toCatalogDetail,
   toCatalogListing,
   toSearchParams,
@@ -493,8 +494,23 @@ export function createSupabaseSource(config: BackendConfig): DataSource {
     },
     async catalogPitch(pitchId) {
       const raw = await rpc<unknown>('catalog_pitch', { p_pitch_id: pitchId });
-      return raw ? (await signPhotos([toCatalogDetail(raw)]))[0]! : null;
+      if (!raw) return null;
+      const detail = (await signPhotos([toCatalogDetail(raw)]))[0]!;
+      // The detail's full photo list gets short-lived links too; one that can't be signed is dropped.
+      const paths = detail.photos.map((ph) => ph.path);
+      if (!paths.length) return detail;
+      const { data } = await db.storage.from('pitch-media').createSignedUrls(paths, 3600);
+      const urls = new Map((data ?? []).map((d) => [d.path, d.error ? null : d.signedUrl]));
+      return {
+        ...detail,
+        photos: detail.photos.flatMap((ph) => {
+          const url = urls.get(ph.path);
+          return url ? [{ ...ph, url }] : [];
+        }),
+      };
     },
+    catalogCityCounts: async (cityId) =>
+      toCityCounts(await rpc('catalog_city_counts', { p_city: cityId })),
     async areas() {
       // The pitch filter's areas are Amman's neighbourhoods (real reference data).
       const { cities } = await loadPlaces();

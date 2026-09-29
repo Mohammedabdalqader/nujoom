@@ -66,7 +66,12 @@ export type CatalogDetail = CatalogListing & {
   /** e.g. "© OpenStreetMap contributors" when facts came from OSM. */
   attribution: string | null;
   canReport: boolean;
+  /** Every approved photo of this field or the whole venue, the field's own first (D-075). */
+  photos: CatalogPhoto[];
 };
+
+/** A city's published fields: all, verified, taking bookings now (D-075), for honest empty states. */
+export type CityCounts = { listed: number; verified: number; bookable: number };
 
 export type CatalogFilters = {
   cityId?: number;
@@ -182,6 +187,23 @@ export function toCatalogDetail(raw: unknown): CatalogDetail {
     address: localized(r.address),
     attribution: str(r.attribution),
     canReport: r.can_report === true,
+    photos: Array.isArray(r.photos)
+      ? r.photos.flatMap((x) => {
+          const o = obj(x);
+          return o && typeof o.path === 'string'
+            ? [{ path: o.path, url: null, attribution: str(o.attribution) }]
+            : [];
+        })
+      : [],
+  };
+}
+
+export function toCityCounts(raw: unknown): CityCounts {
+  const r = obj(raw) ?? {};
+  return {
+    listed: Number(r.listed ?? 0),
+    verified: Number(r.verified ?? 0),
+    bookable: Number(r.bookable ?? 0),
   };
 }
 

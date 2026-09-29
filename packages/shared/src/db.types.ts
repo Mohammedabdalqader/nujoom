@@ -1719,6 +1719,7 @@ export type Database = {
         }
         Returns: Json
       }
+      catalog_city_counts: { Args: { p_city: number }; Returns: Json }
       catalog_pitch: { Args: { p_pitch_id: string }; Returns: Json }
       check_data_rights_secret: { Args: { p_secret: string }; Returns: boolean }
       claim_facility: {

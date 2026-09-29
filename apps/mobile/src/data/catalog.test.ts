@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { toCatalogDetail, toCatalogListing, toSearchParams } from './catalog';
+import { toCatalogDetail, toCatalogListing, toCityCounts, toSearchParams } from './catalog';
 
 // Shapes as public.search_pitches / public.catalog_pitch return them (supabase/tests 070, 080).
 const verified = {
@@ -135,5 +135,32 @@ describe('toSearchParams', () => {
       cursor: 20,
     });
     expect(toSearchParams({ q: '   ', playersPerSide: [] })).toEqual({});
+  });
+});
+
+describe('catalog UX support (D-075)', () => {
+  it('lists every approved photo on the detail, dropping malformed entries', () => {
+    const d = toCatalogDetail({
+      ...verified,
+      siblings: [],
+      photos: [
+        { path: 'f/field-a.jpg', attribution: null },
+        { path: 'f/venue.jpg', attribution: 'Photo: A. Photographer, CC BY 4.0' },
+        { nope: true },
+      ],
+    });
+    expect(d.photos).toEqual([
+      { path: 'f/field-a.jpg', url: null, attribution: null },
+      { path: 'f/venue.jpg', url: null, attribution: 'Photo: A. Photographer, CC BY 4.0' },
+    ]);
+  });
+
+  it('reads city counts, defaulting to zero', () => {
+    expect(toCityCounts({ listed: 2, verified: 1, bookable: 0 })).toEqual({
+      listed: 2,
+      verified: 1,
+      bookable: 0,
+    });
+    expect(toCityCounts(null)).toEqual({ listed: 0, verified: 0, bookable: 0 });
   });
 });

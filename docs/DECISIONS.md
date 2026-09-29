@@ -748,3 +748,10 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
   - Hooks in `api.ts`: `useDaySlots` (always fresh), `useCreateBooking` (refreshes the day and my bookings whether it succeeded or failed), `useMyBookings`, `useBookingDetails` and `useCancelBooking`.
 - **Not changed:** the booking sheet UI (`features/booking/BookingDialog.tsx`, Codex's area) still books against the demo pitch shape. Moving it onto these hooks and the catalog detail is the next step; a handoff note is in `coordination.md`.
 - **Evidence:** pgTAP `210-day-slots.sql` has 8 assertions (481 total), plus 7 mobile unit tests (mapping and retries). The live smoke run now also checks the day's slots before and after a booking (17/17), with test data removed.
+
+**D-075 Catalog data for honest screen states (2026-09-29).**
+
+- **Why:** reviewing Codex's G1 discovery spec (`docs/DESIGN.md`, task X8) against the live API left two gaps. Both are closed, and the review is accepted in `agentic_system/coordination.md`.
+- **Detail photos:** `catalog_pitch` now returns `photos`, every approved, rights-cleared photo of the field or the whole venue, the field's own first, each with its credit (a sibling field never shows another field's photos). The app signs each one for an hour and drops any it can't sign.
+- **City counts:** `catalog_city_counts(city)` gives the city's published fields, how many are verified and how many take bookings now (paused schedules don't count). The list can then say truthfully whether nothing is reviewed there yet, entries exist but none are verified, or the filters match nothing. The app hook is `useCatalogCityCounts`, with a demo version for the sample city.
+- **Evidence:** pgTAP `220-catalog-ux.sql` has 6 assertions (487 total) and 2 mobile unit tests. Live on the project.

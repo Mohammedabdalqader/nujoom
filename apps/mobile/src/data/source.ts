@@ -10,7 +10,7 @@ import type {
 } from '@nujoom/shared';
 
 import type { BookingDetails, BookingReceipt, BookingRequest, DaySlots } from '@/data/booking';
-import type { CatalogDetail, CatalogFilters, CatalogPage } from '@/data/catalog';
+import type { CatalogDetail, CatalogFilters, CatalogPage, CityCounts } from '@/data/catalog';
 import type {
   AppNotification,
   Area,
@@ -195,6 +195,8 @@ export type DataSource = {
   searchPitches(filters: CatalogFilters): Promise<CatalogPage>;
   /** One field's detail; null when it isn't searchable. */
   catalogPitch(pitchId: string): Promise<CatalogDetail | null>;
+  /** How many published, verified and bookable fields a city has (honest empty states). */
+  catalogCityCounts(cityId: number): Promise<CityCounts>;
   areas(): Promise<Area[]>;
   matchDay(): Promise<MatchDay | null>;
   matchDetails(bookingId: string): Promise<MatchDetails | null>;

@@ -187,5 +187,15 @@ export function demoCatalogPitch(id: string): CatalogDetail | null {
     address: null,
     attribution: l.sources.includes('osm') ? '© OpenStreetMap contributors' : null,
     canReport: true,
+    photos: l.photo ? [l.photo] : [],
+  };
+}
+
+/** The demo catalog is one sample city: its counts, whatever city is asked for. */
+export function demoCityCounts() {
+  return {
+    listed: demoCatalog.length,
+    verified: demoCatalog.filter((l) => l.badge === 'verified').length,
+    bookable: demoCatalog.filter((l) => l.operations?.bookable).length,
   };
 }
