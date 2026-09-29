@@ -624,3 +624,10 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
   - a normal Sunday and a split Friday are saved without touching the price, and shown again after reload; then the schedule switches on
   - the layout stays clean at phone width
   - test accounts and files were removed afterwards
+
+**D-065 Owners confirm field details on the website (2026-09-29).**
+
+- **Form:** a "Field details" section in the field's save form on `/[locale]/venue`: players per side (3–11), surface (artificial turf, natural grass, hard court, sand, other), covered or open air, and floodlights. It shows the stored values, which may come from the reviewed import.
+- **Only real changes are recorded:** each select carries the stored value, and the action sends only facts the owner changed. "Not set" never erases a known fact. Each change goes through `owner_confirm_field` and is recorded as operator evidence (D-046), so re-saving a price doesn't create duplicate evidence.
+- **Not yet:** amenities and dimensions (`my_venues()` doesn't return them yet), and the field's name.
+- **Verified live:** the imported "11-a-side" showed as current; the owner changed it to 7-a-side with floodlights. Exactly two operator evidence rows were written, later saves added none, and every earlier check still passed.

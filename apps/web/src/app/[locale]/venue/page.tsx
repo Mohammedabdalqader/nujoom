@@ -10,6 +10,7 @@ import { getT, localeFrom, type Locale } from '@/lib/i18n';
 import { serverSupabase } from '@/lib/supabase/server';
 
 import { claimVenue, confirmField, createProfileAndClaim, setSchedule } from './actions';
+import { FactsFieldset, type FactStrings } from './FactsFieldset';
 import { HoursFieldset } from './HoursFieldset';
 import { PhotoUpload, type PhotoStrings } from './PhotoUpload';
 
@@ -160,6 +161,26 @@ export default async function VenuePage({ params, searchParams }: Props) {
       ? await supabase.storage.from('pitch-media').createSignedUrls(photoPaths, 600)
       : { data: [] as { path: string | null; signedUrl: string; error: string | null }[] };
   const previews = new Map((signed ?? []).map((x) => [x.path, x.error ? null : x.signedUrl]));
+  const factStrings: FactStrings = {
+    title: t('web.owner.facts.title'),
+    hint: t('web.owner.facts.hint'),
+    unknown: t('web.owner.facts.unknown'),
+    players: t('web.owner.facts.players'),
+    playersOption: t('web.owner.facts.playersOption', { n: '{{n}}' }),
+    surface: t('web.owner.facts.surface'),
+    surfaces: Object.fromEntries(
+      ['artificial_turf', 'natural_grass', 'hard_court', 'sand', 'other'].map((k) => [
+        k,
+        t(`web.owner.facts.surfaces.${k}`),
+      ]),
+    ),
+    indoor: t('web.owner.facts.indoor'),
+    covered: t('web.owner.facts.covered'),
+    open: t('web.owner.facts.open'),
+    lights: t('web.owner.facts.lights'),
+    lit: t('web.owner.facts.lit'),
+    unlit: t('web.owner.facts.unlit'),
+  };
   const hoursStrings = {
     title: t('web.owner.hours.title'),
     hint: t('web.owner.hours.hint'),
@@ -284,6 +305,7 @@ export default async function VenuePage({ params, searchParams }: Props) {
                             className={input}
                           />
                         </label>
+                        <FactsFieldset field={f} strings={factStrings} />
                         <HoursFieldset
                           locale={locale}
                           hours={isValidOpeningHours(ops?.opening_hours) ? ops.opening_hours : null}

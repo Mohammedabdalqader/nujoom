@@ -7,6 +7,8 @@ import { redirect } from 'next/navigation';
 
 import { serverSupabase } from '@/lib/supabase/server';
 
+import { SURFACES } from './FactsFieldset';
+
 /**
  * The venue owner's actions (D-060). Inputs are re-validated here; the database decides who may
  * do what (claim_facility for adults, owner_* for the venue's staff only).
@@ -89,10 +91,32 @@ export async function confirmField(form: FormData) {
     hours[day] = ranges;
   }
   if (!isValidOpeningHours(hours)) redirect(`${back}?error=invalid_opening_hours`);
+  // Field facts (D-065): only what the owner changed; "not set" never erases a known fact.
+  const facts: Record<string, unknown> = {};
+  const changed = (k: string) => get(`fact_${k}`) !== '' && get(`fact_${k}`) !== get(`was_${k}`);
+  if (changed('players')) {
+    const n = Number(get('fact_players'));
+    if (!Number.isInteger(n) || n < 3 || n > 11) redirect(`${back}?error=invalid_action`);
+    facts.players_per_side = n;
+  }
+  if (changed('surface')) {
+    if (!(SURFACES as readonly string[]).includes(get('fact_surface'))) {
+      redirect(`${back}?error=invalid_action`);
+    }
+    facts.surface = get('fact_surface');
+  }
+  for (const [k, column] of [
+    ['indoor', 'indoor'],
+    ['lights', 'lights'],
+  ] as const) {
+    if (!changed(k)) continue;
+    if (!['yes', 'no'].includes(get(`fact_${k}`))) redirect(`${back}?error=invalid_action`);
+    facts[column] = get(`fact_${k}`) === 'yes';
+  }
   const supabase = await client(back);
   const { error } = await supabase.rpc('owner_confirm_field', {
     p_pitch: pitch,
-    p_facts: {},
+    p_facts: facts,
     p_operations: {
       price_per_hour: price,
       slot_minutes: slot,

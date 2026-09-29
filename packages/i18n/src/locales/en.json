@@ -1348,6 +1348,27 @@
         "open": "Open",
         "second": "Second period",
         "midnight": "Midnight (end of day)"
+      },
+      "facts": {
+        "title": "Field details",
+        "hint": "What you set here is recorded as confirmed by you, the operator. \"Not set\" leaves a detail unchanged.",
+        "unknown": "Not set",
+        "players": "Players per side",
+        "playersOption": "{{n}}-a-side",
+        "surface": "Surface",
+        "surfaces": {
+          "artificial_turf": "Artificial turf",
+          "natural_grass": "Natural grass",
+          "hard_court": "Hard court",
+          "sand": "Sand",
+          "other": "Other"
+        },
+        "indoor": "Covered or open air?",
+        "covered": "Covered",
+        "open": "Open air",
+        "lights": "Floodlights",
+        "lit": "Floodlit",
+        "unlit": "No floodlights"
       }
     }
   }
