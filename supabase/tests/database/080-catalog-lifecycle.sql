@@ -111,8 +111,8 @@ select throws_ok(format($$ select public.owner_set_schedule_active(%L, true) $$,
 select tests.act_as(tests.id('owner'));
 select lives_ok(
   format($$ select public.owner_confirm_field(%L, '{"lights":true,"indoor":false}',
-                                               '{"price_per_hour":25,"slot_minutes":60}') $$, tests.id('pa')),
-  'the owner confirms facts and a price');
+                                               '{"price_per_hour":25,"slot_minutes":60,"opening_hours":{"sun":[["16:00","24:00"]]}}') $$, tests.id('pa')),
+  'the owner confirms facts, a price and opening hours');
 select tests.act_as(tests.id('admin'));
 select public.admin_verify_authority(tests.id('fac'), '{"document":"municipal_licence"}');
 select throws_ok(

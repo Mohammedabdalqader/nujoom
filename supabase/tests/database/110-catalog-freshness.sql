@@ -26,8 +26,9 @@ insert into public.pitches (id, facility_id, label_ar, listing_state)
 select ('00000000-0000-4000-8000-0000000000' || n)::uuid, '00000000-0000-4000-8000-0000000000f1',
        'ملعب ' || n, 'published'
 from unnest(array['a1', 'b1', 'c1', 'd1', 'e1', 'f1']) n;
-insert into public.pitch_operations (pitch_id, price_per_hour, slot_minutes, schedule_active)
-select id, 20, 60, true from public.pitches where facility_id = '00000000-0000-4000-8000-0000000000f1';
+insert into public.pitch_operations (pitch_id, price_per_hour, slot_minutes, schedule_active, opening_hours)
+select id, 20, 60, true, '{"sun":[["16:00","24:00"]]}'
+from public.pitches where facility_id = '00000000-0000-4000-8000-0000000000f1';
 update public.pitches set participation = 'verified', verified_at = now()
 where facility_id = '00000000-0000-4000-8000-0000000000f1'
   and id <> '00000000-0000-4000-8000-0000000000f1'; -- f1 stays not verified

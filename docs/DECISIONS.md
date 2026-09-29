@@ -601,4 +601,15 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
   - Players see it only after an admin approves it (D-049).
 - **Why in the browser:** server actions cap request bodies at 1 MB by default, and the storage rules already limit each owner to their venue's folder, so no server hop is needed.
 - **Known gap:** if the upload succeeds but registering it fails, the file stays in the venue's folder unlisted. Only the owner and admins can open it. A clean-up job can come later.
-- **Verified live:** a 2400×1800 image was stored as a 1600×1200 JPEG under 2 MB and registered as pending. The owner sees it; a player can't open it before approval; a second upload appears without a reload; all files were removed afterwards (27/27 checks).
+- **Verified live (D-062):** a 2400×1800 image was stored as a 1600×1200 JPEG under 2 MB and registered as pending. The owner sees it; a player can't open it before approval; a second upload appears without a reload; all files were removed afterwards (27/27 checks).
+
+**D-063 Opening hours are validated, kept and required (2026-09-29).**
+
+- **Shape** (Amman wall-clock time, as the contract promised): `{"sun": [["16:00", "24:00"]], "fri": [["10:00", "13:00"], ["15:00", "23:00"]]}`.
+  - Keys are `sun`…`sat`; each day is a list of `[start, end]` ranges in 24-hour `HH:MM`, and `24:00` is allowed as an end (midnight).
+  - Each range ends after it starts, and a day's ranges are in order and don't overlap. A missing or empty day is closed.
+  - The database checks it (`private.valid_opening_hours`, and a check on `pitch_operations`), and `isValidOpeningHours` in `@nujoom/shared` now applies the same rules.
+- **Bug fixed:** saving a price without hours used to reset the stored hours to empty. `owner_confirm_field` now keeps them unless the save includes `opening_hours`; sending `{}` clears them on purpose.
+- **Rule:** a schedule can be switched on only when at least one day has hours (`no_opening_hours`). Pausing is always allowed. Bad hours give `invalid_opening_hours`. Both have messages in Arabic and English.
+- **Evidence:** pgTAP `170-opening-hours.sql` has 12 assertions; the lifecycle and freshness tests now stage hours (387 total). Shared unit tests were added. Live on the project.
+- **Next:** the opening-hours form on the owner page (D-060), needed before an owner can switch their schedule on.

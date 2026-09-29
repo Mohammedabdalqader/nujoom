@@ -922,7 +922,9 @@
       "notAdult": "You must be 18 or older to run a venue.",
       "claimExists": "Your claim on this venue is still under review.",
       "alreadyStaff": "This venue is already on your account.",
-      "noOperations": "Save the price and booking length first, then switch the schedule on."
+      "noOperations": "Save the price and booking length first, then switch the schedule on.",
+      "noOpeningHours": "Set your opening hours first, then switch the schedule on.",
+      "invalidOpeningHours": "Those opening hours don't work: each period must end after it starts, and periods can't overlap."
     },
     "notFound": "We couldn't find it. It may have been removed.",
     "forbidden": "You don't have access to this."

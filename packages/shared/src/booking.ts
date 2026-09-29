@@ -34,6 +34,7 @@ export function endsAfter(start: string, end: string): boolean {
   return hhmmToMinutes(end) > hhmmToMinutes(start);
 }
 
+/** Mirrors private.valid_opening_hours (D-063): each day's ranges in order and not overlapping. */
 export function isValidOpeningHours(hours: unknown): hours is OpeningHours {
   if (!hours || typeof hours !== 'object' || Array.isArray(hours)) return false;
   return Object.entries(hours).every(
@@ -41,12 +42,15 @@ export function isValidOpeningHours(hours: unknown): hours is OpeningHours {
       (DAY_KEYS as readonly string[]).includes(day) &&
       Array.isArray(intervals) &&
       intervals.every(
-        (interval) =>
+        (interval, i) =>
           Array.isArray(interval) &&
           interval.length === 2 &&
+          typeof interval[0] === 'string' &&
+          typeof interval[1] === 'string' &&
           HHMM.test(interval[0]) &&
           (HHMM.test(interval[1]) || interval[1] === '24:00') &&
-          hhmmToMinutes(interval[0]) < hhmmToMinutes(interval[1]),
+          hhmmToMinutes(interval[0]) < hhmmToMinutes(interval[1]) &&
+          (i === 0 || hhmmToMinutes(interval[0]) >= hhmmToMinutes(intervals[i - 1][1])),
       ),
   );
 }

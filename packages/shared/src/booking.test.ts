@@ -24,6 +24,45 @@ describe('opening hours', () => {
     expect(isValidOpeningHours([])).toBe(false);
   });
 
+  it('matches the database: split days in order, no overlaps (D-063)', () => {
+    expect(
+      isValidOpeningHours({
+        fri: [
+          ['10:00', '13:00'],
+          ['15:00', '23:30'],
+        ],
+        sat: [],
+      }),
+    ).toBe(true);
+    expect(
+      isValidOpeningHours({
+        sun: [
+          ['10:00', '13:00'],
+          ['13:00', '14:00'],
+        ],
+      }),
+    ).toBe(true);
+    expect(
+      isValidOpeningHours({
+        sun: [
+          ['10:00', '13:00'],
+          ['12:00', '14:00'],
+        ],
+      }),
+    ).toBe(false);
+    expect(
+      isValidOpeningHours({
+        sun: [
+          ['15:00', '18:00'],
+          ['10:00', '12:00'],
+        ],
+      }),
+    ).toBe(false);
+    expect(isValidOpeningHours({ sun: [['9:00', '12:00']] })).toBe(false);
+    expect(isValidOpeningHours({ sun: [['10:00']] })).toBe(false);
+    expect(isValidOpeningHours({ sun: '10:00-12:00' })).toBe(false);
+  });
+
   it('finds the weekday of a date', () => {
     expect(dayKeyOf('2026-09-27')).toBe('sun');
     expect(dayKeyOf('2026-10-02')).toBe('fri');

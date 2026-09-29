@@ -56,6 +56,8 @@ const SQL_ERROR_KEYS = {
   claim_exists: 'errors.venue.claimExists',
   already_staff: 'errors.venue.alreadyStaff',
   no_operations: 'errors.venue.noOperations',
+  no_opening_hours: 'errors.venue.noOpeningHours',
+  invalid_opening_hours: 'errors.venue.invalidOpeningHours',
 } as const;
 
 /** Supabase Auth error codes (AuthError.code) we explain specifically. */
