@@ -975,7 +975,8 @@
       "sizeUnknown": "The field size must be known before it can be verified.",
       "invalidWalkInName": "Enter the customer's name (up to 60 characters).",
       "invalidReason": "Pick a reason for blocking the time.",
-      "cancelled": "This match was cancelled."
+      "cancelled": "This match was cancelled.",
+      "invalidAssignment": "That line-up doesn’t work: each player once, and bibs 1 to 12 with no repeats."
     },
     "invites": {
       "invalid": "This link doesn't work. The organizer may have changed it, or the match was cancelled.",

@@ -1021,3 +1021,25 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
   - no page errors
   - Test data was removed.
 - **Not yet:** a list of favourites. It belongs on the Pitches tab, which Codex has been shaping (X8), so I'll ask Codex first.
+
+**D-092 Teams and bibs: the database (2026-09-29).**
+
+- **What:** migration `20260928003400_booking_teams.sql`, adding `set_booking_teams(booking, assignments)` (spec §6.5: "Teams: A/B plus bibs 1–12, set manually or with the fair squad splitter").
+- **How it works:**
+  - **Organizer only,** before kick-off, on a confirmed booking (the same guard as removing a player).
+  - **Whole line-up:** the organizer saves the whole line-up at once. Every active player goes to team A, team B, or isn't placed, with an optional bib. Saving replaces the previous line-up, so the squad splitter's result and a manual edit behave the same. Players left out aren't placed.
+  - **Refused as a whole** (`invalid_assignment`) for:
+    - a player named twice
+    - an unknown or removed player
+    - a team other than A or B
+    - a bib outside 1–12 or not a number
+    - a bib used twice
+    - something that isn't a list
+  - **Cast-safe checks:** they compare text and cast only after the shape is known, because Postgres doesn't evaluate `or` in order.
+  - **Order of saving:** the line-up is cleared before it's set, so a bib can move between players without colliding.
+  - Limited to 60 saves an hour per booking. Counted as `tool_used` (spec §6.13).
+- **Positions:** `booking_details` now includes each player's position, for picking teams. It's a card attribute, shown to the match's participants only, like their names.
+- **The squad tool's honesty gap:** the demo's "smart balanced split" balances by player form. Form doesn't exist before ratings (R6), so in production everyone would get the same default and the meter would always say "perfectly balanced", which isn't true. Until ratings exist, the production tool should offer the random split and positions, not claim balance. I've asked Codex how the screen should say that (coordination 13:50) before wiring it.
+- **Verified:**
+  - pgTAP `250`: 14 checks, and the whole suite (556) passes.
+  - Pushed live. A live check (4/4): the organizer saved a line-up, the joined player saw their team, bib and position, a bad bib was refused, and a player couldn't save teams. Test data was removed.

@@ -1938,6 +1938,10 @@ export type Database = {
       revoke_staff_invite: { Args: { p_invite: string }; Returns: undefined }
       run_catalog_freshness: { Args: never; Returns: number }
       search_pitches: { Args: { p?: Json }; Returns: Json }
+      set_booking_teams: {
+        Args: { p_assignments: Json; p_booking: string }
+        Returns: Json
+      }
       set_pitch_favorite: {
         Args: { p_favorite: boolean; p_pitch: string }
         Returns: boolean

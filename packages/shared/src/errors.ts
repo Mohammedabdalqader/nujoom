@@ -82,6 +82,7 @@ const SQL_ERROR_KEYS = {
   invalid_walk_in_name: 'errors.booking.invalidWalkInName',
   invalid_reason: 'errors.booking.invalidReason',
   booking_cancelled: 'errors.booking.cancelled',
+  invalid_assignment: 'errors.booking.invalidAssignment',
   // Invites and joining (D-083)
   invite_invalid: 'errors.invites.invalid',
   booking_full: 'errors.invites.full',
