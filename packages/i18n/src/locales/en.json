@@ -1390,7 +1390,40 @@
         "futsal": "Futsal?",
         "futsalYes": "Futsal",
         "futsalNo": "Not futsal"
+      },
+      "team": {
+        "title": "Team",
+        "hint": "Add people who help you run the venue. Staff can see the venue and add photos; prices and hours stay with you.",
+        "owner": "Owner",
+        "staff": "Staff",
+        "remove": "Remove",
+        "links": "Open invite links",
+        "noLinks": "No open links.",
+        "expires": "Expires {{date}}",
+        "revoke": "Cancel link",
+        "create": "Create an invite link",
+        "creating": "Creating the link…",
+        "createdHint": "Copy the link and send it to the person. It works once, for 7 days, and we can't show it again.",
+        "copy": "Copy link",
+        "copied": "Copied ✓",
+        "whatsapp": "Share on WhatsApp",
+        "shareText": "Join my venue team on {{app}}: {{url}}",
+        "staffNote": "You're on this venue's staff. The owner sets prices and hours.",
+        "leave": "Leave the team"
       }
+    },
+    "join": {
+      "title": "Join a venue team",
+      "signInBody": "Sign in first to join the venue team.",
+      "signIn": "Sign in",
+      "intro": "{{name}} invited you to join the team at {{venue}} ({{city}}) on {{app}}.",
+      "what": "As staff you can see the venue and add photos. The owner sets prices and hours.",
+      "expires": "The link expires {{date}}.",
+      "join": "Join the team",
+      "already": "You're already on the team at {{venue}}.",
+      "open": "Open my venues",
+      "profileHint": "To join you must be 18 or older. We keep only your name and date of birth.",
+      "joined": "You've joined the team."
     }
   }
 }

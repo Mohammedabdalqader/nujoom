@@ -1,6 +1,6 @@
 -- Venue staff: invite links, roles and removal (D-068).
 begin;
-select plan(24);
+select plan(27);
 
 create function pg_temp.city(p_slug text) returns bigint language sql as $$
   select id from public.cities where slug = p_slug $$;
@@ -70,6 +70,13 @@ select tests.act_as(tests.id('helper'));
 select is(public.accept_staff_invite(pg_temp.val('link')), '00000000-0000-4000-8000-0000000000f1'::uuid,
   'an adult joins with the link');
 select is(public.my_venues() -> 0 ->> 'role', 'staff', 'and sees the venue as staff');
+select is(public.my_venues() -> 0 -> 'team', 'null'::jsonb, 'staff don''t see the team list');
+select tests.act_as(tests.id('owner'));
+select is(
+  (select jsonb_agg(t ->> 'name' order by t ->> 'name') from jsonb_array_elements(public.my_venues() -> 0 -> 'team') t),
+  '["Abu Sami", "Hamza"]'::jsonb, 'the owner sees who is on the team');
+select ok(public.my_venues() -> 0 -> 'links' = '[]'::jsonb and public.my_venues()::text not like '%token%',
+  'used links drop off the list, and tokens never appear');
 select tests.act_as(tests.id('stranger'));
 select throws_ok(format($$ select public.accept_staff_invite(%L) $$, pg_temp.val('link')),
   'invalid_staff_invite', 'a link works once');

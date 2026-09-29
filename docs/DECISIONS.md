@@ -667,3 +667,17 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
 - **Leaving:** owners revoke links (`revoke_staff_invite`) and remove staff (`remove_staff`); staff can leave themselves. Owners are never removed this way, since that's an admin matter.
 - **Records:** every step is audited. The data export lists the links a person created, without tokens and without who joined (the joiner sees it in their own `venues_managed`). `staff_invites` is in the export coverage guard.
 - **Evidence:** pgTAP `180-staff-access.sql` has 24 assertions (416 total), live on the project. The web screens are next.
+
+**D-069 Venue staff on the website (2026-09-29).**
+
+- **Owner page (`/[locale]/venue`), owners only:** a "Team" section lists members (owner or staff; staff can be removed) and open invite links (expiry, cancel). "Create an invite link" shows the new link once, with Copy and "Share on WhatsApp". `my_venues()` returns `team` and open `links` for owners only; staff get null (migration `…2700`).
+- **The token stays out of our URLs, cookies and logs:** the link is created from the owner's browser (`create_staff_invite` with their session) and shown only in that tab. The box disappears once that link is used or cancelled; a bug where it kept showing a cancelled link was found by the live run and fixed.
+- **Staff view:** a note ("the owner sets prices and hours") and "Leave the team". The price, hours, details, schedule and team controls are not shown to staff (the database refuses them anyway, D-068), but photo upload is.
+- **Join page (`/[locale]/venue/join/<token>`):**
+  - signed out, it explains and links to sign-in, then comes back
+  - signed in, it names the venue, city and who invited, with a "Join the team" button
+  - someone without an adult profile gives name, date of birth and terms acceptance first (D-059)
+  - it sends no referrer and is never cached (`next.config`), like the guardian page
+  - spent, cancelled and expired links show one message
+- **Share text** uses `APP_NAME`.
+- **Evidence:** pgTAP +3 (419). Live staff run passed every check: owner link, copy, WhatsApp, headers, sign-in round trip, profile, join, staff view without owner controls, single use, cancel, remove, rejoin and leave, English, audit trail, no page errors. The owner run still passes 37/37. All test data was removed.

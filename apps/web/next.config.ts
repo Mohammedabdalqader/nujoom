@@ -23,6 +23,14 @@ const config: NextConfig = {
         ],
       },
       {
+        // Staff links (D-069) carry their token in the path too.
+        source: '/:locale/venue/join/:path*',
+        headers: [
+          { key: 'Referrer-Policy', value: 'no-referrer' },
+          { key: 'Cache-Control', value: 'no-store' },
+        ],
+      },
+      {
         // The approval token is the whole secret: send no referrer at all from these pages.
         source: '/:locale/guardian/:path*',
         headers: [

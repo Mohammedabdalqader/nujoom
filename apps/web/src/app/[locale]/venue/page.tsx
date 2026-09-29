@@ -3,16 +3,17 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import type { ReactNode } from 'react';
 
-import { ERROR_KEYS, errorKey, isValidOpeningHours } from '@nujoom/shared';
+import { APP_NAME, ERROR_KEYS, errorKey, isValidOpeningHours } from '@nujoom/shared';
 
 import { SiteShell } from '@/components/SiteShell';
 import { getT, localeFrom, type Locale } from '@/lib/i18n';
 import { serverSupabase } from '@/lib/supabase/server';
 
-import { claimVenue, confirmField, createProfileAndClaim, setSchedule } from './actions';
+import { claimVenue, confirmField, createProfileAndClaim, leaveTeam, setSchedule } from './actions';
 import { FactsFieldset, type FactStrings } from './FactsFieldset';
 import { HoursFieldset } from './HoursFieldset';
 import { PhotoUpload, type PhotoStrings } from './PhotoUpload';
+import { TeamSection, type TeamStrings } from './TeamSection';
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -77,7 +78,11 @@ export default async function VenuePage({ params, searchParams }: Props) {
     <>
       {done ? (
         <p role="status" className="mb-4 rounded-lg border border-secondary/50 p-3 text-secondary">
-          {done === 'claimed' ? t('web.owner.claimSent') : t('web.owner.done')}
+          {done === 'claimed'
+            ? t('web.owner.claimSent')
+            : done === 'joined'
+              ? t('web.join.joined')
+              : t('web.owner.done')}
         </p>
       ) : null}
       {error ? (
@@ -203,6 +208,28 @@ export default async function VenuePage({ params, searchParams }: Props) {
     second: t('web.owner.hours.second'),
     midnight: t('web.owner.hours.midnight'),
   };
+  const tm = (k: string) => t(`web.owner.team.${k}`);
+  const teamStrings: TeamStrings = {
+    title: tm('title'),
+    hint: tm('hint'),
+    owner: tm('owner'),
+    staff: tm('staff'),
+    remove: tm('remove'),
+    links: tm('links'),
+    noLinks: tm('noLinks'),
+    expires: t('web.owner.team.expires', { date: '{{date}}' }),
+    revoke: tm('revoke'),
+    link: {
+      create: tm('create'),
+      creating: tm('creating'),
+      createdHint: tm('createdHint'),
+      copy: tm('copy'),
+      copied: tm('copied'),
+      whatsapp: tm('whatsapp'),
+      shareText: t('web.owner.team.shareText', { url: '{{url}}', app: APP_NAME[locale] }),
+      errors: Object.fromEntries(ERROR_KEYS.map((key) => [key, t(key)])),
+    },
+  };
   const photoStrings: PhotoStrings = {
     ...(Object.fromEntries(
       [
@@ -234,6 +261,8 @@ export default async function VenuePage({ params, searchParams }: Props) {
           {venues.map((v) => {
             const state = String(v.operator_state);
             const fields = (v.fields as Json[] | undefined) ?? [];
+            // Prices, hours, details, schedule and the team are for owners (D-068).
+            const isOwner = v.role === 'owner';
             return (
               <Card key={String(v.facility_id)}>
                 <h3 className="font-headline text-lg font-bold">{pick(v.name, locale)}</h3>
@@ -243,6 +272,17 @@ export default async function VenuePage({ params, searchParams }: Props) {
                     `web.owner.operator.${state === 'claimed' || state === 'authority_verified' ? state : 'other'}`,
                   )}
                 </p>
+                {isOwner ? null : (
+                  <div className="mt-3 flex flex-wrap items-center gap-3 rounded-lg border border-border p-3 text-sm">
+                    <span>{t('web.owner.team.staffNote')}</span>
+                    <form action={leaveTeam}>
+                      <Hidden fields={{ locale, facility: String(v.facility_id) }} />
+                      <button type="submit" className={quiet}>
+                        {t('web.owner.team.leave')}
+                      </button>
+                    </form>
+                  </div>
+                )}
                 {fields.map((f) => {
                   const ops = f.operations as Json | null;
                   const note = (ops?.price_note as Named) ?? null;
@@ -269,86 +309,96 @@ export default async function VenuePage({ params, searchParams }: Props) {
                           {f.bookable ? t('web.owner.bookable') : t('web.owner.notBookable')}
                         </span>
                       </div>
-                      <form action={confirmField} className="grid gap-3 sm:grid-cols-2">
-                        <Hidden fields={{ locale, pitch }} />
-                        <label className="flex flex-col gap-1 text-sm">
-                          {t('web.owner.price')}
-                          <input
-                            name="price"
-                            inputMode="decimal"
-                            required
-                            dir="ltr"
-                            defaultValue={
-                              ops?.price_per_hour != null ? String(ops.price_per_hour) : ''
-                            }
-                            className={`${input} font-numeric`}
-                          />
-                        </label>
-                        <label className="flex flex-col gap-1 text-sm">
-                          {t('web.owner.slot')}
-                          <select
-                            name="slot"
-                            defaultValue={String(ops?.slot_minutes ?? 60)}
-                            className={input}
-                          >
-                            {[60, 90].map((n) => (
-                              <option key={n} value={n}>
-                                {t('web.owner.minutes', { n })}
-                              </option>
-                            ))}
-                          </select>
-                        </label>
-                        <label className="flex flex-col gap-1 text-sm">
-                          {t('web.owner.priceNoteAr')}
-                          <input
-                            name="note_ar"
-                            maxLength={120}
-                            dir="rtl"
-                            lang="ar"
-                            defaultValue={note?.ar ?? ''}
-                            className={input}
-                          />
-                        </label>
-                        <label className="flex flex-col gap-1 text-sm">
-                          {t('web.owner.priceNoteEn')}
-                          <input
-                            name="note_en"
-                            maxLength={120}
-                            dir="ltr"
-                            lang="en"
-                            defaultValue={note?.en ?? ''}
-                            className={input}
-                          />
-                        </label>
-                        <FactsFieldset field={f} strings={factStrings} />
-                        <HoursFieldset
-                          locale={locale}
-                          hours={isValidOpeningHours(ops?.opening_hours) ? ops.opening_hours : null}
-                          strings={hoursStrings}
-                        />
-                        <p className="text-xs text-on-surface-variant sm:col-span-2">
-                          {t('web.owner.opsHint')}
-                        </p>
-                        <button type="submit" className={`${button} justify-self-start`}>
-                          {t('web.owner.save')}
-                        </button>
-                      </form>
-                      {ops ? (
-                        <form action={setSchedule} className="mt-3 flex items-center gap-3">
-                          <Hidden
-                            fields={{ locale, pitch, active: ops.schedule_active ? 'off' : 'on' }}
-                          />
-                          <span className="text-sm text-on-surface-variant">
-                            {ops.schedule_active
-                              ? t('web.owner.scheduleIsOn')
-                              : t('web.owner.scheduleIsOff')}
-                          </span>
-                          <button type="submit" className={quiet}>
-                            {ops.schedule_active
-                              ? t('web.owner.scheduleOff')
-                              : t('web.owner.scheduleOn')}
-                          </button>
-                        </form>
+                      {isOwner ? (
+                        <>
+                          <form action={confirmField} className="grid gap-3 sm:grid-cols-2">
+                            <Hidden fields={{ locale, pitch }} />
+                            <label className="flex flex-col gap-1 text-sm">
+                              {t('web.owner.price')}
+                              <input
+                                name="price"
+                                inputMode="decimal"
+                                required
+                                dir="ltr"
+                                defaultValue={
+                                  ops?.price_per_hour != null ? String(ops.price_per_hour) : ''
+                                }
+                                className={`${input} font-numeric`}
+                              />
+                            </label>
+                            <label className="flex flex-col gap-1 text-sm">
+                              {t('web.owner.slot')}
+                              <select
+                                name="slot"
+                                defaultValue={String(ops?.slot_minutes ?? 60)}
+                                className={input}
+                              >
+                                {[60, 90].map((n) => (
+                                  <option key={n} value={n}>
+                                    {t('web.owner.minutes', { n })}
+                                  </option>
+                                ))}
+                              </select>
+                            </label>
+                            <label className="flex flex-col gap-1 text-sm">
+                              {t('web.owner.priceNoteAr')}
+                              <input
+                                name="note_ar"
+                                maxLength={120}
+                                dir="rtl"
+                                lang="ar"
+                                defaultValue={note?.ar ?? ''}
+                                className={input}
+                              />
+                            </label>
+                            <label className="flex flex-col gap-1 text-sm">
+                              {t('web.owner.priceNoteEn')}
+                              <input
+                                name="note_en"
+                                maxLength={120}
+                                dir="ltr"
+                                lang="en"
+                                defaultValue={note?.en ?? ''}
+                                className={input}
+                              />
+                            </label>
+                            <FactsFieldset field={f} strings={factStrings} />
+                            <HoursFieldset
+                              locale={locale}
+                              hours={
+                                isValidOpeningHours(ops?.opening_hours) ? ops.opening_hours : null
+                              }
+                              strings={hoursStrings}
+                            />
+                            <p className="text-xs text-on-surface-variant sm:col-span-2">
+                              {t('web.owner.opsHint')}
+                            </p>
+                            <button type="submit" className={`${button} justify-self-start`}>
+                              {t('web.owner.save')}
+                            </button>
+                          </form>
+                          {ops ? (
+                            <form action={setSchedule} className="mt-3 flex items-center gap-3">
+                              <Hidden
+                                fields={{
+                                  locale,
+                                  pitch,
+                                  active: ops.schedule_active ? 'off' : 'on',
+                                }}
+                              />
+                              <span className="text-sm text-on-surface-variant">
+                                {ops.schedule_active
+                                  ? t('web.owner.scheduleIsOn')
+                                  : t('web.owner.scheduleIsOff')}
+                              </span>
+                              <button type="submit" className={quiet}>
+                                {ops.schedule_active
+                                  ? t('web.owner.scheduleOff')
+                                  : t('web.owner.scheduleOn')}
+                              </button>
+                            </form>
+                          ) : null}
+                        </>
                       ) : null}
                     </div>
                   );
@@ -392,6 +442,17 @@ export default async function VenuePage({ params, searchParams }: Props) {
                     strings={photoStrings}
                   />
                 </div>
+                {isOwner ? (
+                  <TeamSection
+                    locale={locale}
+                    facilityId={String(v.facility_id)}
+                    team={
+                      (v.team as { user_id: string; name: string | null; role: string }[]) ?? []
+                    }
+                    links={(v.links as { id: string; expires_at: string }[]) ?? []}
+                    strings={teamStrings}
+                  />
+                ) : null}
               </Card>
             );
           })}

@@ -171,3 +171,75 @@ export async function setSchedule(form: FormData) {
   });
   finish(back, error, `schedule_${active}`);
 }
+
+// Team (D-069): owners revoke links and remove staff; staff can leave. The database checks roles.
+export async function revokeLink(form: FormData) {
+  const { get, back } = read(form);
+  const invite = get('invite');
+  if (!UUID.test(invite)) redirect(`${back}?error=invalid_action`);
+  const supabase = await client(back);
+  const { error } = await supabase.rpc('revoke_staff_invite', { p_invite: invite });
+  finish(back, error, 'link_revoked');
+}
+
+export async function removeStaffMember(form: FormData) {
+  const { get, back } = read(form);
+  const facility = get('facility');
+  const user = get('user');
+  if (!UUID.test(facility) || !UUID.test(user)) redirect(`${back}?error=invalid_action`);
+  const supabase = await client(back);
+  const { error } = await supabase.rpc('remove_staff', { p_facility: facility, p_user: user });
+  finish(back, error, 'staff_removed');
+}
+
+export async function leaveTeam(form: FormData) {
+  const { get, back } = read(form);
+  const facility = get('facility');
+  if (!UUID.test(facility)) redirect(`${back}?error=invalid_action`);
+  const supabase = await client(back);
+  const { data } = await supabase.auth.getUser();
+  if (!data.user) redirect(`${back}?error=not_authenticated`);
+  const { error } = await supabase.rpc('remove_staff', {
+    p_facility: facility,
+    p_user: data.user.id,
+  });
+  finish(back, error, 'left');
+}
+
+// Joining with a staff link (D-069). The token comes in the form body; redirects only lead back
+// to the join page it came from (no-referrer, no-store) or to the owner page without it.
+const TOKEN = /^[0-9a-f]{64}$/;
+
+export async function joinTeam(form: FormData) {
+  const { get } = read(form);
+  const locale = get('locale');
+  const token = get('token');
+  if (!TOKEN.test(token)) redirect(`/${locale}/venue?error=invalid_staff_invite`);
+  const joinPath = `/${locale}/venue/join/${token}`;
+  const supabase = await client(joinPath);
+  const { error } = await supabase.rpc('accept_staff_invite', { p_token: token });
+  if (error?.message === 'not_adult') redirect(`${joinPath}?profile=1`);
+  if (error) redirect(`${joinPath}?error=${encodeURIComponent(error.message)}`);
+  revalidatePath(`/${locale}/venue`);
+  redirect(`/${locale}/venue?done=joined`);
+}
+
+export async function createProfileAndJoin(form: FormData) {
+  const { get } = read(form);
+  const locale = get('locale');
+  const token = get('token');
+  if (!TOKEN.test(token)) redirect(`/${locale}/venue?error=invalid_staff_invite`);
+  const joinPath = `/${locale}/venue/join/${token}`;
+  const dob = get('dob');
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dob)) redirect(`${joinPath}?profile=1&error=invalid_action`);
+  const supabase = await client(joinPath);
+  const created = await supabase.rpc('create_owner_profile', {
+    p_name: get('name'),
+    p_dob: dob,
+    p_accept_terms: get('accept') === 'yes',
+  });
+  if (created.error) {
+    redirect(`${joinPath}?profile=1&error=${encodeURIComponent(created.error.message)}`);
+  }
+  await joinTeam(form);
+}
