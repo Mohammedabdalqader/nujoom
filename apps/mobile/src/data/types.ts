@@ -170,7 +170,8 @@ export type UpcomingMatch = {
   endsAt: string;
   ranked: boolean;
   teams: [Team, Team];
-  shareUrl: string;
+  /** The join link to share; null until the booking has one. */
+  shareUrl: string | null;
 };
 
 export type LineupPlayer = PlayerRef & {
@@ -183,9 +184,13 @@ export type LineupPlayer = PlayerRef & {
 /** "تشكيلة وتفاصيل المباراة": a booking's teams and line-ups, for its players. */
 export type MatchDetails = UpcomingMatch & {
   size: number;
+  /** False for a match booked without recording. */
+  recorded: boolean;
   /** Whose phone records the match, null until the organizer picks one. */
   recordingBy: string | null;
   lineups: [LineupPlayer[], LineupPlayer[]];
+  /** Players not split into teams yet. */
+  unassigned: LineupPlayer[];
 };
 
 export type MissingOne = {

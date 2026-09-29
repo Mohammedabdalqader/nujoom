@@ -14,7 +14,8 @@ import { useToast } from '@/ui/Toast';
 
 /**
  * "تشكيلة وتفاصيل المباراة": both line-ups with bibs and form, the pitch, time, size and who
- * films it. Only the booking's players can open it (R2: RLS on booking_players).
+ * films it (or that it isn't filmed). Players not in a team yet are listed below the line-ups.
+ * Only the booking's players can open it (booking_details). Sharing needs the join link.
  */
 export function MatchDetailsDialog({ bookingId }: { bookingId: string }) {
   const query = useMatchDetails(bookingId);
@@ -117,9 +118,11 @@ function Details({ match }: { match: MatchDetails }) {
           </Text>
         </View>
         <Text className="text-[12px] text-on-surface-variant">
-          {match.recordingBy
-            ? t('matchDetails.recordedBy', { name: match.recordingBy })
-            : t('matchDetails.notRecorded')}
+          {!match.recorded
+            ? t('matchDetails.unrecorded')
+            : match.recordingBy
+              ? t('matchDetails.recordedBy', { name: match.recordingBy })
+              : t('matchDetails.notRecorded')}
         </Text>
       </View>
 
@@ -128,15 +131,28 @@ function Details({ match }: { match: MatchDetails }) {
         <Lineup team={teamB} players={match.lineups[1]} nameOf={nameOf} />
       </View>
 
-      <Pressable
-        onPress={() => void share()}
-        className="w-full py-3 rounded-xl bg-secondary-container active:bg-emerald flex-row items-center justify-center gap-2 shadow-lg"
-      >
-        <Icon name="share" size={20} className="text-on-secondary-container" />
-        <Text font="rubik" className="text-[16px] text-on-secondary-container font-bold">
-          {t('matchDetails.share')}
-        </Text>
-      </Pressable>
+      {match.unassigned.length ? (
+        <View className="bg-surface-container-low p-3 rounded-xl border border-surface-container-high gap-1">
+          <Text font="rubik" className="text-[13px] text-on-surface font-bold">
+            {t('matchDetails.unassigned')}
+          </Text>
+          <Text className="text-[12px] text-on-surface-variant">
+            {match.unassigned.map(nameOf).join('، ')}
+          </Text>
+        </View>
+      ) : null}
+
+      {match.shareUrl ? (
+        <Pressable
+          onPress={() => void share()}
+          className="w-full py-3 rounded-xl bg-secondary-container active:bg-emerald flex-row items-center justify-center gap-2 shadow-lg"
+        >
+          <Icon name="share" size={20} className="text-on-secondary-container" />
+          <Text font="rubik" className="text-[16px] text-on-secondary-container font-bold">
+            {t('matchDetails.share')}
+          </Text>
+        </Pressable>
+      ) : null}
     </Dialog>
   );
 }

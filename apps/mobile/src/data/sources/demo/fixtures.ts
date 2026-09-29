@@ -485,7 +485,9 @@ const lineup = (
 export const previewMatchDetails: MatchDetails = {
   ...previewHome.nextMatch!,
   size: 6,
+  recorded: true,
   recordingBy: 'أحمد المالكي',
+  unassigned: [],
   lineups: [
     [
       lineup('me', 'أحمد المالكي', 1, 'FWD', 8.4, PHOTOS.ahmadMalki, true),

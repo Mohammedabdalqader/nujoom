@@ -210,6 +210,7 @@ export function useCreateBooking() {
     onSettled: (_receipt, _error, request) => {
       void client.invalidateQueries({ queryKey: ['day-slots', request.pitchId] });
       void client.invalidateQueries({ queryKey: keys.myBookings });
+      void client.invalidateQueries({ queryKey: keys.home });
     },
   });
 }
@@ -224,6 +225,8 @@ export function useCancelBooking() {
       );
       void client.invalidateQueries({ queryKey: ['day-slots', receipt.pitchId] });
       void client.invalidateQueries({ queryKey: keys.myBookings });
+      void client.invalidateQueries({ queryKey: keys.home });
+      void client.invalidateQueries({ queryKey: keys.matchDetails(receipt.id) });
     },
   });
 }

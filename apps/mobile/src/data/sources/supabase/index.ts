@@ -14,7 +14,16 @@ import { FunctionsFetchError, FunctionsHttpError } from '@supabase/supabase-js';
 import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
 
-import { toBookingDetails, toDaySlots, toReceipt, withRetry } from '@/data/booking';
+import {
+  nextBooking,
+  toBookingDetails,
+  toDaySlots,
+  toMatchDetails,
+  toReceipt,
+  toUpcomingMatch,
+  withRetry,
+  type TeamNames,
+} from '@/data/booking';
 import {
   toCityCounts,
   toCatalogDetail,
@@ -32,6 +41,7 @@ import type {
   Session,
 } from '@/data/source';
 import type { Me, Position } from '@/data/types';
+import { i18n } from '@/lib/i18n';
 import { createSupabase } from '@/lib/supabase';
 
 /**
@@ -219,6 +229,19 @@ export function createSupabaseSource(config: BackendConfig): DataSource {
   }
 
   const none = <T>(value: T) => Promise.resolve(value);
+  // A booking without team names shows the defaults in the app's language (it reloads on a switch).
+  const teamNames = (): TeamNames => ({
+    a: i18n.t('tools.squad.blueTeam'),
+    b: i18n.t('tools.squad.orangeTeam'),
+  });
+  const bookingDetails = async (bookingId: string) => {
+    try {
+      return toBookingDetails(await rpc('booking_details', { p_booking: bookingId }));
+    } catch (error) {
+      if ((error as { message?: string }).message === 'not_found') return null;
+      throw error;
+    }
+  };
 
   return {
     auth: {
@@ -393,14 +416,7 @@ export function createSupabaseSource(config: BackendConfig): DataSource {
           ),
         ),
       mine: async () => (await rpc<unknown[]>('my_bookings')).map(toReceipt),
-      async details(bookingId) {
-        try {
-          return toBookingDetails(await rpc('booking_details', { p_booking: bookingId }));
-        } catch (error) {
-          if ((error as { message?: string }).message === 'not_found') return null;
-          throw error;
-        }
-      },
+      details: bookingDetails,
       cancel: async (bookingId) =>
         toReceipt(await rpc('cancel_booking', { p_booking: bookingId, p_reason: 'organizer' })),
     },
@@ -482,7 +498,16 @@ export function createSupabaseSource(config: BackendConfig): DataSource {
     friendSuggestions: () => none([]),
     findPlayerByCardCode: () => none(null),
     notifications: () => none([]),
-    homeFeed: () => none({ nextMatch: null, missingOne: [], trendingClips: [], pulse: [] }),
+    async homeFeed() {
+      // Only the next match is real so far; "missing one", clips and the pulse come later.
+      const next = nextBooking((await rpc<unknown[]>('my_bookings')).map(toReceipt), Date.now());
+      return {
+        nextMatch: next ? toUpcomingMatch(next, teamNames()) : null,
+        missingOne: [],
+        trendingClips: [],
+        pulse: [],
+      };
+    },
     myClips: () => none([]),
     clip: () => none(null),
     pitches: () => none([]),
@@ -518,7 +543,10 @@ export function createSupabaseSource(config: BackendConfig): DataSource {
       return (cities[0]?.neighborhoods ?? []).map((n) => ({ slug: String(n.id), name: n.name }));
     },
     matchDay: () => none(null),
-    matchDetails: () => none(null),
+    async matchDetails(bookingId) {
+      const details = await bookingDetails(bookingId);
+      return details ? toMatchDetails(details, teamNames()) : null;
+    },
     leaderboard: () => none({ standings: [], playerOfWeek: null, rows: [], me: null }),
     profileExtras: () =>
       none({

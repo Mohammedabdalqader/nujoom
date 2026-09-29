@@ -3,9 +3,13 @@ import { describe, expect, it } from 'vitest';
 import {
   isRetryable,
   newRequestId,
+  nextBooking,
+  teamInitials,
   toBookingDetails,
   toDaySlots,
+  toMatchDetails,
   toReceipt,
+  toUpcomingMatch,
   withRetry,
 } from './booking';
 
@@ -129,5 +133,65 @@ describe('newRequestId', () => {
   it('keeps the version and variant bits whatever the random source says', () => {
     expect(newRequestId(() => 0.99)).toMatch(/^f{8}-f{4}-4f{3}-bf{3}-f{12}$/);
     expect(newRequestId(() => 0)).toMatch(/^0{8}-0{4}-40{3}-80{3}-0{12}$/);
+  });
+});
+
+describe('the next match on Home', () => {
+  const names = { a: 'الفريق الأزرق', b: 'الفريق البرتقالي' };
+  const at = (id: string, starts: string, ends: string, status = 'confirmed') =>
+    toReceipt({ ...receipt, id, starts_at: starts, ends_at: ends, status });
+  const now = new Date('2026-09-30T15:30:00Z').getTime();
+
+  it('picks the earliest confirmed booking that has not ended', () => {
+    const list = [
+      at('later', '2026-10-01T15:00:00Z', '2026-10-01T16:00:00Z'),
+      at('over', '2026-09-30T13:00:00Z', '2026-09-30T14:00:00Z'),
+      at('cancelled', '2026-09-30T17:00:00Z', '2026-09-30T18:00:00Z', 'cancelled'),
+      at('playing', '2026-09-30T15:00:00Z', '2026-09-30T16:00:00Z'),
+    ];
+    expect(nextBooking(list, now)?.id).toBe('playing');
+    expect(nextBooking(list.slice(0, 3), now)?.id).toBe('later');
+    expect(nextBooking([list[1]!, list[2]!], now)).toBeNull();
+  });
+
+  it('shows a booking with default team names, never ranked and with no link to share yet', () => {
+    const m = toUpcomingMatch(
+      toReceipt({ ...receipt, field: { ar: 'ملعب ٢', en: 'Pitch 2' }, team_b_name: 'النسور' }),
+      names,
+    );
+    expect(m.pitchName).toEqual({ ar: 'ملاعب الشمس · ملعب ٢', en: 'ملاعب الشمس · Pitch 2' });
+    expect(m.teams.map((t) => [t.name, t.initials, t.kit])).toEqual([
+      ['الفريق الأزرق', 'ف.أ', 'blue'],
+      ['النسور', 'ن', 'orange'],
+    ]);
+    expect(m.teams[0].hara).toEqual({ ar: 'الزرقاء', en: 'Zarqa' });
+    expect(m).toMatchObject({ ranked: false, shareUrl: null, pitchPhotoUrl: null });
+  });
+
+  it('makes initials from up to two words', () => {
+    expect(teamInitials('Blue team')).toBe('B.T');
+    expect(teamInitials('ال')).toBe('ا');
+    expect(teamInitials('')).toBe('');
+  });
+
+  it('splits players into line-ups by bib and keeps the rest apart', () => {
+    const d = toMatchDetails(
+      toBookingDetails({
+        ...receipt,
+        recorded: false,
+        players: [
+          { name: 'Organizer', team: null, bib: null, is_organizer: true },
+          { name: 'B7', team: 'b', bib: 7, is_organizer: false },
+          { name: 'A9', team: 'a', bib: 9, is_organizer: false },
+          { name: 'A2', team: 'a', bib: 2, is_organizer: false },
+        ],
+      }),
+      names,
+    );
+    expect(d.lineups[0].map((p) => p.name)).toEqual(['A2', 'A9']);
+    expect(d.lineups[1].map((p) => p.name)).toEqual(['B7']);
+    expect(d.unassigned.map((p) => p.name)).toEqual(['Organizer']);
+    expect(d).toMatchObject({ size: 5, recorded: false, recordingBy: null });
+    expect(d.lineups[0][0]).not.toHaveProperty('team');
   });
 });

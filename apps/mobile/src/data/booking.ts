@@ -1,4 +1,5 @@
 import type { Localized } from '@/data/catalog';
+import type { Bilingual, LineupPlayer, MatchDetails, Team, UpcomingMatch } from '@/data/types';
 
 /**
  * Booking as the app sees it (contract agentic_system/contracts/booking.md, D-070–D-074). The
@@ -176,4 +177,93 @@ export function newRequestId(random: () => number = Math.random): string {
   hex[16] = ((parseInt(hex[16]!, 16) & 0x3) | 0x8).toString(16);
   const s = hex.join('');
   return `${s.slice(0, 8)}-${s.slice(8, 12)}-${s.slice(12, 16)}-${s.slice(16, 20)}-${s.slice(20)}`;
+}
+
+/** The next booking to show on Home: the earliest confirmed one that hasn't ended yet. */
+export function nextBooking<T extends BookingReceipt>(bookings: T[], now: number): T | null {
+  return (
+    bookings
+      .filter((b) => b.status === 'confirmed' && new Date(b.endsAt).getTime() > now)
+      .sort((a, b) => new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime())[0] ?? null
+  );
+}
+
+/** Default team names in the viewer's language (spec §6.5: blue team / orange team). */
+export type TeamNames = { a: string; b: string };
+
+const both = (l: Localized | null): Bilingual => ({
+  ar: l?.ar ?? l?.en ?? '',
+  en: l?.en ?? l?.ar ?? '',
+});
+
+/** Badge initials from a team name: first letters of up to two words, without the Arabic "ال". */
+export function teamInitials(name: string): string {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => (w.startsWith('ال') && w.length > 3 ? w.slice(2) : w).charAt(0).toUpperCase())
+    .join('.');
+}
+
+function teams(b: BookingReceipt, names: TeamNames): [Team, Team] {
+  const hara = both(b.city);
+  const a = b.teamAName ?? names.a;
+  const bName = b.teamBName ?? names.b;
+  return [
+    { side: 'A', name: a, initials: teamInitials(a), kit: 'blue', hara },
+    { side: 'B', name: bName, initials: teamInitials(bName), kit: 'orange', hara },
+  ];
+}
+
+/**
+ * A booking as Home's hero card. Until rankings (R6) nothing counts as ranked, and until invite
+ * links exist there is no link to share, so the card hides sharing rather than send a dead link.
+ */
+export function toUpcomingMatch(b: BookingReceipt, names: TeamNames): UpcomingMatch {
+  const venue = both(b.venue);
+  const field = b.field ? both(b.field) : null;
+  return {
+    bookingId: b.id,
+    pitchName: field ? { ar: `${venue.ar} · ${field.ar}`, en: `${venue.en} · ${field.en}` } : venue,
+    pitchPhotoUrl: null,
+    startsAt: b.startsAt,
+    endsAt: b.endsAt,
+    ranked: false,
+    teams: teams(b, names),
+    shareUrl: null,
+  };
+}
+
+/** A booking's line-ups for its players; people not yet split into teams are listed apart. */
+export function toMatchDetails(d: BookingDetails, names: TeamNames): MatchDetails {
+  const players = d.players.map((p, i): LineupPlayer & { team: 'a' | 'b' | null } => ({
+    id: `p${i}`,
+    name: p.name,
+    avatarUrl: null,
+    bib: p.bib,
+    position: null,
+    form: null,
+    captain: false,
+    team: p.team,
+  }));
+  const strip = ({ team: _team, ...p }: LineupPlayer & { team: 'a' | 'b' | null }) => p;
+  const byBib = (x: LineupPlayer, y: LineupPlayer) => (x.bib ?? 99) - (y.bib ?? 99);
+  return {
+    ...toUpcomingMatch(d, names),
+    size: d.playersPerSide ?? 0,
+    recorded: d.recorded,
+    recordingBy: null,
+    lineups: [
+      players
+        .filter((p) => p.team === 'a')
+        .map(strip)
+        .sort(byBib),
+      players
+        .filter((p) => p.team === 'b')
+        .map(strip)
+        .sort(byBib),
+    ],
+    unassigned: players.filter((p) => p.team === null).map(strip),
+  };
 }

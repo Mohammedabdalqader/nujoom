@@ -37,7 +37,10 @@ function TeamBadge({ team }: { team: Team }) {
   );
 }
 
-/** The hero card: next booked match with a live countdown, teams and the details button. */
+/**
+ * The hero card: next booked match with a live countdown, teams and the details button. Sharing
+ * shows only once the booking has a join link.
+ */
 export function NextMatchCard({ match }: { match: UpcomingMatch }) {
   const { t, pick, time } = useLocale();
   const router = useRouter();
@@ -137,14 +140,16 @@ export function NextMatchCard({ match }: { match: UpcomingMatch }) {
             </Text>
             <Icon name="arrow_back" size={20} directional className="text-on-primary-container" />
           </Pressable>
-          <Pressable
-            onPress={share}
-            accessibilityRole="button"
-            accessibilityLabel={t('home.nextMatch.share')}
-            className="h-12 w-12 bg-surface-container-high active:bg-surface-bright rounded-lg items-center justify-center"
-          >
-            <Icon name="share" size={20} className="text-on-surface" />
-          </Pressable>
+          {match.shareUrl ? (
+            <Pressable
+              onPress={share}
+              accessibilityRole="button"
+              accessibilityLabel={t('home.nextMatch.share')}
+              className="h-12 w-12 bg-surface-container-high active:bg-surface-bright rounded-lg items-center justify-center"
+            >
+              <Icon name="share" size={20} className="text-on-surface" />
+            </Pressable>
+          ) : null}
         </View>
       </View>
     </View>

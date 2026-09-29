@@ -804,3 +804,26 @@ Each rewrite is listed in `docs/DESIGN.md` → Copy changes.
   - no page errors
   - The directory check (D-076/D-077) passed again, 15/15. All test data was removed.
 - **Next:** "My bookings" with the receipt and cancel, then "Report a problem" / "Add a missing pitch".
+
+**D-079 Home's next match from real bookings (2026-09-29).**
+
+- **Why:** in production, Home still said "no upcoming match" after a player booked, because the home feed was an empty placeholder.
+- **Next match:** the demo's hero card now shows the player's real next booking: the earliest confirmed one that hasn't ended (`nextBooking`, pure and tested). It comes from `my_bookings`.
+  - Pitch name (venue · field), the live countdown, and teams with the booking's names. Names left empty get the defaults "الفريق الأزرق" / "الفريق البرتقالي" in the app's language, with initials from the name.
+  - Never labelled ranked (rankings are R6).
+  - No share button: bookings have no join link yet, and sharing a dead link would be false. `shareUrl` is now nullable; the demo keeps its link.
+- **Match details dialog:** filled from `booking_details` for the booking's players only.
+  - Pitch, time, size and length.
+  - "Not recorded" for an unrecorded booking. The old "not decided yet" would imply someone will film.
+  - Both line-ups by bib. Players not split into teams yet are listed under "not in a team yet".
+  - Sharing is hidden until there's a link.
+  - View-model change: `MatchDetails.recorded` and `MatchDetails.unassigned` (the demo sets `true` and `[]`).
+- **Freshness:** booking or cancelling refreshes Home, my bookings and that match's details.
+- **Unchanged:** "missing one", trending clips and the pulse stay empty in production until their milestones. The match tools still show their empty states (R3).
+- **Verified** on Expo web (production variant, 390 px) against a temporary live pitch, 11/11 checks:
+  - a player's unrecorded booking for tomorrow showed on Home with "الفريق الأزرق" and the chosen "صقور الحارة", not ranked and with no share button
+  - the details showed 60 minutes, "not recorded" and the organizer under "not in a team yet"
+  - after the player cancelled, Home showed "no upcoming match" with "Book a pitch"
+  - no page errors
+  - Test data was removed.
+- **Next:** cancel from the app (organizer, with a confirmation) and a list of all upcoming bookings (up to three).

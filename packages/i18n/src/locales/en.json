@@ -841,7 +841,9 @@
     "empty": "No players yet",
     "share": "Share the line-up on WhatsApp",
     "shareText": "⚽ Line-ups for {{when}}: {{teamA}} vs {{teamB}}!\n🏟️ {{pitch}}\n\n🔵 {{teamA}}:\n{{listA}}\n\n🟠 {{teamB}}:\n{{listB}}\n\nCome and watch, and catch the clips afterwards on {{app}}.\n{{url}}",
-    "notFound": "This match isn't available, or you're not one of its players."
+    "notFound": "This match isn't available, or you're not one of its players.",
+    "unrecorded": "Recording: not recorded",
+    "unassigned": "Not in a team yet"
   },
   "missingOne": {
     "title": "One short (urgent)",
