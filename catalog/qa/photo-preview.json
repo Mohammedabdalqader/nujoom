@@ -1,0 +1,16 @@
+[
+  {
+    "name": { "ar": "ستاد عمّان الدولي", "en": "Amman International Stadium" },
+    "city": { "ar": "عمّان", "en": "Amman" },
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Inside_the_Amman_International_Stadium.jpg?width=960",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Inside_the_Amman_International_Stadium.jpg",
+    "credit": "GhaziTwaissi · CC0 1.0"
+  },
+  {
+    "name": { "ar": "ملعب الحسن", "en": "Al-Hassan Stadium" },
+    "city": { "ar": "إربد", "en": "Irbid" },
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Al-hassan_stadium.jpg?width=856",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Al-hassan_stadium.jpg",
+    "credit": "Owis miq · CC BY-SA 4.0"
+  }
+]

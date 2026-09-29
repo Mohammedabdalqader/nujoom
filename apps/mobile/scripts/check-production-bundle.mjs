@@ -13,6 +13,8 @@ const FORBIDDEN = [
   'nujoom-demo-fixtures:not-for-production', // DEMO_FIXTURE_MARKER
   'lh3.googleusercontent.com/aida-public', // the prototype's generated images
   'أحمد المالكي', // a demo player's name
+  'Inside_the_Amman_International_Stadium.jpg', // dev-only catalog photo QA
+  'Al-hassan_stadium.jpg', // dev-only catalog photo QA
 ];
 
 try {
@@ -25,6 +27,8 @@ try {
       // Placeholders: the guard only inspects the bundle, it never runs it.
       EXPO_PUBLIC_SUPABASE_URL: 'https://bundleguard00000000000.supabase.co',
       EXPO_PUBLIC_SUPABASE_ANON_KEY: 'bundle-guard-placeholder',
+      EXPO_PUBLIC_CATALOG_QA_PHOTOS: '0',
+      EXPO_PUBLIC_CATALOG_QA_MANIFEST: '',
     },
   });
   const files = [];

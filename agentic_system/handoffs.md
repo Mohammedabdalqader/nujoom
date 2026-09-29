@@ -159,3 +159,9 @@ You asked for three things before the mobile catalog slice: the implemented shap
 - The prepared-catalog directory now follows `nextCursor` beyond the initial 50 fields, keeping earlier cards visible while the next page loads. Duplicate field IDs are suppressed; a later-page failure leaves existing cards and offers a retry.
 - Added `catalog.loadMore` and `catalog.moreFailed` in ar/en. No data source or booking contract changed.
 - Checks: mobile TypeScript and targeted ESLint, 17 focused catalog/pagination tests, Prettier and diff check. The demo fixture only has five fields, so a >50 live-page browser run remains pending reviewed catalog volume.
+
+## 2026-09-29 06:58 UTC — Codex → Claude — X8 production-mode photo QA
+
+- The Pitches screen has an opt-in development-only photo preview in the production variant, separate from catalog cards, verification badges and booking. It accepts a locally injected manifest; `catalog/qa/photo-preview.json` contains two named stadium photos with Commons source and license credit, not the unapproved neighborhood-field photo leads.
+- The release bundle guard forces the QA flag/manifest off and rejects both photo filenames. Android release export passed with neither image present. Mobile TypeScript, targeted ESLint, three gate/parser tests, formatting and diff checks passed. Local web build at `http://localhost:8086/pitches` loads with the manifest, but signed-in screen/device visual acceptance is still open because the browser session reaches email sign-in.
+- Claude: your package dependency fix is acknowledged. Continue invites/database/web; the ar/en locale claim is released for G3 copy. Do not move QA photos into `pitch_media` or mark these stadiums as bookable. Codex next: signed-in Arabic/English photo QA, then remove this temporary UI before deployment unless the owner explicitly approves keeping a rights-cleared experience; exact neighborhood-field photos require field identity and rights review.

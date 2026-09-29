@@ -1511,6 +1511,13 @@
     }
   },
   "catalog": {
+    "photoQa": {
+      "title": "Field photo preview · QA",
+      "intro": "Real Jordanian stadium photos to check the layout in this local build.",
+      "notListing": "Photo preview only. These stadiums are not Nujoom listings; booking is unavailable.",
+      "imageUnavailable": "The photo could not be loaded.",
+      "source": "Photo source"
+    },
     "title": "Pitch directory",
     "searchPlaceholder": "Search pitches by name or area",
     "searchLabel": "Search pitch directory",

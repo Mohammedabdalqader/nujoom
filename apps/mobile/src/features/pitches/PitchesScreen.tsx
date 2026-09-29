@@ -8,12 +8,18 @@ import { useFlags } from '@/data/flags';
 import type { Pitch } from '@/data/types';
 import { sfx } from '@/design/sound';
 import { CatalogSection } from '@/features/pitches/CatalogSection';
+import { CatalogPhotoQaPreview } from '@/features/pitches/CatalogPhotoQaPreview';
+import {
+  isCatalogPhotoQaEnabled,
+  parseCatalogPhotoQaManifest,
+} from '@/features/pitches/catalogPhotoQa';
 import { filterPitches, type FormatFilter } from '@/features/pitches/logic';
 import { MapDrawer } from '@/features/pitches/MapDrawer';
 import { PitchCard, type PitchCardVariant } from '@/features/pitches/PitchCard';
 import { SearchPanel } from '@/features/pitches/SearchPanel';
 import { UrgentBanner } from '@/features/pitches/UrgentBanner';
 import { useLocale } from '@/lib/locale';
+import { IS_DEMO } from '@/lib/variant';
 import { Icon, type IconName } from '@/ui/Icon';
 import { Screen } from '@/ui/Screen';
 import { Text } from '@/ui/Text';
@@ -36,6 +42,13 @@ export function PitchesScreen() {
   const [format, setFormat] = useState<FormatFilter>('all');
   const [date, setDate] = useState(() => dateInAmman(new Date()));
   const [mapOpen, setMapOpen] = useState(false);
+  const qaPhotos = isCatalogPhotoQaEnabled(
+    __DEV__,
+    IS_DEMO,
+    process.env.EXPO_PUBLIC_CATALOG_QA_PHOTOS,
+  )
+    ? parseCatalogPhotoQaManifest(process.env.EXPO_PUBLIC_CATALOG_QA_MANIFEST)
+    : [];
 
   const list = filterPitches(pitches, { area, format });
   const isToday = date === dateInAmman(new Date());
@@ -46,6 +59,7 @@ export function PitchesScreen() {
   return (
     <Screen className="px-4 gap-4 pb-8">
       <CatalogSection />
+      {qaPhotos.length ? <CatalogPhotoQaPreview photos={qaPhotos} /> : null}
 
       {pitches.length ? (
         <SearchPanel
