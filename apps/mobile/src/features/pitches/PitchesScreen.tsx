@@ -45,23 +45,27 @@ export function PitchesScreen() {
 
   return (
     <Screen className="px-4 gap-4 pb-8">
-      <SearchPanel
-        cityName={me ? pick(me.city) : ''}
-        cityCode={me ? me.city.en.toUpperCase() : ''}
-        areas={areas}
-        area={area}
-        onArea={setArea}
-        date={date}
-        onDate={setDate}
-        format={format}
-        onFormat={setFormat}
-        totalCount={filterPitches(pitches, { area, format: 'all' }).length}
-        mapOpen={mapOpen}
-        // The schematic map works without a Maps key; tiles come with `map_enabled` (spec §6.4).
-        onToggleMap={() => setMapOpen((v) => !v)}
-      />
+      <CatalogSection />
 
-      {mapOpen ? (
+      {pitches.length ? (
+        <SearchPanel
+          cityName={me ? pick(me.city) : ''}
+          cityCode={me ? me.city.en.toUpperCase() : ''}
+          areas={areas}
+          area={area}
+          onArea={setArea}
+          date={date}
+          onDate={setDate}
+          format={format}
+          onFormat={setFormat}
+          totalCount={filterPitches(pitches, { area, format: 'all' }).length}
+          mapOpen={mapOpen}
+          // The schematic map works without a Maps key; tiles come with `map_enabled` (spec §6.4).
+          onToggleMap={() => setMapOpen((v) => !v)}
+        />
+      ) : null}
+
+      {pitches.length && mapOpen ? (
         <MapDrawer
           pitches={list}
           onClose={() => setMapOpen(false)}
@@ -138,8 +142,6 @@ export function PitchesScreen() {
           )}
         </>
       ) : null}
-
-      <CatalogSection />
 
       <PerksBar />
     </Screen>

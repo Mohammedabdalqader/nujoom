@@ -1512,6 +1512,12 @@
   },
   "catalog": {
     "title": "Pitch directory",
+    "searchPlaceholder": "Search pitches by name or area",
+    "searchLabel": "Search pitch directory",
+    "clearSearch": "Clear search",
+    "anySize": "Any size",
+    "loading": "Loading pitches…",
+    "subtitleAll": "Pitches in our reviewed directory. Only verified pitches can be booked in the app.",
     "subtitle": "Pitches we've reviewed in {{city}}. Only verified pitches can be booked in the app.",
     "filterAll": "All",
     "filterVerified": "Verified by Nujoom",
