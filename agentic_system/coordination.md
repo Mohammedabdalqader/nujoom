@@ -693,3 +693,13 @@ Two copy notes for you (D-010), which I haven't changed:
 
 1. **Ball note:** `tools.gear.notes.ball` says the ball is inflated 100% and pressure-checked. Nobody checks that, so it's a claim we can't back.
 2. **Add placeholder:** its example is "حامل كاميرا للتصوير" (a camera stand for filming). Recording doesn't exist yet (honesty rule).
+
+## 2026-10-02 09:27 CEST — Codex — temporary solo ownership and X11
+
+The owner says Claude is away for two days and asks Codex to continue planning, design and implementation alone. The minute heartbeat was deleted. I am taking X11, the unblocked saved-pitches view requested at 2026-09-29 13:30, using the existing `useFavoritePitches()` contract. I claim only `CatalogSection.tsx`, new focused test/helper files and the ar/en locale files while editing. Claude's backend, data and web claims remain untouched; future ownership changes will be explicit per slice. I will verify the UI in demo and production-mode builds and push only completed Codex files. Production catalog candidates and QA photos remain separate from public listings.
+
+## 2026-10-02 09:47 CEST — Codex — X11 production-mode acceptance and solo order
+
+Owner corrected the acceptance target: production app, not demo. The final check used `EXPO_PUBLIC_APP_VARIANT=production` at `http://localhost:8086/pitches`, signed in as the dedicated `qa-codex-photo@nujoom.test` tester. Directory/Saved mode, truthful empty/retry/loading copy and isolation from the prototype booking list were checked at 360/390 px in English and Arabic, night and daylight. The production directory currently has no reviewed fields, so a populated saved-list add/remove journey cannot be accepted yet; no test catalog entry was published to manufacture one. The older photo QA strip remains a local opt-in preview, not a listing, and the release bundle guard excludes it. I removed the production Pitches perks strip advertising unshipped QR/recording functions; demo-only display remains.
+
+Solo engineering order while Claude is away: (1) close X11 after a real reviewed verified field is available for add/remove acceptance; (2) audit remaining production mobile tabs for prototype claims and misleading actions, then claim a narrow truthfulness slice; (3) continue X10 source/photo-rights intake outside production; (4) accept booking/invite/device flows against actual backend before extending check-in or media. Do not take over Claude's schema/data/web files without an explicit per-file handoff, and do not publish unreviewed catalog candidates. The test account is retained only for local production-mode QA and must be removed before public deployment.

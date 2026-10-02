@@ -39,6 +39,7 @@ Slice order (agreed from Codex's direction): **S1** identity and consent → **S
 | X8  | Specify and implement G1 prepared-catalog mobile discovery after D1 contract acceptance: list/map/card/detail, badge and location truth states, accessibility | in progress (Codex)             | Directory search/size/badge UI; map, pagination, reports and native acceptance pending |
 | X9  | Fix mixed-script paragraph direction in the shared mobile Text primitive, retaining explicit LTR for identifiers                                              | review (Claude)                 | `ui/Text.tsx`; typecheck and targeted lint pass; visual checks pending                 |
 | X10 | Prepare a source-backed, field-level Jordan catalog outside the app with photo-rights intake and validation; keep candidates out of production until reviewed | in progress (Codex)             | `catalog/intake/`, `tools/catalog/`; first Amman batch and negative tests              |
+| X11 | Add a production-backed saved-pitches view on the Pitches tab, with Arabic/English states and verified-only truth | review (populated live flow pending) | Production-mode empty state checked at 360/390 px in Arabic/English and light/dark; 99 mobile and 10 i18n tests pass |
 
 ## Unassigned
 

@@ -42,6 +42,7 @@ export function PitchesScreen() {
   const [format, setFormat] = useState<FormatFilter>('all');
   const [date, setDate] = useState(() => dateInAmman(new Date()));
   const [mapOpen, setMapOpen] = useState(false);
+  const [catalogSaved, setCatalogSaved] = useState(false);
   const qaPhotos = isCatalogPhotoQaEnabled(
     __DEV__,
     IS_DEMO,
@@ -58,106 +59,110 @@ export function PitchesScreen() {
 
   return (
     <Screen className="px-4 gap-4 pb-8">
-      <CatalogSection />
-      {qaPhotos.length ? <CatalogPhotoQaPreview photos={qaPhotos} /> : null}
-
-      {pitches.length ? (
-        <SearchPanel
-          cityName={me ? pick(me.city) : ''}
-          cityCode={me ? me.city.en.toUpperCase() : ''}
-          areas={areas}
-          area={area}
-          onArea={setArea}
-          date={date}
-          onDate={setDate}
-          format={format}
-          onFormat={setFormat}
-          totalCount={filterPitches(pitches, { area, format: 'all' }).length}
-          mapOpen={mapOpen}
-          // The schematic map works without a Maps key; tiles come with `map_enabled` (spec §6.4).
-          onToggleMap={() => setMapOpen((v) => !v)}
-        />
-      ) : null}
-
-      {pitches.length && mapOpen ? (
-        <MapDrawer
-          pitches={list}
-          onClose={() => setMapOpen(false)}
-          onPitch={openBooking}
-          onUrgent={(pitch) => pitch.openSpot && openSpot(pitch.openSpot.id)}
-        />
-      ) : null}
-
-      {flags.missing_one_enabled && urgent ? (
-        <UrgentBanner
-          spot={urgent}
-          onJoin={() => {
-            sfx.success();
-            openSpot(urgent.id);
-          }}
-        />
-      ) : null}
-
-      {/* The bookable list of the prototype shape (demo sample venues); production has none of
-          these, so the directory below is the tab's content there (D-076). */}
-      {pitches.length ? (
+      <CatalogSection saved={catalogSaved} onSavedChange={setCatalogSaved} />
+      {!catalogSaved ? (
         <>
-          <View className="flex-row items-center justify-between pt-1">
-            <View className="flex-row items-center gap-2 flex-1">
-              <Icon name="sports_soccer" size={20} className="text-primary" />
-              <Text
-                font="rubik"
-                className="text-[22px] leading-[30px] text-on-surface font-extrabold tracking-tight"
-              >
-                {isToday
-                  ? t('pitches.titleTonight')
-                  : t('pitches.titleDay', { day: day(`${date}T12:00:00+03:00`) })}
-              </Text>
-            </View>
-            {list.some((p) => p.amenities.includes('lights')) ? (
-              <View className="bg-surface-container px-2 py-0.5 rounded-md border border-border">
-                <Text font="grotesk" className="text-[11px] text-primary-fixed-dim">
-                  {t('pitches.floodlit')}
-                </Text>
-              </View>
-            ) : null}
-          </View>
+          {qaPhotos.length ? <CatalogPhotoQaPreview photos={qaPhotos} /> : null}
 
-          {list.length ? (
-            list.map((pitch, index) => (
-              <PitchCard
-                key={pitch.id}
-                pitch={pitch}
-                date={date}
-                variant={variantFor(pitch, index)}
-              />
-            ))
-          ) : (
-            <View className="bg-surface-container-low rounded-xl p-5 items-center gap-3 border border-border/60">
-              <Icon name="stadium" size={40} className="text-surface-bright" />
-              <Text className="text-[14px] text-on-surface-variant text-center">
-                {/* No bookable pitches at all is honest news, not a filter problem (docs/DESIGN.md). */}
-                {pitches.length === 0 ? t('pitches.noneBookable') : t('pitches.empty')}
-              </Text>
-              {pitches.length === 0 ? null : (
-                <Pressable
-                  onPress={() => {
-                    setArea('all');
-                    setFormat('all');
-                  }}
-                  className="px-4 py-2 rounded-lg bg-surface-container-high active:bg-surface-container-highest"
-                >
-                  <Text font="rubik" className="text-[13px] text-primary font-bold">
-                    {t('pitches.emptyCta')}
+          {pitches.length ? (
+            <SearchPanel
+              cityName={me ? pick(me.city) : ''}
+              cityCode={me ? me.city.en.toUpperCase() : ''}
+              areas={areas}
+              area={area}
+              onArea={setArea}
+              date={date}
+              onDate={setDate}
+              format={format}
+              onFormat={setFormat}
+              totalCount={filterPitches(pitches, { area, format: 'all' }).length}
+              mapOpen={mapOpen}
+              // The schematic map works without a Maps key; tiles come with `map_enabled` (spec §6.4).
+              onToggleMap={() => setMapOpen((v) => !v)}
+            />
+          ) : null}
+
+          {pitches.length && mapOpen ? (
+            <MapDrawer
+              pitches={list}
+              onClose={() => setMapOpen(false)}
+              onPitch={openBooking}
+              onUrgent={(pitch) => pitch.openSpot && openSpot(pitch.openSpot.id)}
+            />
+          ) : null}
+
+          {flags.missing_one_enabled && urgent ? (
+            <UrgentBanner
+              spot={urgent}
+              onJoin={() => {
+                sfx.success();
+                openSpot(urgent.id);
+              }}
+            />
+          ) : null}
+
+          {/* The bookable list of the prototype shape (demo sample venues); production has none of
+          these, so the directory below is the tab's content there (D-076). */}
+          {pitches.length ? (
+            <>
+              <View className="flex-row items-center justify-between pt-1">
+                <View className="flex-row items-center gap-2 flex-1">
+                  <Icon name="sports_soccer" size={20} className="text-primary" />
+                  <Text
+                    font="rubik"
+                    className="text-[22px] leading-[30px] text-on-surface font-extrabold tracking-tight"
+                  >
+                    {isToday
+                      ? t('pitches.titleTonight')
+                      : t('pitches.titleDay', { day: day(`${date}T12:00:00+03:00`) })}
                   </Text>
-                </Pressable>
+                </View>
+                {list.some((p) => p.amenities.includes('lights')) ? (
+                  <View className="bg-surface-container px-2 py-0.5 rounded-md border border-border">
+                    <Text font="grotesk" className="text-[11px] text-primary-fixed-dim">
+                      {t('pitches.floodlit')}
+                    </Text>
+                  </View>
+                ) : null}
+              </View>
+
+              {list.length ? (
+                list.map((pitch, index) => (
+                  <PitchCard
+                    key={pitch.id}
+                    pitch={pitch}
+                    date={date}
+                    variant={variantFor(pitch, index)}
+                  />
+                ))
+              ) : (
+                <View className="bg-surface-container-low rounded-xl p-5 items-center gap-3 border border-border/60">
+                  <Icon name="stadium" size={40} className="text-surface-bright" />
+                  <Text className="text-[14px] text-on-surface-variant text-center">
+                    {/* No bookable pitches at all is honest news, not a filter problem (docs/DESIGN.md). */}
+                    {pitches.length === 0 ? t('pitches.noneBookable') : t('pitches.empty')}
+                  </Text>
+                  {pitches.length === 0 ? null : (
+                    <Pressable
+                      onPress={() => {
+                        setArea('all');
+                        setFormat('all');
+                      }}
+                      className="px-4 py-2 rounded-lg bg-surface-container-high active:bg-surface-container-highest"
+                    >
+                      <Text font="rubik" className="text-[13px] text-primary font-bold">
+                        {t('pitches.emptyCta')}
+                      </Text>
+                    </Pressable>
+                  )}
+                </View>
               )}
-            </View>
-          )}
+            </>
+          ) : null}
+
+          {IS_DEMO ? <PerksBar /> : null}
         </>
       ) : null}
-
-      <PerksBar />
     </Screen>
   );
 }
